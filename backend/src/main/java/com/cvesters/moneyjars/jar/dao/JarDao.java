@@ -1,4 +1,4 @@
-package com.cvesters.jar.dao;
+package com.cvesters.moneyjars.jar.dao;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.cvesters.jar.bdo.Jar;
+import com.cvesters.moneyjars.jar.bdo.Jar;
 
 @Getter
 @Setter

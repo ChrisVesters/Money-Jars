@@ -1,0 +1,22 @@
+type Jar {
+  id: ID!
+  name: String!
+  description: String!
+  balance: Float! # string instead? To not lose precision
+}
+
+input UpdateJar {
+  name: String!
+  description: String!
+}
+
+type Query {
+  getJars: [Jar!]!
+  getJar(id: ID!): Jar
+}
+
+type Mutation {
+  createJar(req: UpdateJar!): Jar
+  updateJar(id: ID!, req: UpdateJar!): Jar
+  deleteJar(id: ID!): Boolean
+}

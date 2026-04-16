@@ -1,8 +1,8 @@
-package com.cvesters.jar;
+package com.cvesters.moneyjars.jar;
 
 import org.springframework.data.repository.ListCrudRepository;
 
-import com.cvesters.jar.dao.JarDao;
+import com.cvesters.moneyjars.jar.dao.JarDao;
 
 public interface JarRepository extends ListCrudRepository<JarDao, Long> {
 

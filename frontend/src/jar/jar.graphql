@@ -1,0 +1,35 @@
+query GetJars {
+  getJars {
+    id
+    name
+    description
+    balance
+  }
+}
+
+query GetJar($id: ID!) {
+  getJar(id: $id) {
+    id
+    name
+    description
+    balance
+  }
+}
+
+mutation CreateJar($req: UpdateJar!) {
+	createJar(req: $req) {
+		id
+		name
+		description
+		balance
+	}
+}
+
+mutation UpdateJar($id: ID!, $req: UpdateJar!) {
+	updateJar(id: $id, req: $req) {
+		id
+		name
+		description
+		balance
+	}
+}

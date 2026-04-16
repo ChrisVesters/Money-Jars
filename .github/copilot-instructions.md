@@ -42,6 +42,7 @@ Conventions and guardrails for code changes
 - When adding DB migrations, use Flyway's naming conventions (V{version}__desc.sql) and commit them into `backend/src/main/resources/db/migration/`.
 - Tests expect Docker available for Testcontainers. If adding CI jobs that run tests without Docker, provide an alternative profile or replace Testcontainers usage.
  - Do not add comments anywhere in source code. Do not add Javadoc, block comments (/* ... */) or line comments (//) in any source files. Comments in documentation (Markdown/README) or non-source assets are allowed.
+ - Use tabs for indentation in all source files and new edits. Do not introduce spaces for code indentation in modified files.
 
 Helpful files to inspect when you start working
 - `backend/pom.xml` — dependencies, java version, build plugins (Lombok, spring-boot-plugin).

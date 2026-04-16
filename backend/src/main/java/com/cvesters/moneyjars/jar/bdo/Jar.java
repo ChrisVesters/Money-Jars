@@ -1,4 +1,4 @@
-package com.cvesters.jar.bdo;
+package com.cvesters.moneyjars.jar.bdo;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -15,8 +15,8 @@ public class Jar {
 	private String description;
 	private BigDecimal balance = BigDecimal.ZERO;
 
-	public Jar(final String name, final String description, final BigDecimal balance) {
-		this(null, name, description, balance);
+	public Jar(final String name, final String description) {
+		this(null, name, description, BigDecimal.ZERO);
 	}
 
 	public Jar(final Long id, final String name, final String description, final BigDecimal balance) {

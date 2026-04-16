@@ -1,9 +1,9 @@
-package com.cvesters.jar.dto;
+package com.cvesters.moneyjars.jar.dto;
 
 import java.math.BigDecimal;
 
-import com.cvesters.jar.dao.JarDao;
-import com.cvesters.jar.bdo.Jar;
+import com.cvesters.moneyjars.jar.bdo.Jar;
+import com.cvesters.moneyjars.jar.dao.JarDao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class JarDto {
 	private Long id;
 	private String name;
 	private String description;
-	private BigDecimal balance;
+	private BigDecimal balance; // TODO: float?
 
 	public static JarDto fromBdo(final Jar bdo) {
 		if (bdo == null)
