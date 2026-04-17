@@ -1,0 +1,14 @@
+{
+	"configurations": [
+		{
+			"type": "java",
+			"name": "Spring Boot-MoneyJarsApplication<money-jars>",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"mainClass": "com.cvesters.moneyjars.MoneyJarsApplication",
+			"projectName": "money-jars",
+			"args": "",
+			"envFile": "${workspaceFolder}/.env"
+		}
+	]
+}
