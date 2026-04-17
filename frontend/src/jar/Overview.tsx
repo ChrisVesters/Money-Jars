@@ -68,7 +68,6 @@ export default function Overview(): JSX.Element {
 
 	return (
 		<div>
-			<h1>Jars</h1>
 			<div className="jar-grid">
 				{data?.getJars.map((jar: Jar) => (
 					<div key={jar.id} className="jar-card">

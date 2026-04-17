@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { Link, useLocation } from "react-router-dom";
 import IconPanelLeftOpen from "@assets/icons/IconPanelLeftOpen";
 import IconPanelLeftClose from "@assets/icons/IconPanelLeftClose";
 import IconChartArea from "@assets/icons/IconChartArea";
@@ -12,6 +13,10 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, onToggle }: SidebarProps): JSX.Element => {
+	const location = useLocation();
+
+	const isActive = (path: string): boolean => location.pathname === path;
+
 	return (
 		<>
 			<aside className={`sidebar ${isOpen ? "open" : "closed"}`}>
@@ -31,28 +36,40 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps): JSX.Element => {
 					</div>
 					<ul className="nav-menu">
 						<li className="nav-item">
-							<a href="#" className="nav-link active" title="Dashboard">
+							<Link
+								to="/"
+								className={`nav-link ${isActive("/") ? "active" : ""}`}
+								title="Dashboard">
 								<IconChartArea className="nav-icon" />
 								<span>Dashboard</span>
-							</a>
+							</Link>
 						</li>
 						<li className="nav-item">
-							<a href="#" className="nav-link" title="Jars">
+							<Link
+								to="/jars"
+								className={`nav-link ${isActive("/jars") ? "active" : ""}`}
+								title="Jars">
 								<IconJar className="nav-icon" />
 								<span>Jars</span>
-							</a>
+							</Link>
 						</li>
 						<li className="nav-item">
-							<a href="#" className="nav-link" title="Reports">
+							<Link
+								to="/reports"
+								className={`nav-link ${isActive("/reports") ? "active" : ""}`}
+								title="Reports">
 								<IconChartArea className="nav-icon" />
 								<span>Reports</span>
-							</a>
+							</Link>
 						</li>
 						<li className="nav-item">
-							<a href="#" className="nav-link" title="Settings">
+							<Link
+								to="/settings"
+								className={`nav-link ${isActive("/settings") ? "active" : ""}`}
+								title="Settings">
 								<IconSettings className="nav-icon" />
 								<span>Settings</span>
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</nav>
