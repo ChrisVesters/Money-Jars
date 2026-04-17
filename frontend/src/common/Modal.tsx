@@ -2,7 +2,6 @@ import { useEffect, useRef, type JSX } from "react";
 
 interface ModalProps {
 	isOpen: boolean;
-	hasCloseBtn?: boolean;
 	onClose?: () => void;
 	children: React.ReactNode;
 }

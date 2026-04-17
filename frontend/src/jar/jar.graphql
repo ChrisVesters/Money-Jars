@@ -33,3 +33,7 @@ mutation UpdateJar($id: ID!, $req: UpdateJar!) {
 		balance
 	}
 }
+
+mutation DeleteJar($id: ID!) {
+	deleteJar(id: $id)
+}

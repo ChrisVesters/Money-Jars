@@ -6,19 +6,44 @@ import IconEdit from "@assets/icons/IconEdit";
 
 export type JarViewProps = {
 	jar: Jar;
+	isSelected: boolean;
+	onSelect: () => void;
 	onEdit: (jar: Jar) => void;
 };
 
 export default function JarView(props: JarViewProps): JSX.Element {
-	return (
-		<div>
-			<h3>{props.jar.name}</h3>
-			<p>{props.jar.description}</p>
-			<p>Balance: {props.jar.balance}</p>
+	const handleEdit = () => {
+		props.onEdit(props.jar);
+	};
 
-			<button className="icon-button" onClick={() => props.onEdit(props.jar)}>
-				<IconEdit />
-			</button>
+	return (
+		<div
+			className={`jar-card ${props.isSelected ? "selected" : ""}`}
+			onClick={props.onSelect}>
+			<div className="card-content">
+				<div className="card-title">
+					<div>{props.jar.name}</div>
+				</div>
+				<div className="card-description">
+					<div>{props.jar.description}</div>
+				</div>
+				<div className="card-footer">
+					<div>Balance: {props.jar.balance}</div>
+				</div>
+			</div>
+
+			{props.isSelected && (
+				<div className="card-actions">
+					<button
+						className="icon-button"
+						onClick={e => {
+							e.stopPropagation();
+							handleEdit();
+						}}>
+						<IconEdit size="1rem" />
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }

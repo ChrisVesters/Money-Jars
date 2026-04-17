@@ -6,6 +6,7 @@ import IconPlus from "@assets/icons/IconPlus";
 
 import {
 	CreateJarDocument,
+	DeleteJarDocument,
 	GetJarsDocument,
 	UpdateJarDocument,
 	type Jar,
@@ -22,12 +23,17 @@ export default function Overview(): JSX.Element {
 
 	const [createJar] = useMutation(CreateJarDocument);
 	const [updateJar] = useMutation(UpdateJarDocument);
+	const [deleteJar] = useMutation(DeleteJarDocument);
 
 	const [JarFormVisible, setJarFormVisible] = useState<boolean>(false);
 	const [selectedJar, setSelectedJar] = useState<Jar | undefined>(undefined);
+	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
+		undefined
+	);
 
 	function openCreateJarForm(): void {
 		setSelectedJar(undefined);
+		setSelectedCardId(undefined);
 		setJarFormVisible(true);
 	}
 
@@ -36,13 +42,21 @@ export default function Overview(): JSX.Element {
 		setJarFormVisible(true);
 	}
 
-	// TODO: saveJar
+	function handleCardSelect(jarId: string | undefined): void {
+		if (selectedCardId === jarId) {
+			setSelectedCardId(undefined);
+		} else {
+			setSelectedCardId(jarId);
+		}
+	}
+
 	function closeJarForm(): void {
 		setJarFormVisible(false);
 		setSelectedJar(undefined);
+		setSelectedCardId(undefined);
 	}
 
-	async function submitJarForm(jar: UpdateJar): Promise<void> {
+	async function handleSubmitJar(jar: UpdateJar): Promise<void> {
 		try {
 			if (selectedJar) {
 				const result = await updateJar({
@@ -69,29 +83,51 @@ export default function Overview(): JSX.Element {
 		closeJarForm();
 	}
 
+	async function handleDeleteJar(): Promise<void> {
+		try {
+			if (!selectedJar) {
+				return;
+			}
+
+			const result = await deleteJar({
+				variables: {
+					id: selectedJar.id
+				},
+				refetchQueries: [{ query: GetJarsDocument }]
+			});
+			console.log("Delete jar result:", result);
+		} catch (error) {
+			console.error("Error deleting jar:", error);
+		}
+
+		closeJarForm();
+	}
+
 	return (
 		<div>
 			<div className="jar-grid">
 				{data?.getJars.map((jar: Jar) => (
-					<div key={jar.id} className="jar-card">
-						<JarView jar={jar} onEdit={openEditJarForm} />
-					</div>
+					<JarView
+						key={jar.id}
+						jar={jar}
+						onEdit={openEditJarForm}
+						isSelected={selectedCardId === jar.id}
+						onSelect={() => handleCardSelect(jar.id)}
+					/>
 				))}
-				<div className="jar-card">
-					<button className="icon-button" onClick={openCreateJarForm}>
-						<IconPlus />
-					</button>
+				<div
+					className="jar-card jar-add-card"
+					onClick={openCreateJarForm}>
+					<IconPlus />
 				</div>
 			</div>
 
-			<Modal
-				isOpen={JarFormVisible}
-				onClose={closeJarForm}
-				hasCloseBtn={true}>
+			<Modal isOpen={JarFormVisible} onClose={closeJarForm}>
 				<JarForm
 					jar={selectedJar}
-					onSave={submitJarForm}
 					onClose={closeJarForm}
+					onSave={handleSubmitJar}
+					onDelete={handleDeleteJar}
 				/>
 			</Modal>
 		</div>

@@ -6,10 +6,79 @@
 }
 
 .jar-card {
+	position: relative;
 	background: grey;
-	padding: 1rem;
 	border-radius: 8px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.2s ease;
+	margin: 2px;
+	padding: 1rem;
+	min-height: 200px;
+	cursor: pointer;
+}
+
+.jar-card.selected {
+	background-color: rgba(255, 255, 255, 0.1);
+	border: 2px solid #4a90e2;
+	box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+	margin: 0px;
+}
+
+.jar-add-card {
+	background: rgba(128, 128, 128, 0.3);
+	border: 2px dashed rgba(128, 128, 128, 0.6);
+	box-shadow: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.jar-view {
+	position: relative;
+	transition: all 0.2s ease;
+	padding: 1rem;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+}
+
+.card-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+}
+
+.card-title {
+	font-size: 1.2rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+}
+
+.card-description {
+	flex-grow: 2;
+}
+
+.card-actions {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+
+	display: flex;
+	flex-direction: column;
+}
+
+.jar-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	text-align: center;
+}
+
+.jar-content h2,
+.jar-content p {
+	margin: 0;
 }
 
 .jar-form-section {
