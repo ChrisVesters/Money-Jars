@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useEffect, useState } from "react";
 
-import type { Jar, UpdateJar } from "../gql/graphql";
+import type { Jar, UpdateJar } from "@gql/graphql";
 
 export type JarFormProps = {
 	jar?: Jar;

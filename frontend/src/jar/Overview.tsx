@@ -1,17 +1,20 @@
 import { useState, type JSX } from "react";
 
+import { useMutation, useQuery } from "@apollo/client/react";
+
+import IconPlus from "@assets/icons/IconPlus";
+
 import {
 	CreateJarDocument,
 	GetJarsDocument,
 	UpdateJarDocument,
 	type Jar,
 	type UpdateJar
-} from "../gql/graphql";
-import { useMutation, useQuery } from "@apollo/client/react";
+} from "@gql/graphql";
 import JarView from "./JarView";
 
-import "./jar.css";
 import Modal from "../common/Modal";
+import "./jar.css";
 import JarForm from "./JarForm";
 
 export default function Overview(): JSX.Element {
@@ -75,7 +78,9 @@ export default function Overview(): JSX.Element {
 					</div>
 				))}
 				<div className="jar-card">
-					<button onClick={openCreateJarForm}>+</button>
+					<button className="icon-button" onClick={openCreateJarForm}>
+						<IconPlus />
+					</button>
 				</div>
 			</div>
 

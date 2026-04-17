@@ -1,5 +1,8 @@
 import type { JSX } from "react";
-import type { Jar } from "../gql/graphql";
+
+import type { Jar } from "@gql/graphql";
+
+import IconEdit from "@assets/icons/IconEdit";
 
 export type JarViewProps = {
 	jar: Jar;
@@ -13,7 +16,9 @@ export default function JarView(props: JarViewProps): JSX.Element {
 			<p>{props.jar.description}</p>
 			<p>Balance: {props.jar.balance}</p>
 
-			<button onClick={() => props.onEdit(props.jar)}>Edit</button>
+			<button className="icon-button" onClick={() => props.onEdit(props.jar)}>
+				<IconEdit />
+			</button>
 		</div>
 	);
 }
