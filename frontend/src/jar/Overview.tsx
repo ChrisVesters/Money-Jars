@@ -83,15 +83,15 @@ export default function Overview(): JSX.Element {
 		closeJarForm();
 	}
 
-	async function handleDeleteJar(): Promise<void> {
-		try {
-			if (!selectedJar) {
-				return;
-			}
+	async function handleDeleteJar(jarId: string): Promise<void> {
+		if (!window.confirm("Are you sure you want to delete this jar?")) {
+			return;
+		}
 
+		try {
 			const result = await deleteJar({
 				variables: {
-					id: selectedJar.id
+					id: jarId
 				},
 				refetchQueries: [{ query: GetJarsDocument }]
 			});
@@ -113,6 +113,7 @@ export default function Overview(): JSX.Element {
 						onEdit={openEditJarForm}
 						isSelected={selectedCardId === jar.id}
 						onSelect={() => handleCardSelect(jar.id)}
+						onDelete={() => handleDeleteJar(jar.id)}
 					/>
 				))}
 				<div
@@ -126,8 +127,7 @@ export default function Overview(): JSX.Element {
 				<JarForm
 					jar={selectedJar}
 					onClose={closeJarForm}
-					onSave={handleSubmitJar}
-					onDelete={handleDeleteJar}
+					onConfirm={handleSubmitJar}
 				/>
 			</Modal>
 		</div>

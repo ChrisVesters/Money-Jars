@@ -6,8 +6,7 @@ import type { Jar, UpdateJar } from "@gql/graphql";
 export type JarFormProps = {
 	jar?: Jar;
 	onClose: () => void;
-	onSave: (jar: UpdateJar) => void;
-	onDelete: () => void;
+	onConfirm: (jar: UpdateJar) => void;
 };
 
 export default function JarForm(props: JarFormProps): JSX.Element {
@@ -40,7 +39,7 @@ export default function JarForm(props: JarFormProps): JSX.Element {
 		// 	return;
 		// }
 
-		props.onSave({
+		props.onConfirm({
 			name,
 			description
 		});
@@ -74,9 +73,6 @@ export default function JarForm(props: JarFormProps): JSX.Element {
 					justifyContent: "center",
 					gap: "1rem"
 				}}>
-				<button type="button" onClick={props.onDelete}>
-					Delete
-				</button>
 				<button type="button" onClick={props.onClose}>
 					Cancel
 				</button>

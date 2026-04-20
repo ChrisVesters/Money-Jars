@@ -65,6 +65,17 @@ button.icon-button:hover {
   border-color: transparent;
 }
 
+button.danger {
+  background-color: #ff161a;
+  color: white;
+  border-color: transparent;
+}
+
+button.danger:hover {
+  background-color: #ff4d4f;
+  border-color: transparent;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
