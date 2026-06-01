@@ -1,39 +1,46 @@
 package com.cvesters.moneyjars.jar.dao;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.math.BigDecimal;
 import java.util.Objects;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.cvesters.moneyjars.jar.bdo.Jar;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "jars")
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class JarDao {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Setter(lombok.AccessLevel.NONE)
 	private Long id;
 
 	private String name;
 	private String description;
-	private BigDecimal balance = BigDecimal.ZERO;
+	private BigDecimal balance;
 
-	public static JarDao fromBdo(final Jar bdo) {
+	public JarDao(final Jar bdo) {
 		Objects.requireNonNull(bdo);
 
-		// TODO: or private constructor?
-		JarDao dao = new JarDao();
-		dao.id = bdo.getId();
-		dao.name = bdo.getName();
-		dao.description = bdo.getDescription();
-		dao.balance = bdo.getBalance();
-		return dao;
+		this.name = bdo.getName();
+		this.description = bdo.getDescription();
+		this.balance = bdo.getBalance();
+	}
+
+	public void updateWith(final Jar bdo) {
+		Objects.requireNonNull(bdo);
+
+		this.name = bdo.getName();
+		this.description = bdo.getDescription();
 	}
 
 	public Jar toBdo() {
