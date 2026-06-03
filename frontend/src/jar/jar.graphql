@@ -1,18 +1,18 @@
 query GetJars {
   getJars {
-    id
-    name
-    description
-    balance
+	id
+	name
+	description
+	balance
   }
 }
 
 query GetJar($id: ID!) {
   getJar(id: $id) {
-    id
-    name
-    description
-    balance
+	id
+	name
+	description
+	balance
   }
 }
 

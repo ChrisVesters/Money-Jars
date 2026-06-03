@@ -8,6 +8,7 @@ import DashboardPage from "./pages/DashboardPage";
 import JarsPage from "./pages/JarsPage";
 import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
+import TransactionsPage from "./pages/TransactionsPage";
 
 function App(): JSX.Element {
 	const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -24,6 +25,10 @@ function App(): JSX.Element {
 					<Routes>
 						<Route path="/" element={<DashboardPage />} />
 						<Route path="/jars" element={<JarsPage />} />
+						<Route
+							path="/transactions"
+							element={<TransactionsPage />}
+						/>
 						<Route path="/reports" element={<ReportsPage />} />
 						<Route path="/settings" element={<SettingsPage />} />
 					</Routes>

@@ -1,0 +1,37 @@
+query GetTransactions {
+	getTransactions {
+		id
+		date
+		amount
+		beneficiary
+		description
+		jar {
+			id
+			name
+		}
+	}
+}
+
+mutation CreateTransaction($req: CreateTransaction!) {
+	createTransaction(req: $req) {
+		id
+		date
+		amount
+		beneficiary
+		description
+	}
+}
+
+mutation UpdateTransaction($id: ID!, $req: CreateTransaction!) {
+	updateTransaction(id: $id, req: $req) {
+		id
+		date
+		amount
+		beneficiary
+		description
+	}
+}
+
+mutation DeleteTransaction($id: ID!) {
+	deleteTransaction(id: $id)
+}

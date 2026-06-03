@@ -1,10 +1,14 @@
 import type { JSX } from "react";
+
 import { Link, useLocation } from "react-router-dom";
-import IconPanelLeftOpen from "@assets/icons/IconPanelLeftOpen";
-import IconPanelLeftClose from "@assets/icons/IconPanelLeftClose";
+
 import IconChartArea from "@assets/icons/IconChartArea";
 import IconJar from "@assets/icons/IconJar";
+import IconPanelLeftClose from "@assets/icons/IconPanelLeftClose";
+import IconPanelLeftOpen from "@assets/icons/IconPanelLeftOpen";
 import IconSettings from "@assets/icons/IconSettings";
+import IconTransaction from "@assets/icons/IconTransaction";
+
 import "./Sidebar.css";
 
 interface SidebarProps {
@@ -51,6 +55,15 @@ const Sidebar = ({ isOpen, onToggle }: SidebarProps): JSX.Element => {
 								title="Jars">
 								<IconJar className="nav-icon" />
 								<span>Jars</span>
+							</Link>
+						</li>
+						<li className="nav-item">
+							<Link
+								to="/transactions"
+								className={`nav-link ${isActive("/transactions") ? "active" : ""}`}
+								title="Jars">
+								<IconTransaction className="nav-icon" />
+								<span>Transactions</span>
 							</Link>
 						</li>
 						<li className="nav-item">

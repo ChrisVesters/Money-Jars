@@ -25,8 +25,10 @@ export default function Overview(): JSX.Element {
 	const [updateJar] = useMutation(UpdateJarDocument);
 	const [deleteJar] = useMutation(DeleteJarDocument);
 
-	const [JarFormVisible, setJarFormVisible] = useState<boolean>(false);
+	const [JarFormVisible, setJarFormVisible] = useState(false);
 	const [selectedJar, setSelectedJar] = useState<Jar | undefined>(undefined);
+
+	// TODO: Can't we get rid of this?
 	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
 		undefined
 	);
@@ -104,7 +106,7 @@ export default function Overview(): JSX.Element {
 	}
 
 	return (
-		<div>
+		<>
 			<div className="jar-grid">
 				{data?.getJars.map((jar: Jar) => (
 					<JarView
@@ -130,6 +132,6 @@ export default function Overview(): JSX.Element {
 					onConfirm={handleSubmitJar}
 				/>
 			</Modal>
-		</div>
+		</>
 	);
 }

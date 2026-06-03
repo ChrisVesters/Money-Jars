@@ -46,7 +46,7 @@ export default function JarForm(props: JarFormProps): JSX.Element {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="jar-form">
+		<form onSubmit={handleSubmit}>
 			<div className="form-group">
 				<label htmlFor="name">Name</label>
 				<input
@@ -67,12 +67,7 @@ export default function JarForm(props: JarFormProps): JSX.Element {
 				/>
 			</div>
 
-			<div
-				style={{
-					display: "flex",
-					justifyContent: "center",
-					gap: "1rem"
-				}}>
+			<div className="form-actions">
 				<button type="button" onClick={props.onClose}>
 					Cancel
 				</button>
