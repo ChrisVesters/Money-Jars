@@ -47,7 +47,6 @@ public class Transaction {
 
 	public void setAmount(final BigDecimal amount) {
 		Objects.requireNonNull(amount);
-		Validate.isTrue(amount.signum() != 0);
 
 		this.amount = amount;
 	}
