@@ -30,7 +30,7 @@ class JarControllerTest {
 	private JarService jarService;
 
 	@Nested
-	class GetAll {
+	class GetJars {
 
 		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
 		private static final TestJar HOLIDAY = TestJar.HOLIDAY;
@@ -43,7 +43,7 @@ class JarControllerTest {
 
 			when(jarService.getAll()).thenReturn(jars);
 
-			String document = """
+			final String document = """
 					query {
 						getJars {
 							id
@@ -64,7 +64,7 @@ class JarControllerTest {
 	}
 
 	@Nested
-	class Get {
+	class GetJar {
 
 		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
 
@@ -75,7 +75,7 @@ class JarControllerTest {
 			when(jarService.find(HOUSEHOLD.getId()))
 					.thenReturn(Optional.of(jar));
 
-			String document = """
+			final String document = """
 					query {
 						getJar(id: 1) {
 							id
@@ -97,7 +97,7 @@ class JarControllerTest {
 			when(jarService.find(HOUSEHOLD.getId()))
 					.thenReturn(Optional.empty());
 
-			String document = """
+			final String document = """
 					query {
 						getJar(id: 1) {
 							id
@@ -117,7 +117,7 @@ class JarControllerTest {
 	}
 
 	@Nested
-	class Create {
+	class CreateJar {
 
 		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
 
@@ -131,7 +131,7 @@ class JarControllerTest {
 				return true;
 			}))).thenReturn(createdJar);
 
-			String document = """
+			final String document = """
 					mutation {
 						createJar(req: {
 							name: "%s",
@@ -155,7 +155,7 @@ class JarControllerTest {
 	}
 
 	@Nested
-	class Update {
+	class UpdateJar {
 
 		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
 
@@ -169,7 +169,7 @@ class JarControllerTest {
 				return true;
 			}))).thenReturn(updatedJar);
 
-			String document = """
+			final String document = """
 					mutation {
 						updateJar(id: %d, req: {
 							name: "%s",
@@ -192,11 +192,11 @@ class JarControllerTest {
 	}
 
 	@Nested
-	class Delete {
+	class DeleteJar {
 
 		@Test
 		void success() {
-			String document = """
+			final String document = """
 					mutation {
 						deleteJar(id: 1)
 					}
@@ -222,7 +222,6 @@ class JarControllerTest {
 				.path(prefix + ".balance")
 				.entity(Float.class)
 				.isEqualTo(expected.getBalance().floatValue());
-
 	}
 
 }

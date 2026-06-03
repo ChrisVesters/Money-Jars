@@ -6,3 +6,19 @@ CREATE TABLE jars(
 
 		PRIMARY KEY (id)
 );
+
+
+CREATE TABLE transactions(
+		id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+		date DATE NOT NULL,
+		amount NUMERIC NOT NULL,
+		jar_id BIGINT NOT NULL,
+		beneficiary TEXT NOT NULL,
+		description TEXT NOT NULL,
+
+		PRIMARY KEY (id),
+		FOREIGN KEY(jar_id) REFERENCES jars(id)
+);
+
+CREATE INDEX ON transactions(date);
+CREATE INDEX ON transactions(jar_id);

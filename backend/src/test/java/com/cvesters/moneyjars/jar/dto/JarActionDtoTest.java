@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.cvesters.moneyjars.jar.TestJar;
+import com.cvesters.moneyjars.jar.bdo.JarAction;
 
 class JarActionDtoTest {
 
@@ -28,7 +29,7 @@ class JarActionDtoTest {
 			final var dto = new JarActionDto.Create(JAR.getName(),
 					JAR.getDescription());
 
-			final var bdo = dto.toBdo();
+			final JarAction.Create bdo = dto.toBdo();
 
 			assertThat(bdo.name()).isEqualTo(JAR.getName());
 			assertThat(bdo.description()).isEqualTo(JAR.getDescription());

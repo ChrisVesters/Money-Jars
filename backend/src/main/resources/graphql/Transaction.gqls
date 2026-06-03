@@ -1,0 +1,27 @@
+type Transaction {
+	id: ID!
+	date: String!
+	amount: Float! # string instead? To not lose precision
+	jar: Jar!
+	beneficiary: String!
+	description: String!
+}
+
+input CreateTransaction {
+	date: String!	
+	amount: Float! # string instead? To not lose precision
+	jarId: ID!
+	beneficiary: String!
+	description: String!
+}
+
+extend type Query {
+	getTransactions: [Transaction!]!
+	getTransaction(id: ID!): Transaction
+}
+
+extend type Mutation {
+ 	createTransaction(req: CreateTransaction!): Transaction
+	updateTransaction(id: ID!, req: CreateTransaction!): Transaction
+	deleteTransaction(id: ID!): Boolean
+}

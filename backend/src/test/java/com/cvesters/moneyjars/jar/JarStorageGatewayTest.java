@@ -70,9 +70,9 @@ class JarStorageGatewayTest {
 			final Jar jar = JAR.bdo();
 			when(repository.save(argThat(v -> {
 				assertThat(v.getId()).isNull();
-				assertThat(v.getName()).isEqualTo(jar.getName());
-				assertThat(v.getDescription()).isEqualTo(jar.getDescription());
-				assertThat(v.getBalance()).isEqualTo(jar.getBalance());
+				assertThat(v.getName()).isEqualTo(JAR.getName());
+				assertThat(v.getDescription()).isEqualTo(JAR.getDescription());
+				assertThat(v.getBalance()).isEqualTo(JAR.getBalance());
 				return true;
 			}))).thenReturn(createdDao);
 
@@ -99,7 +99,7 @@ class JarStorageGatewayTest {
 
 			final Jar update = mock();
 			when(update.getId()).thenReturn(JAR.getId());
-			
+
 			final JarDao existing = mock();
 			when(repository.findById(JAR.getId()))
 					.thenReturn(Optional.of(existing));
@@ -117,8 +117,10 @@ class JarStorageGatewayTest {
 		@Test
 		void notFound() {
 			when(repository.findById(JAR.getId())).thenReturn(Optional.empty());
-			
+
 			final Jar update = mock();
+			when(update.getId()).thenReturn(JAR.getId());
+
 			assertThatThrownBy(() -> gateway.update(update))
 					.isInstanceOf(IllegalArgumentException.class);
 		}

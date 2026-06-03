@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jar;
+package com.cvesters.moneyjars.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,23 +15,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
-import com.cvesters.moneyjars.jar.bdo.Jar;
-import com.cvesters.moneyjars.jar.bdo.JarAction;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 
-class JarServiceTest {
+class TransactionServiceTest {
 
-	private final JarStorageGateway storage = mock();
-	private final JarService service = new JarService(storage);
+	private final TransactionStorageGateway storage = mock();
+	private final TransactionService service = new TransactionService(storage);
 
 	@Nested
 	class GetAll {
 
 		@Test
 		void success() {
-			final Jar expected = mock();
+			final Transaction expected = mock();
 			when(storage.getAll()).thenReturn(List.of(expected));
 
-			final List<Jar> result = service.getAll();
+			final var result = service.getAll();
 
 			assertThat(result).containsExactly(expected);
 		}
@@ -40,14 +40,14 @@ class JarServiceTest {
 	@Nested
 	class Find {
 
-		private static final long JAR_ID = 2L;
+		private static final long TRANSACTION_ID = 1L;
 
 		@Test
 		void success() {
-			final Optional<Jar> expected = Optional.of(mock());
-			when(storage.find(JAR_ID)).thenReturn(expected);
+			final Optional<Transaction> expected = Optional.of(mock());
+			when(storage.find(TRANSACTION_ID)).thenReturn(expected);
 
-			final Optional<Jar> result = service.find(JAR_ID);
+			final var result = service.find(TRANSACTION_ID);
 
 			assertThat(result).isSameAs(expected);
 		}
@@ -58,14 +58,14 @@ class JarServiceTest {
 
 		@Test
 		void success() {
-			final JarAction.Create action = mock();
-			final Jar create = mock();
+			final TransactionAction.Create action = mock();
+			final Transaction create = mock();
 			when(action.toBdo()).thenReturn(create);
 
-			final Jar created = mock();
+			final Transaction created = mock();
 			when(storage.create(create)).thenReturn(created);
 
-			final Jar result = service.create(action);
+			final var result = service.create(action);
 
 			assertThat(result).isSameAs(created);
 		}
@@ -80,39 +80,40 @@ class JarServiceTest {
 	@Nested
 	class Update {
 
-		private static final long JAR_ID = 2L;
+		private static final long TRANSACTION_ID = 1L;
 
 		@Test
 		void success() {
-			final JarAction.Update action = mock();
-			final Jar existing = mock();
+			final TransactionAction.Update action = mock();
+			final Transaction existing = mock();
 
-			final Jar updated = mock();
-			when(storage.find(JAR_ID)).thenReturn(Optional.of(existing));
+			final Transaction updated = mock();
+			when(storage.find(TRANSACTION_ID))
+					.thenReturn(Optional.of(existing));
 			when(storage.update(existing)).thenReturn(updated);
 
-			final Jar result = service.update(JAR_ID, action);
+			final var result = service.update(TRANSACTION_ID, action);
 
 			assertThat(result).isSameAs(updated);
 
 			final InOrder inOrder = inOrder(storage, action);
-			inOrder.verify(storage).find(JAR_ID);
+			inOrder.verify(storage).find(TRANSACTION_ID);
 			inOrder.verify(action).applyOn(existing);
 			inOrder.verify(storage).update(existing);
 		}
 
 		@Test
 		void actionNull() {
-			assertThatThrownBy(() -> service.update(JAR_ID, null))
+			assertThatThrownBy(() -> service.update(TRANSACTION_ID, null))
 					.isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
 		void missingEntity() {
-			final JarAction.Update action = mock();
-			when(storage.find(JAR_ID)).thenReturn(Optional.empty());
+			final TransactionAction.Update action = mock();
+			when(storage.find(TRANSACTION_ID)).thenReturn(Optional.empty());
 
-			assertThatThrownBy(() -> service.update(JAR_ID, action))
+			assertThatThrownBy(() -> service.update(TRANSACTION_ID, action))
 					.isInstanceOf(MissingEntityException.class);
 		}
 	}
@@ -120,13 +121,13 @@ class JarServiceTest {
 	@Nested
 	class Delete {
 
-		private static final long JAR_ID = 2L;
+		private static final long TRANSACTION_ID = 1L;
 
 		@Test
 		void success() {
-			service.delete(JAR_ID);
+			service.delete(TRANSACTION_ID);
 
-			verify(storage).delete(JAR_ID);
+			verify(storage).delete(TRANSACTION_ID);
 		}
 	}
 }

@@ -10,12 +10,12 @@ input UpdateJar {
   description: String!
 }
 
-type Query {
+extend type Query {
   getJars: [Jar!]!
   getJar(id: ID!): Jar
 }
 
-type Mutation {
+extend type Mutation {
   createJar(req: UpdateJar!): Jar
   updateJar(id: ID!, req: UpdateJar!): Jar
   deleteJar(id: ID!): Boolean
