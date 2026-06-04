@@ -213,4 +213,25 @@ class TransactionTest {
 		}
 	}
 
+	@Nested
+	class SetDescription {
+
+		private final Transaction transaction = TestTransaction.RENT.bdo();
+
+		@Test
+		void success() {
+			final var description = "Description";
+
+			transaction.setDescription(description);
+
+			assertThat(transaction.getDescription()).isEqualTo(description);
+		}
+
+		@Test
+		void descriptionNull() {
+			assertThatThrownBy(() -> transaction.setDescription(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
 }
