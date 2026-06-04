@@ -27,7 +27,7 @@ class JarDaoTest {
 		}
 
 		@Test
-		void bdoNull() {
+		void jarNull() {
 			assertThatThrownBy(() -> new JarDao(null))
 					.isInstanceOf(NullPointerException.class);
 		}
@@ -35,7 +35,7 @@ class JarDaoTest {
 	}
 
 	@Nested
-	class Update {
+	class UpdateWith {
 
 		@Test
 		void success() {
@@ -50,6 +50,13 @@ class JarDaoTest {
 			assertThat(dao.getName()).isEqualTo(name);
 			assertThat(dao.getDescription()).isEqualTo(description);
 			assertThat(dao.getBalance()).isEqualTo(JAR.getBalance());
+		}
+
+		@Test
+		void jarNull() {
+			final var dao = new JarDao(JAR.bdo());
+			assertThatThrownBy(() -> dao.updateWith(null))
+					.isInstanceOf(NullPointerException.class);
 		}
 
 	}

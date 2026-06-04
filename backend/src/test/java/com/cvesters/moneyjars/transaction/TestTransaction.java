@@ -16,12 +16,12 @@ public enum TestTransaction {
 	GROCERY(2L, LocalDate.of(2026, 1, 3), new BigDecimal("-134.50"),
 			TestJar.HOUSEHOLD, "Supermarket", "Weekly groceries");
 
-	private long id;
-	private LocalDate date;
-	private BigDecimal amount;
-	private TestJar jar;
-	private String beneficiary;
-	private String description;
+	private final long id;
+	private final LocalDate date;
+	private final BigDecimal amount;
+	private final TestJar jar;
+	private final String beneficiary;
+	private final String description;
 
 	TestTransaction(final long id, final LocalDate date,
 			final BigDecimal amount, final TestJar jar,

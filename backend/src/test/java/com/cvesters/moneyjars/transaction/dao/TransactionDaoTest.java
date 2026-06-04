@@ -31,7 +31,7 @@ class TransactionDaoTest {
 		}
 
 		@Test
-		void bdoNull() {
+		void transactionNull() {
 			assertThatThrownBy(() -> new TransactionDao(null))
 					.isInstanceOf(NullPointerException.class);
 		}
@@ -61,6 +61,14 @@ class TransactionDaoTest {
 			assertThat(dao.getJarId()).isEqualTo(updatedJar);
 			assertThat(dao.getBeneficiary()).isEqualTo(updatedBeneficiary);
 			assertThat(dao.getDescription()).isEqualTo(updatedDescription);
+		}
+
+		@Test
+		void transactionNull() {
+			final var dao = new TransactionDao(TRANSACTION.bdo());
+
+			assertThatThrownBy(() -> dao.updateWith(null))
+					.isInstanceOf(NullPointerException.class);
 		}
 	}
 

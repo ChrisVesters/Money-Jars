@@ -13,7 +13,7 @@ class TransactionDtoTest {
 	private static final TestTransaction TRANSACTION = TestTransaction.RENT;
 
 	@Nested
-	class FromBdo {
+	class Constructor {
 
 		@Test
 		void success() {

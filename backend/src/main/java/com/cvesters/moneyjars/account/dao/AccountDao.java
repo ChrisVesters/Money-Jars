@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jar.dao;
+package com.cvesters.moneyjars.account.dao;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -13,13 +13,13 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import com.cvesters.moneyjars.jar.bdo.Jar;
+import com.cvesters.moneyjars.account.bdo.Account;
 
 @Getter
 @Entity
-@Table(name = "jars")
+@Table(name = "accounts")
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class JarDao {
+public class AccountDao {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,22 +34,22 @@ public class JarDao {
 	@Column(nullable = false)
 	private BigDecimal balance;
 
-	public JarDao(final Jar bdo) {
-		Objects.requireNonNull(bdo);
+	public AccountDao(final Account account) {
+		Objects.requireNonNull(account);
 
-		this.name = bdo.getName();
-		this.description = bdo.getDescription();
-		this.balance = bdo.getBalance();
+		this.name = account.getName();
+		this.description = account.getDescription();
+		this.balance = account.getBalance();
 	}
 
-	public void updateWith(final Jar bdo) {
-		Objects.requireNonNull(bdo);
+	public void updateWith(final Account account) {
+		Objects.requireNonNull(account);
 
-		this.name = bdo.getName();
-		this.description = bdo.getDescription();
+		this.name = account.getName();
+		this.description = account.getDescription();
 	}
 
-	public Jar toBdo() {
-		return new Jar(id, name, description, balance);
+	public Account toBdo() {
+		return new Account(id, name, description, balance);
 	}
 }

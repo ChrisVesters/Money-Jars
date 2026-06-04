@@ -13,7 +13,7 @@ class JarDtoTest {
 	private static final TestJar JAR = TestJar.HOUSEHOLD;
 
 	@Nested
-	class FromBdo {
+	class Constructor {
 
 		@Test
 		void success() {

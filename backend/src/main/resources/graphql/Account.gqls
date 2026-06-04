@@ -1,0 +1,22 @@
+type Account {
+  id: ID!
+  name: String!
+  description: String!
+  balance: Float!
+}
+
+input UpdateAccount {
+  name: String!
+  description: String!
+}
+
+extend type Query {
+  getAccounts: [Account!]!
+  getAccount(id: ID!): Account
+}
+
+extend type Mutation {
+  createAccount(req: UpdateAccount!): Account
+  updateAccount(id: ID!, req: UpdateAccount!): Account
+  deleteAccount(id: ID!): Boolean
+}

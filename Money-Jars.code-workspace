@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": ".github"
+		},
+		{
 			"path": "backend"
 		},
 		{
@@ -33,6 +36,9 @@
 			"lombok",
 			"com",
 			""
-		]
+		],
+		"chat.tools.terminal.autoApprove": {
+			"./mvnw": true
+		}
 	}
 }

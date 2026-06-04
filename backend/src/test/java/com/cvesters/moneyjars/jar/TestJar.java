@@ -12,10 +12,10 @@ public enum TestJar {
 	HOUSEHOLD(1L, "Household", "General expenses", new BigDecimal("734.85")),
 	HOLIDAY(2L, "Holiday", "We need some time off", new BigDecimal("2300.00"));
 
-	private long id;
-	private String name;
-	private String description;
-	private BigDecimal balance;
+	private final long id;
+	private final String name;
+	private final String description;
+	private final BigDecimal balance;
 
 	private TestJar(final long id, final String name, final String description,
 			final BigDecimal balance) {

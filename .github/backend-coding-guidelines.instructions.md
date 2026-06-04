@@ -9,6 +9,11 @@ The `jar` and `transaction` packages are the canonical templates for architectur
 - Use package naming consistent with existing code, e.g. `com.cvesters.moneyjars.jar`, `com.cvesters.moneyjars.transaction`.
 - Name repository interfaces `*Repository.java`, storage gateway classes `*StorageGateway.java`, and business services `*Service.java`.
 
+## Formatting
+- Use tabs for indentation in backend Java source and test files.
+- Do not use spaces for code block indentation; follow the repository's existing tab-based formatting.
+- Prefer explicit imports for standard types such as `BigDecimal` instead of fully-qualified names like `java.math.BigDecimal`.
+
 ## Layering and responsibilities
 - Put GraphQL entry points in `*Controller.java` classes and annotate them with `@Controller`, `@QueryMapping`, and `@MutationMapping`.
 - For nested GraphQL field resolution, use separate resolver classes with `@Controller` and `@SchemaMapping`.
@@ -43,6 +48,7 @@ public class TransactionResolver {
 
 ## Service / gateway pattern
 - `*Service` methods should validate non-null inputs with `Objects.requireNonNull(...)`.
+- Leave a blank line between validation checks and the actual method body to separate preconditions from execution logic.
 - `create(...)` methods should convert action payloads to BDOs and delegate persistence to the storage gateway.
 - `update(...)` methods should first load the existing BDO, throw `MissingEntityException` if absent, apply the update action, and then save via the gateway.
 - `delete(...)` methods should delegate deletion to the storage gateway without exposing persistence details.
@@ -156,6 +162,7 @@ public class JarDto {
 - Mock dependencies with `@MockitoBean`.
 - Test GraphQL documents using multi-line text blocks.
 - Include success, failure, and validation edge cases.
+- Always generate test classes for new backend features, covering controller, service, storage/gateway, DAO, DTO, BDO, action payload conversions, and schema integration.
 
 Example GraphQL test snippet:
 
@@ -177,6 +184,7 @@ graphQlTester.document(document).execute();
 - Mock gateway dependencies instead of testing the repository layer.
 - Verify correct domain conversions and exception paths.
 - Use `inOrder(...)` only when interaction sequence matters.
+- Create unit tests for every new backend class, including BDOs, DAOs, DTOs, services, storage gateways, controllers, and action payloads.
 
 ### DAO and BDO tests
 - Verify entity conversion, `toBdo()`, `updateWith(...)`, and action application.
