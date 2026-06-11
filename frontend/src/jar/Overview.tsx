@@ -18,7 +18,7 @@ import Modal from "../common/Modal";
 import "./jar.css";
 import JarForm from "./JarForm";
 
-export default function Overview(): JSX.Element {
+const Overview = (): JSX.Element => {
 	const { data } = useQuery(GetJarsDocument);
 
 	const [createJar] = useMutation(CreateJarDocument);
@@ -33,32 +33,32 @@ export default function Overview(): JSX.Element {
 		undefined
 	);
 
-	function openCreateJarForm(): void {
+	const openCreateJarForm = (): void => {
 		setSelectedJar(undefined);
 		setSelectedCardId(undefined);
 		setJarFormVisible(true);
-	}
+	};
 
-	function openEditJarForm(jar: Jar): void {
+	const openEditJarForm = (jar: Jar): void => {
 		setSelectedJar(jar);
 		setJarFormVisible(true);
-	}
+	};
 
-	function handleCardSelect(jarId: string | undefined): void {
+	const handleCardSelect = (jarId: string | undefined): void => {
 		if (selectedCardId === jarId) {
 			setSelectedCardId(undefined);
 		} else {
 			setSelectedCardId(jarId);
 		}
-	}
+	};
 
-	function closeJarForm(): void {
+	const closeJarForm = (): void => {
 		setJarFormVisible(false);
 		setSelectedJar(undefined);
 		setSelectedCardId(undefined);
-	}
+	};
 
-	async function handleSubmitJar(jar: UpdateJar): Promise<void> {
+	const handleSubmitJar = async (jar: UpdateJar): Promise<void> => {
 		try {
 			if (selectedJar) {
 				const result = await updateJar({
@@ -83,9 +83,9 @@ export default function Overview(): JSX.Element {
 		}
 
 		closeJarForm();
-	}
+	};
 
-	async function handleDeleteJar(jarId: string): Promise<void> {
+	const handleDeleteJar = async (jarId: string): Promise<void> => {
 		if (!window.confirm("Are you sure you want to delete this jar?")) {
 			return;
 		}
@@ -103,7 +103,7 @@ export default function Overview(): JSX.Element {
 		}
 
 		closeJarForm();
-	}
+	};
 
 	return (
 		<>
@@ -134,4 +134,6 @@ export default function Overview(): JSX.Element {
 			</Modal>
 		</>
 	);
-}
+};
+
+export default Overview;

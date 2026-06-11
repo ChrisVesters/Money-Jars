@@ -1,10 +1,16 @@
 import type { JSX } from "react";
+import { useTranslation } from "react-i18next";
 
-export default function SettingsPage(): JSX.Element {
+import Page from "./Page";
+
+const SettingsPage = (): JSX.Element => {
+	const { t } = useTranslation();
+
 	return (
-		<div>
-			<h1>Settings</h1>
+		<Page title={t("settings")}>
 			<p>Configure your preferences and settings.</p>
-		</div>
+		</Page>
 	);
-}
+};
+
+export default SettingsPage;

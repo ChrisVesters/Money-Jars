@@ -6,6 +6,7 @@ import { ApolloProvider } from "@apollo/client/react";
 
 import "./index.css";
 import App from "./App.tsx";
+import "./i18n";
 
 const client = new ApolloClient({
 	link: new HttpLink({

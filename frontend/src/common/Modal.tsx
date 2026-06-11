@@ -1,12 +1,12 @@
 import { useEffect, useRef, type JSX } from "react";
 
-interface ModalProps {
+export type ModalProps = {
 	isOpen: boolean;
 	onClose?: () => void;
 	children: React.ReactNode;
-}
+};
 
-export default function Modal(props: ModalProps): JSX.Element {
+const Modal = (props: Readonly<ModalProps>): JSX.Element => {
 	const modalRef = useRef<HTMLDialogElement>(null);
 
 	useEffect(() => {
@@ -22,23 +22,25 @@ export default function Modal(props: ModalProps): JSX.Element {
 		}
 	}, [props.isOpen]);
 
-	function handleCloseModal(): void {
+	const handleCloseModal = (): void => {
 		if (props.onClose) {
 			props.onClose();
 		}
-	}
+	};
 
-	function handleKeyDown(
+	const handleKeyDown = (
 		event: React.KeyboardEvent<HTMLDialogElement>
-	): void {
+	): void => {
 		if (event.key === "Escape") {
 			handleCloseModal();
 		}
-	}
+	};
 
 	return (
 		<dialog ref={modalRef} onKeyDown={handleKeyDown}>
 			{props.children}
 		</dialog>
 	);
-}
+};
+
+export default Modal;

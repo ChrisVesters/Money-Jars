@@ -1,10 +1,16 @@
 import type { JSX } from "react";
+import { useTranslation } from "react-i18next";
 
-export default function ReportsPage(): JSX.Element {
+import Page from "./Page";
+
+const ReportsPage = (): JSX.Element => {
+	const { t } = useTranslation();
+
 	return (
-		<div>
-			<h1>Reports</h1>
+		<Page title={t("reports")}>
 			<p>View your financial reports and analytics.</p>
-		</div>
+		</Page>
 	);
-}
+};
+
+export default ReportsPage;

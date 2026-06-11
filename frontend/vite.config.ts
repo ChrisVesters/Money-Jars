@@ -15,6 +15,7 @@ export default defineConfig({
     alias: {
       '@assets': path.resolve(__dirname, './src/assets'),
       '@gql': path.resolve(__dirname, './src/gql'),
+	  '@src': path.resolve(__dirname, './src'),
     },
   },
 })

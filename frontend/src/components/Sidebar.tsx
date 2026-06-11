@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { JSX } from "react";
 
 import { Link, useLocation } from "react-router-dom";
@@ -11,13 +12,14 @@ import IconTransaction from "@assets/icons/IconTransaction";
 
 import "./Sidebar.css";
 
-interface SidebarProps {
-	isOpen: boolean;
-	onToggle: () => void;
-}
-
-const Sidebar = ({ isOpen, onToggle }: SidebarProps): JSX.Element => {
+const Sidebar = (): JSX.Element => {
 	const location = useLocation();
+
+	const [isOpen, setIsOpen] = useState(true);
+
+	const onToggle = () => {
+		setIsOpen(prev => !prev);
+	};
 
 	const isActive = (path: string): boolean => location.pathname === path;
 

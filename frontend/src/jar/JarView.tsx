@@ -13,7 +13,7 @@ export type JarViewProps = {
 	onDelete: () => void;
 };
 
-export default function JarView(props: JarViewProps): JSX.Element {
+const JarView = (props: Readonly<JarViewProps>): JSX.Element => {
 	const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.stopPropagation();
 
@@ -47,11 +47,15 @@ export default function JarView(props: JarViewProps): JSX.Element {
 					<button className="icon-button" onClick={handleEdit}>
 						<IconEdit size="1rem" />
 					</button>
-					<button className="icon-button danger" onClick={handleDelete}>
+					<button
+						className="icon-button danger"
+						onClick={handleDelete}>
 						<IconDelete size="1rem" />
 					</button>
 				</div>
 			)}
 		</div>
 	);
-}
+};
+
+export default JarView;

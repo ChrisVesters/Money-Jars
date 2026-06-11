@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import type { IconProps } from "./Icon";
 import Icon from "./Icon";
 
-export default function IconJar(props: IconProps): JSX.Element {
+const IconJar = (props: Readonly<IconProps>): JSX.Element => {
 	return (
 		<Icon {...props}>
 			<path d="M4.5 3h15" />
@@ -11,4 +11,6 @@ export default function IconJar(props: IconProps): JSX.Element {
 			<path d="M6 14h12" />
 		</Icon>
 	);
-}
+};
+
+export default IconJar;

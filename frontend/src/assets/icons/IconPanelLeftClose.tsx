@@ -3,7 +3,7 @@ import type { JSX } from "react";
 import type { IconProps } from "./Icon";
 import Icon from "./Icon";
 
-export default function IconPanelLeftClose(props: IconProps): JSX.Element {
+const IconPanelLeftClose = (props: Readonly<IconProps>): JSX.Element => {
 	return (
 		<Icon {...props}>
 			<rect width="18" height="18" x="3" y="3" rx="2" />
@@ -11,4 +11,6 @@ export default function IconPanelLeftClose(props: IconProps): JSX.Element {
 			<path d="m16 15-3-3 3-3" />
 		</Icon>
 	);
-}
+};
+
+export default IconPanelLeftClose;

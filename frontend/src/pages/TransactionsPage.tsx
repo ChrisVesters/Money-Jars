@@ -1,11 +1,18 @@
 import type { JSX } from "react";
-import TransactionsOverview from "../transaction/TransactionsOverview";
+import { useTranslation } from "react-i18next";
 
-export default function TransactionsPage(): JSX.Element {
+import TransactionsOverview from "@src/transaction/TransactionsOverview";
+
+import Page from "./Page";
+
+const TransactionsPage = (): JSX.Element => {
+	const { t } = useTranslation();
+
 	return (
-		<div>
-			<h1>Transactions</h1>
+		<Page title={t("transactions")}>
 			<TransactionsOverview />
-		</div>
+		</Page>
 	);
-}
+};
+
+export default TransactionsPage;

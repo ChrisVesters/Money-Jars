@@ -19,7 +19,7 @@ import TransactionForm from "./TransactionForm";
 import "./transaction.css";
 import type { TransactionItem } from "./transactionTypes";
 
-export default function TransactionsOverview(): JSX.Element {
+const TransactionsOverview = (): JSX.Element => {
 	const transactions = useQuery(GetTransactionsDocument);
 	const jars = useQuery(GetJarsDocument);
 
@@ -32,33 +32,33 @@ export default function TransactionsOverview(): JSX.Element {
 		TransactionItem | undefined
 	>(undefined);
 
-	function openCreateTransaction(): void {
+	const openCreateTransaction = (): void => {
 		setSelectedTransaction(undefined);
 		setTransactionFormVisible(true);
-	}
+	};
 
-	function openEditTransaction(): void {
+	const openEditTransaction = (): void => {
 		if (selectedTransaction) {
 			setTransactionFormVisible(true);
 		}
-	}
+	};
 
-	function closeTransactionForm(): void {
+	const closeTransactionForm = (): void => {
 		setTransactionFormVisible(false);
 		setSelectedTransaction(undefined);
-	}
+	};
 
-	function selectTransaction(transaction: TransactionItem): void {
+	const selectTransaction = (transaction: TransactionItem): void => {
 		if (transaction === selectedTransaction) {
 			setSelectedTransaction(undefined);
 		} else {
 			setSelectedTransaction(transaction);
 		}
-	}
+	};
 
-	async function handleSubmitTransaction(
+	const handleSubmitTransaction = async (
 		data: CreateTransaction
-	): Promise<void> {
+	): Promise<void> => {
 		try {
 			if (selectedTransaction) {
 				const result = await updateTransaction({
@@ -83,10 +83,12 @@ export default function TransactionsOverview(): JSX.Element {
 		}
 
 		closeTransactionForm();
-	}
+	};
 
-	async function handleDeleteTransaction(): Promise<void> {
-		if (!selectedTransaction) return;
+	const handleDeleteTransaction = async (): Promise<void> => {
+		if (!selectedTransaction) {
+			return;
+		}
 
 		if (
 			!window.confirm("Are you sure you want to delete this transaction?")
@@ -106,7 +108,7 @@ export default function TransactionsOverview(): JSX.Element {
 		} catch (error) {
 			console.error("Error deleting transaction:", error);
 		}
-	}
+	};
 
 	return (
 		<div className="transactions-overview">
@@ -173,4 +175,6 @@ export default function TransactionsOverview(): JSX.Element {
 			</Modal>
 		</div>
 	);
-}
+};
+
+export default TransactionsOverview;

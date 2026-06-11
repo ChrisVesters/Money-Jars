@@ -15,9 +15,7 @@ export type TransactionFormProps = {
 // TODO: we can not re-use create for update, since most fields will be locked.
 // TODO: Well, we can re-use it, but we won't be able to submit it.
 // TODO: onConfirm should use Transaction instead of CreateTransaction
-export default function TransactionForm(
-	props: TransactionFormProps
-): JSX.Element {
+const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const [beneficiary, setBeneficiary] = useState("");
@@ -172,4 +170,6 @@ export default function TransactionForm(
 			</div>
 		</form>
 	);
-}
+};
+
+export default TransactionForm;

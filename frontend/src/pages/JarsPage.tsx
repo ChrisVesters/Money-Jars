@@ -1,11 +1,18 @@
 import type { JSX } from "react";
-import Overview from "../jar/Overview";
+import { useTranslation } from "react-i18next";
 
-export default function JarsPage(): JSX.Element {
+import Overview from "@src/jar/Overview";
+
+import Page from "./Page";
+
+const JarsPage = (): JSX.Element => {
+	const { t } = useTranslation();
+
 	return (
-		<div>
-			<h1>Jars</h1>
+		<Page title={t("jars")}>
 			<Overview />
-		</div>
+		</Page>
 	);
-}
+};
+
+export default JarsPage;

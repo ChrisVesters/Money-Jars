@@ -9,7 +9,7 @@ export type IconRenderProps = IconProps & {
 	children: React.ReactNode;
 };
 
-export default function Icon(props: IconRenderProps): JSX.Element {
+const Icon = (props: Readonly<IconRenderProps>): JSX.Element => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -25,4 +25,6 @@ export default function Icon(props: IconRenderProps): JSX.Element {
 			{props.children}
 		</svg>
 	);
-}
+};
+
+export default Icon;

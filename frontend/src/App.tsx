@@ -1,5 +1,4 @@
 import type { JSX } from "react";
-import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
@@ -10,18 +9,13 @@ import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
 import TransactionsPage from "./pages/TransactionsPage";
 
-function App(): JSX.Element {
-	const [sidebarOpen, setSidebarOpen] = useState(true);
-
-	const toggleSidebar = () => {
-		setSidebarOpen(!sidebarOpen);
-	};
-
+const App = (): JSX.Element => {
 	return (
+		// TODO: Fix css
 		<BrowserRouter>
 			<div className="app-container">
-				<Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
-				<main className={`app-main ${sidebarOpen ? "" : "collapsed"}`}>
+				<Sidebar />
+				<main className="app-main">
 					<Routes>
 						<Route path="/" element={<DashboardPage />} />
 						<Route path="/jars" element={<JarsPage />} />
@@ -36,6 +30,6 @@ function App(): JSX.Element {
 			</div>
 		</BrowserRouter>
 	);
-}
+};
 
 export default App;

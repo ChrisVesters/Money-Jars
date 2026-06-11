@@ -1,10 +1,16 @@
 import type { JSX } from "react";
+import { useTranslation } from "react-i18next";
 
-export default function DashboardPage(): JSX.Element {
+import Page from "./Page";
+
+const DashboardPage = (): JSX.Element => {
+	const { t } = useTranslation();
+
 	return (
-		<div>
-			<h1>Dashboard</h1>
+		<Page title={t("dashboard")}>
 			<p>Welcome to your Money Jars dashboard.</p>
-		</div>
+		</Page>
 	);
-}
+};
+
+export default DashboardPage;

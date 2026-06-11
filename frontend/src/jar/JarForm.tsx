@@ -9,7 +9,7 @@ export type JarFormProps = {
 	onConfirm: (jar: UpdateJar) => void;
 };
 
-export default function JarForm(props: JarFormProps): JSX.Element {
+const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 	const [name, setName] = useState(props.jar?.name ?? "");
 	const [description, setDescription] = useState(
 		props.jar?.description ?? ""
@@ -75,4 +75,6 @@ export default function JarForm(props: JarFormProps): JSX.Element {
 			</div>
 		</form>
 	);
-}
+};
+
+export default JarForm;

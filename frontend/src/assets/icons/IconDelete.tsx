@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import type { IconProps } from "./Icon";
 import Icon from "./Icon";
 
-export default function IconDelete(props: IconProps): JSX.Element {
+const IconDelete = (props: Readonly<IconProps>): JSX.Element => {
 	return (
 		<Icon {...props}>
 			<path d="M10 11v6" />
@@ -12,4 +12,6 @@ export default function IconDelete(props: IconProps): JSX.Element {
 			<path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
 		</Icon>
 	);
-}
+};
+
+export default IconDelete;
