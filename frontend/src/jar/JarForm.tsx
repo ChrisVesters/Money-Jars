@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { Jar, UpdateJar } from "@gql/graphql";
 
@@ -10,19 +11,16 @@ export type JarFormProps = {
 };
 
 const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
+	const { t } = useTranslation();
+
 	const [name, setName] = useState(props.jar?.name ?? "");
 	const [description, setDescription] = useState(
 		props.jar?.description ?? ""
 	);
 
 	useEffect(() => {
-		if (props.jar) {
-			setName(props.jar.name);
-			setDescription(props.jar.description);
-		} else {
-			setName("");
-			setDescription("");
-		}
+		setName(props.jar?.name ?? "");
+		setDescription(props.jar?.description ?? "");
 	}, [props.jar]);
 
 	// const [error, setError] = useState<string | null>(null);
@@ -48,7 +46,7 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 	return (
 		<form onSubmit={handleSubmit}>
 			<div className="form-group">
-				<label htmlFor="name">Name</label>
+				<label htmlFor="name">{t("name")}</label>
 				<input
 					id="name"
 					type="text"
@@ -58,7 +56,7 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="description">Description</label>
+				<label htmlFor="description">{t("description")}</label>
 				<textarea
 					id="description"
 					value={description}
@@ -69,9 +67,11 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 
 			<div className="form-actions">
 				<button type="button" onClick={props.onClose}>
-					Cancel
+					{t("cancel")}
 				</button>
-				<button type="submit">{props.jar ? "Update" : "Create"}</button>
+				<button type="submit">
+					{props.jar ? t("update") : t("create")}
+				</button>
 			</div>
 		</form>
 	);

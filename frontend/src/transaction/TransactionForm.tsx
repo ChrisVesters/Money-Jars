@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { CreateTransaction, Jar } from "@gql/graphql";
 import type { TransactionItem } from "./transactionTypes";
@@ -16,6 +17,8 @@ export type TransactionFormProps = {
 // TODO: Well, we can re-use it, but we won't be able to submit it.
 // TODO: onConfirm should use Transaction instead of CreateTransaction
 const TransactionForm = (props: TransactionFormProps): JSX.Element => {
+	const { t } = useTranslation();
+
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const [beneficiary, setBeneficiary] = useState("");
@@ -42,21 +45,24 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 		const newErrors: Record<string, string> = {};
 
 		if (!date) {
-			newErrors.date = "Date is required";
+			newErrors.date = t("validationDateRequired");
 		}
 
 		if (!amount) {
-			newErrors.amount = "Amount is required";
-		} else if (isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-			newErrors.amount = "Please enter a valid amount";
+			newErrors.amount = t("validationAmountRequired");
+		} else if (
+			Number.isNaN(Number.parseFloat(amount)) ||
+			Number.parseFloat(amount) <= 0
+		) {
+			newErrors.amount = t("validationAmountInvalid");
 		}
 
 		if (!beneficiary.trim()) {
-			newErrors.beneficiary = "Beneficiary is required";
+			newErrors.beneficiary = t("validationBeneficiaryRequired");
 		}
 
 		if (!jarId) {
-			newErrors.jarId = "Jar is required";
+			newErrors.jarId = t("validationJarRequired");
 		}
 
 		setErrors(newErrors);
@@ -71,10 +77,10 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 		}
 
 		props.onConfirm({
-			date,
-			amount: parseFloat(amount),
+			amount: Number.parseFloat(amount),
 			beneficiary,
-			description: description || undefined,
+			date,
+			description: description || "",
 			jarId
 		});
 	};
@@ -83,7 +89,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 		<form onSubmit={handleSubmit}>
 			<div className="form-group">
 				<label htmlFor="date">
-					Date <span className="required">*</span>
+					{t("date")} <span className="required">*</span>
 				</label>
 				<input
 					id="date"
@@ -99,7 +105,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 
 			<div className="form-group">
 				<label htmlFor="amount">
-					Amount <span className="required">*</span>
+					{t("amount")} <span className="required">*</span>
 				</label>
 				<input
 					id="amount"
@@ -116,7 +122,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 
 			<div className="form-group">
 				<label htmlFor="beneficiary">
-					Beneficiary <span className="required">*</span>
+					{t("beneficiary")} <span className="required">*</span>
 				</label>
 				<input
 					id="beneficiary"
@@ -131,7 +137,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="description">Description</label>
+				<label htmlFor="description">{t("description")}</label>
 				<textarea
 					id="description"
 					value={description}
@@ -142,7 +148,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 
 			<div className="form-group">
 				<label htmlFor="jarId">
-					Jar <span className="required">*</span>
+					{t("jar")} <span className="required">*</span>
 				</label>
 				<select
 					id="jarId"
@@ -162,10 +168,10 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 
 			<div className="form-actions">
 				<button type="button" onClick={props.onClose}>
-					Cancel
+					{t("cancel")}
 				</button>
 				<button type="submit">
-					{props.transaction ? "Update" : "Create"}
+					{props.transaction ? t("update") : t("create")}
 				</button>
 			</div>
 		</form>

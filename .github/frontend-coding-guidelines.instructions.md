@@ -13,6 +13,7 @@ This file captures the frontend conventions already used in the current React + 
 
 ## TypeScript and React patterns
 - Use `type { ... }` imports for types and `import type` wherever possible.
+- Keep value imports and type imports on separate import lines; do not combine classes and types in the same import statement.
 - Use function components with explicit return type `JSX.Element`.
 - Use `React 19` with the latest hooks and component patterns.
 - Use hooks with typed state and event handlers; type event handlers properly (e.g., `React.FormEvent`, `React.KeyboardEvent<HTMLDialogElement>`).
@@ -133,6 +134,7 @@ const Overview = (): JSX.Element => {
 - Display inline error messages next to invalid inputs.
 - Use controlled inputs for form field values (e.g., `value={name}` with `onChange={e => setName(e.target.value)}`).
 - Keep submit handlers async and handle API errors gracefully.
+- Put the primary confirm action on the far right of the form footer, with secondary actions such as Cancel placed before it.
 - Type form event handlers properly: `const handleSubmit = async (e: React.FormEvent): Promise<void> => { /* ... */ }`
 - Reset form state when opening a form for creation vs. editing (use `useEffect` with the input data as dependency).
 
@@ -191,6 +193,11 @@ export default JarForm;
 - Prefer layout classes in the component markup and turn repeated visual patterns into reusable CSS rules.
 - Use native HTML `<dialog>` elements for modals with `showModal()` and `close()` methods; wrap in a `Modal` utility component for consistent behavior.
 - Handle dialog lifecycle in `useEffect` based on an `isOpen` prop and call `onClose` callback on Escape key or backdrop clicks.
+
+## Icons
+- Always build new icons through the shared generic Icon component in [frontend/src/assets/icons/Icon.tsx](frontend/src/assets/icons/Icon.tsx).
+- Reuse the generic Icon component for all icon implementations instead of writing ad-hoc SVG markup directly in feature components.
+- Keep icon paths and shapes inside dedicated icon files under [frontend/src/assets/icons](frontend/src/assets/icons).
 
 Example modal pattern:
 ```tsx

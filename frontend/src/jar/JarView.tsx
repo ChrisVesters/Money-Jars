@@ -1,4 +1,5 @@
 import type { JSX } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { Jar } from "@gql/graphql";
 
@@ -14,6 +15,8 @@ export type JarViewProps = {
 };
 
 const JarView = (props: Readonly<JarViewProps>): JSX.Element => {
+	const { t } = useTranslation();
+
 	const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.stopPropagation();
 
@@ -38,7 +41,9 @@ const JarView = (props: Readonly<JarViewProps>): JSX.Element => {
 					<div>{props.jar.description}</div>
 				</div>
 				<div className="card-footer">
-					<div>Balance: {props.jar.balance}</div>
+					<div>
+						{t("balance")}: {props.jar.balance}
+					</div>
 				</div>
 			</div>
 

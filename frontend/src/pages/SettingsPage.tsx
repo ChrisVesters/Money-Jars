@@ -8,7 +8,7 @@ const SettingsPage = (): JSX.Element => {
 
 	return (
 		<Page title={t("settings")}>
-			<p>Configure your preferences and settings.</p>
+			<p>{t("settingsIntro")}</p>
 		</Page>
 	);
 };

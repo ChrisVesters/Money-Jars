@@ -1,4 +1,5 @@
 import { useState, type JSX } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
@@ -20,6 +21,8 @@ import "./transaction.css";
 import type { TransactionItem } from "./transactionTypes";
 
 const TransactionsOverview = (): JSX.Element => {
+	const { t } = useTranslation();
+
 	const transactions = useQuery(GetTransactionsDocument);
 	const jars = useQuery(GetJarsDocument);
 
@@ -90,9 +93,7 @@ const TransactionsOverview = (): JSX.Element => {
 			return;
 		}
 
-		if (
-			!window.confirm("Are you sure you want to delete this transaction?")
-		) {
+		if (!globalThis.confirm(t("confirmDeleteTransaction"))) {
 			return;
 		}
 
@@ -118,13 +119,13 @@ const TransactionsOverview = (): JSX.Element => {
 						<button
 							className="icon-button"
 							onClick={openEditTransaction}
-							title="Edit transaction">
+							title={t("editTransaction")}>
 							<IconEdit />
 						</button>
 						<button
 							className="icon-button"
 							onClick={handleDeleteTransaction}
-							title="Delete transaction">
+							title={t("deleteTransaction")}>
 							<IconDelete />
 						</button>
 					</>
@@ -132,7 +133,7 @@ const TransactionsOverview = (): JSX.Element => {
 				<button
 					className="icon-button"
 					onClick={openCreateTransaction}
-					title="Create transaction">
+					title={t("createTransaction")}>
 					<IconPlus />
 				</button>
 			</div>

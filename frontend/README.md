@@ -73,3 +73,5 @@ export default defineConfig([
   },
 ])
 ```
+
+We use Lucide icons.

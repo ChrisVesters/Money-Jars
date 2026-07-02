@@ -8,7 +8,7 @@ const DashboardPage = (): JSX.Element => {
 
 	return (
 		<Page title={t("dashboard")}>
-			<p>Welcome to your Money Jars dashboard.</p>
+			<p>{t("welcomeDashboard")}</p>
 		</Page>
 	);
 };

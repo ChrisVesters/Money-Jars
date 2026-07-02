@@ -1,8 +1,9 @@
 import { useState } from "react";
 import type { JSX } from "react";
-
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
+import IconAccount from "@assets/icons/IconAccount";
 import IconChartArea from "@assets/icons/IconChartArea";
 import IconJar from "@assets/icons/IconJar";
 import IconPanelLeftClose from "@assets/icons/IconPanelLeftClose";
@@ -13,6 +14,7 @@ import IconTransaction from "@assets/icons/IconTransaction";
 import "./Sidebar.css";
 
 const Sidebar = (): JSX.Element => {
+	const { t } = useTranslation();
 	const location = useLocation();
 
 	const [isOpen, setIsOpen] = useState(true);
@@ -31,59 +33,68 @@ const Sidebar = (): JSX.Element => {
 						<button
 							className="toggle-btn"
 							onClick={onToggle}
-							aria-label="Toggle sidebar">
+							aria-label={t("toggleSidebar")}>
 							{isOpen ? (
 								<IconPanelLeftClose />
 							) : (
 								<IconPanelLeftOpen />
 							)}
 						</button>
-						<h1>Money Jars</h1>
+						<h1>{t("appTitle")}</h1>
 					</div>
 					<ul className="nav-menu">
 						<li className="nav-item">
 							<Link
 								to="/"
 								className={`nav-link ${isActive("/") ? "active" : ""}`}
-								title="Dashboard">
+								title={t("dashboard")}>
 								<IconChartArea className="nav-icon" />
-								<span>Dashboard</span>
+								<span>{t("dashboard")}</span>
+							</Link>
+						</li>
+						<li className="nav-item">
+							<Link
+								to="/accounts"
+								className={`nav-link ${isActive("/accounts") ? "active" : ""}`}
+								title={t("accounts")}>
+								<IconAccount className="nav-icon" />
+								<span>{t("accounts")}</span>
 							</Link>
 						</li>
 						<li className="nav-item">
 							<Link
 								to="/jars"
 								className={`nav-link ${isActive("/jars") ? "active" : ""}`}
-								title="Jars">
+								title={t("jars")}>
 								<IconJar className="nav-icon" />
-								<span>Jars</span>
+								<span>{t("jars")}</span>
 							</Link>
 						</li>
 						<li className="nav-item">
 							<Link
 								to="/transactions"
 								className={`nav-link ${isActive("/transactions") ? "active" : ""}`}
-								title="Jars">
+								title={t("transactions")}>
 								<IconTransaction className="nav-icon" />
-								<span>Transactions</span>
+								<span>{t("transactions")}</span>
 							</Link>
 						</li>
 						<li className="nav-item">
 							<Link
 								to="/reports"
 								className={`nav-link ${isActive("/reports") ? "active" : ""}`}
-								title="Reports">
+								title={t("reports")}>
 								<IconChartArea className="nav-icon" />
-								<span>Reports</span>
+								<span>{t("reports")}</span>
 							</Link>
 						</li>
 						<li className="nav-item">
 							<Link
 								to="/settings"
 								className={`nav-link ${isActive("/settings") ? "active" : ""}`}
-								title="Settings">
+								title={t("settings")}>
 								<IconSettings className="nav-icon" />
-								<span>Settings</span>
+								<span>{t("settings")}</span>
 							</Link>
 						</li>
 					</ul>

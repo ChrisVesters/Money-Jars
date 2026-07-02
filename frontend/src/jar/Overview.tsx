@@ -44,7 +44,7 @@ const Overview = (): JSX.Element => {
 		setJarFormVisible(true);
 	};
 
-	const handleCardSelect = (jarId: string | undefined): void => {
+	const handleSelectJar = (jarId: string | undefined): void => {
 		if (selectedCardId === jarId) {
 			setSelectedCardId(undefined);
 		} else {
@@ -86,7 +86,7 @@ const Overview = (): JSX.Element => {
 	};
 
 	const handleDeleteJar = async (jarId: string): Promise<void> => {
-		if (!window.confirm("Are you sure you want to delete this jar?")) {
+		if (!globalThis.confirm("Are you sure you want to delete this jar?")) {
 			return;
 		}
 
@@ -114,7 +114,7 @@ const Overview = (): JSX.Element => {
 						jar={jar}
 						onEdit={openEditJarForm}
 						isSelected={selectedCardId === jar.id}
-						onSelect={() => handleCardSelect(jar.id)}
+						onSelect={() => handleSelectJar(jar.id)}
 						onDelete={() => handleDeleteJar(jar.id)}
 					/>
 				))}

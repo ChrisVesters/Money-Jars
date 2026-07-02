@@ -1,0 +1,39 @@
+query GetAccounts {
+  getAccounts {
+    id
+    name
+    description
+    balance
+  }
+}
+
+query GetAccount($id: ID!) {
+  getAccount(id: $id) {
+    id
+    name
+    description
+    balance
+  }
+}
+
+mutation CreateAccount($req: UpdateAccount!) {
+  createAccount(req: $req) {
+    id
+    name
+    description
+    balance
+  }
+}
+
+mutation UpdateAccount($id: ID!, $req: UpdateAccount!) {
+  updateAccount(id: $id, req: $req) {
+    id
+    name
+    description
+    balance
+  }
+}
+
+mutation DeleteAccount($id: ID!) {
+  deleteAccount(id: $id)
+}
