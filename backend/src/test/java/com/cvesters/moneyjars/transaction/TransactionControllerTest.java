@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -21,6 +22,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @GraphQlTest(TransactionController.class)
+@Import(TransactionGraphqlConfig.class)
 class TransactionControllerTest {
 
 	@Autowired
@@ -35,8 +37,10 @@ class TransactionControllerTest {
 		@Test
 		void success() {
 			final List<Transaction> transactions = Stream
-					.of(TestTransaction.RENT, TestTransaction.GROCERY)
-					.map(TestTransaction::bdo)
+					.of(TestPaymentTransaction.RENT,
+							TestPaymentTransaction.GROCERY)
+					.map(TestPaymentTransaction::bdo)
+					.map(Transaction.class::cast)
 					.toList();
 
 			when(transactionService.getAll()).thenReturn(transactions);
@@ -56,8 +60,9 @@ class TransactionControllerTest {
 			final Response response = graphQlTester.document(document)
 					.execute();
 
-			assertEquals(response, TestTransaction.RENT, "getTransactions[0]");
-			assertEquals(response, TestTransaction.GROCERY,
+			assertEquals(response, TestPaymentTransaction.RENT,
+					"getTransactions[0]");
+			assertEquals(response, TestPaymentTransaction.GROCERY,
 					"getTransactions[1]");
 		}
 	}
@@ -65,7 +70,7 @@ class TransactionControllerTest {
 	@Nested
 	class GetTransaction {
 
-		private static final TestTransaction TRANSACTION = TestTransaction.RENT;
+		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
 
 		@Test
 		void success() {
@@ -117,9 +122,9 @@ class TransactionControllerTest {
 	}
 
 	@Nested
-	class CreateTransaction {
+	class CreatePaymentTransaction {
 
-		private static final TestTransaction TRANSACTION = TestTransaction.RENT;
+		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
 
 		@Test
 		void success() {
@@ -139,12 +144,14 @@ class TransactionControllerTest {
 
 			final String document = """
 					mutation {
-						createTransaction(req: {
+						createPaymentTransaction(req: {
 							date: "%s"
 							amount: %s
-							jarId: %d
 							beneficiary: "%s"
 							description: "%s"
+							jarId: %d
+							accountId: %d
+							direction: %s
 						}) {
 							id
 							date
@@ -154,20 +161,22 @@ class TransactionControllerTest {
 						}
 					}
 					""".formatted(TRANSACTION.getDate().toString(),
-					TRANSACTION.getAmount(), TRANSACTION.getJar().getId(),
-					TRANSACTION.getBeneficiary(), TRANSACTION.getDescription());
+					TRANSACTION.getAmount(), TRANSACTION.getBeneficiary(),
+					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
+					TRANSACTION.getAccount().getId(),
+					TRANSACTION.getDirection().name());
 
 			final Response response = graphQlTester.document(document)
 					.execute();
 
-			assertEquals(response, TRANSACTION, "createTransaction");
+			assertEquals(response, TRANSACTION, "createPaymentTransaction");
 		}
 	}
 
 	@Nested
-	class UpdateTransaction {
+	class UpdatePaymentTransaction {
 
-		private static final TestTransaction TRANSACTION = TestTransaction.RENT;
+		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
 
 		@Test
 		void success() {
@@ -189,12 +198,14 @@ class TransactionControllerTest {
 
 			final String document = """
 					mutation {
-						updateTransaction(id: %d, req: {
+						updatePaymentTransaction(id: %d, req: {
 							date: "%s"
 							amount: %s
-							jarId: %d
 							beneficiary: "%s"
 							description: "%s"
+							jarId: %d
+							accountId: %d
+							direction: %s
 						}) {
 							id
 							date
@@ -205,13 +216,15 @@ class TransactionControllerTest {
 					}
 					""".formatted(TRANSACTION.getId(),
 					TRANSACTION.getDate().toString(), TRANSACTION.getAmount(),
-					TRANSACTION.getJar().getId(), TRANSACTION.getBeneficiary(),
-					TRANSACTION.getDescription());
+					TRANSACTION.getBeneficiary(), TRANSACTION.getDescription(),
+					TRANSACTION.getJar().getId(),
+					TRANSACTION.getAccount().getId(),
+					TRANSACTION.getDirection().name());
 
 			final Response response = graphQlTester.document(document)
 					.execute();
 
-			assertEquals(response, TRANSACTION, "updateTransaction");
+			assertEquals(response, TRANSACTION, "updatePaymentTransaction");
 		}
 	}
 
@@ -232,8 +245,8 @@ class TransactionControllerTest {
 		}
 	}
 
-	void assertEquals(final Response response, final TestTransaction expected,
-			final String prefix) {
+	void assertEquals(final Response response,
+			final TestPaymentTransaction expected, final String prefix) {
 		response.path(prefix + ".id")
 				.entity(Long.class)
 				.isEqualTo(expected.getId())
@@ -249,7 +262,6 @@ class TransactionControllerTest {
 				.path(prefix + ".description")
 				.entity(String.class)
 				.isEqualTo(expected.getDescription());
-
 	}
 
 }

@@ -3,6 +3,7 @@ package com.cvesters.moneyjars.transaction;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -12,13 +13,16 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
 class TransactionStorageGatewayTest {
 
-	private static final TestTransaction TRANSACTION = TestTransaction.RENT;
+	private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
 
 	private final TransactionRepository repository = mock();
 	private final TransactionStorageGateway gateway = new TransactionStorageGateway(
@@ -30,7 +34,7 @@ class TransactionStorageGatewayTest {
 		@Test
 		void success() {
 			final TransactionDao dao = mock();
-			final Transaction bdo = mock();
+			final PaymentTransaction bdo = mock();
 			when(dao.toBdo()).thenReturn(bdo);
 			when(repository.findAll()).thenReturn(List.of(dao));
 
@@ -46,7 +50,7 @@ class TransactionStorageGatewayTest {
 		@Test
 		void success() {
 			final TransactionDao dao = mock();
-			final Transaction bdo = mock();
+			final PaymentTransaction bdo = mock();
 			when(dao.toBdo()).thenReturn(bdo);
 
 			when(repository.findById(TRANSACTION.getId()))
@@ -64,19 +68,28 @@ class TransactionStorageGatewayTest {
 		@Test
 		void success() {
 			final TransactionDao createdDao = mock();
-			final Transaction createdBdo = mock();
+			final PaymentTransaction createdBdo = mock();
 			when(createdDao.toBdo()).thenReturn(createdBdo);
 
-			final Transaction transaction = TRANSACTION.bdo();
+			final PaymentTransaction transaction = TRANSACTION.bdo();
 			when(repository.save(argThat(v -> {
-				assertThat(v.getId()).isNull();
-				assertThat(v.getDate()).isEqualTo(TRANSACTION.getDate());
-				assertThat(v.getAmount()).isEqualTo(TRANSACTION.getAmount());
-				assertThat(v.getJarId())
+				assertThat(v).isInstanceOf(PaymentTransactionDao.class);
+				final PaymentTransactionDao paymentDao = (PaymentTransactionDao) v;
+
+				assertThat(paymentDao.getId()).isNull();
+				assertThat(paymentDao.getDate())
+						.isEqualTo(TRANSACTION.getDate());
+				assertThat(paymentDao.getAmount())
+						.isEqualTo(TRANSACTION.getAmount());
+				assertThat(paymentDao.getJarId())
 						.isEqualTo(TRANSACTION.getJar().getId());
-				assertThat(v.getBeneficiary())
+				assertThat(paymentDao.getAccountId())
+						.isEqualTo(TRANSACTION.getAccount().getId());
+				assertThat(paymentDao.getDirection())
+						.isEqualTo(TRANSACTION.getDirection().name());
+				assertThat(paymentDao.getBeneficiary())
 						.isEqualTo(TRANSACTION.getBeneficiary());
-				assertThat(v.getDescription())
+				assertThat(paymentDao.getDescription())
 						.isEqualTo(TRANSACTION.getDescription());
 				return true;
 			}))).thenReturn(createdDao);
@@ -99,10 +112,10 @@ class TransactionStorageGatewayTest {
 		@Test
 		void success() {
 			final TransactionDao updatedDao = mock();
-			final Transaction updatedBdo = mock();
+			final PaymentTransaction updatedBdo = mock();
 			when(updatedDao.toBdo()).thenReturn(updatedBdo);
 
-			final Transaction update = mock();
+			final PaymentTransaction update = mock();
 			when(update.getId()).thenReturn(TRANSACTION.getId());
 
 			final TransactionDao existing = mock();
@@ -113,6 +126,10 @@ class TransactionStorageGatewayTest {
 			final var result = gateway.update(update);
 
 			assertThat(result).isSameAs(updatedBdo);
+
+			final InOrder inOrder = inOrder(existing, repository);
+			inOrder.verify(existing).updateWith(update);
+			inOrder.verify(repository).save(existing);
 		}
 
 		@Test
@@ -120,11 +137,11 @@ class TransactionStorageGatewayTest {
 			when(repository.findById(TRANSACTION.getId()))
 					.thenReturn(Optional.empty());
 
-			final Transaction update = mock();
+			final PaymentTransaction update = mock();
 			when(update.getId()).thenReturn(TRANSACTION.getId());
 
 			assertThatThrownBy(() -> gateway.update(update))
-					.isInstanceOf(IllegalArgumentException.class);
+					.isInstanceOf(MissingEntityException.class);
 		}
 
 		@Test

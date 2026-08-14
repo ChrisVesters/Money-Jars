@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 
@@ -27,40 +28,28 @@ public class TransactionService {
 		return storage.find(id);
 	}
 
-	public Transaction create(final TransactionAction.Create action) {
+	// TODO: abstract?
+	public Transaction create(final TransactionAction.CreatePayment action) {
 		Objects.requireNonNull(action);
 
 		final Transaction transaction = action.toBdo();
 		return storage.create(transaction);
 	}
 
-	public Transaction update(final long id, final TransactionAction.Update action) {
+	public Transaction update(final long id,
+			final TransactionAction.UpdatePayment action) {
 		Objects.requireNonNull(action);
 
-		final Transaction transaction = storage.find(id)
+		final PaymentTransaction transaction = storage.find(id)
+				.filter(PaymentTransaction.class::isInstance)
+				.map(PaymentTransaction.class::cast)
 				.orElseThrow(MissingEntityException::new);
 		action.applyOn(transaction);
-
 		return storage.update(transaction);
 	}
 
 	public void delete(final long id) {
 		storage.delete(id);
 	}
-
-
-
-
-//  Keep list of jar transactions & account transactions.
-//  TODO: transaction should not have a reference to jar!?
-
-//  Every transaction can only be part of 1 jar!
-//  What about the concept of splitting transactions?
-//  CREATE TABLE jar_transactions(
-//  	jar_id BIGINT NOT NULL,
-//  	transaction_id BIGINT NOT NULL,
-//  	before_balance NUMERIC NOT NULL,
-//  	after_balance NUMERIC NOT NULL,
-//  )
 
 }

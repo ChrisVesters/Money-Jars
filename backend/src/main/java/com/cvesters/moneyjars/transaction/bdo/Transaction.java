@@ -9,23 +9,21 @@ import org.apache.commons.lang3.Validate;
 import lombok.Getter;
 
 @Getter
-public class Transaction {
+public abstract sealed class Transaction permits PaymentTransaction {
 
 	private final Long id;
 	private LocalDate date;
 	private BigDecimal amount;
-	private long jarId;
 	private String beneficiary;
 	private String description;
 
-	public Transaction(final LocalDate date, final BigDecimal amount,
-			final long jarId, final String beneficiary,
-			final String description) {
-		this(null, date, amount, jarId, beneficiary, description);
+	protected Transaction(final LocalDate date, final BigDecimal amount,
+			final String beneficiary, final String description) {
+		this(null, date, amount, beneficiary, description);
 	}
 
-	public Transaction(final Long id, final LocalDate date,
-			final BigDecimal amount, final long jarId, final String beneficiary,
+	protected Transaction(final Long id, final LocalDate date,
+			final BigDecimal amount, final String beneficiary,
 			final String description) {
 		Objects.requireNonNull(date);
 		Objects.requireNonNull(amount);
@@ -35,13 +33,13 @@ public class Transaction {
 		this.id = id;
 		this.date = date;
 		this.amount = amount;
-		this.jarId = jarId;
 		this.beneficiary = beneficiary;
 		this.description = description;
 	}
 
 	public void setDate(final LocalDate date) {
 		Objects.requireNonNull(date);
+
 		this.date = date;
 	}
 
@@ -49,10 +47,6 @@ public class Transaction {
 		Objects.requireNonNull(amount);
 
 		this.amount = amount;
-	}
-
-	public void setJarId(final long jarId) {
-		this.jarId = jarId;
 	}
 
 	public void setBeneficiary(final String beneficiary) {

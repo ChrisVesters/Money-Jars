@@ -11,40 +11,46 @@ public final class TransactionAction {
 	private TransactionAction() {
 	}
 
-	public static record Create(LocalDate date, BigDecimal amount, long jarId,
-			String beneficiary, String description) {
+	public static record CreatePayment(LocalDate date, BigDecimal amount,
+			String beneficiary, String description, long jarId, long accountId,
+			PaymentTransactionDirection direction) {
 
-		public Create {
+		public CreatePayment {
 			Objects.requireNonNull(date);
 			Objects.requireNonNull(amount);
 			Validate.notBlank(beneficiary);
 			Objects.requireNonNull(description);
+			Objects.requireNonNull(direction);
 		}
 
-		public Transaction toBdo() {
-			return new Transaction(date, amount, jarId, beneficiary,
-					description);
+		public PaymentTransaction toBdo() {
+			return new PaymentTransaction(date, amount, beneficiary,
+					description, jarId, accountId, direction);
 		}
 	}
 
-	public static record Update(LocalDate date, BigDecimal amount,
-			long jarId, String beneficiary, String description) {
+	public static record UpdatePayment(LocalDate date, BigDecimal amount,
+			String beneficiary, String description, long jarId, long accountId,
+			PaymentTransactionDirection direction) {
 
-		public Update {
+		public UpdatePayment {
 			Objects.requireNonNull(date);
 			Objects.requireNonNull(amount);
 			Validate.notBlank(beneficiary);
 			Objects.requireNonNull(description);
+			Objects.requireNonNull(direction);
 		}
 
-		public void applyOn(final Transaction transaction) {
+		public void applyOn(final PaymentTransaction transaction) {
 			Objects.requireNonNull(transaction);
 
 			transaction.setDate(date);
 			transaction.setAmount(amount);
-			transaction.setJarId(jarId);
 			transaction.setBeneficiary(beneficiary);
 			transaction.setDescription(description);
+			transaction.setJarId(jarId);
+			transaction.setAccountId(accountId);
+			transaction.setDirection(direction);
 		}
 	}
 }

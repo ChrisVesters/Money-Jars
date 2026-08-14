@@ -1,18 +1,25 @@
-type Transaction {
+interface Transaction {
 	id: ID!
 	date: String!
 	amount: Float! # string instead? To not lose precision
-	jar: Jar!
 	beneficiary: String!
 	description: String!
 }
 
-input CreateTransaction {
-	date: String!	
+enum Direction {
+	INCOMING,
+	OUTGOING
+}
+
+type PaymentTransaction implements Transaction {
+	id: ID!
+	date: String!
 	amount: Float! # string instead? To not lose precision
-	jarId: ID!
 	beneficiary: String!
 	description: String!
+	jar: Jar!
+	account: Account!
+	direction: Direction!
 }
 
 extend type Query {
@@ -20,8 +27,18 @@ extend type Query {
 	getTransaction(id: ID!): Transaction
 }
 
+input CreatePaymentTransaction {
+	date: String!
+	amount: Float! # string instead? To not lose precision
+	beneficiary: String!
+	description: String!
+	jarId: ID!
+	accountId: ID!
+	direction: Direction!
+}
+
 extend type Mutation {
- 	createTransaction(req: CreateTransaction!): Transaction
-	updateTransaction(id: ID!, req: CreateTransaction!): Transaction
+	createPaymentTransaction(req: CreatePaymentTransaction!): PaymentTransaction
+	updatePaymentTransaction(id: ID!, req: CreatePaymentTransaction!): PaymentTransaction
 	deleteTransaction(id: ID!): Boolean
 }

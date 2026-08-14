@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 
@@ -28,7 +29,7 @@ class TransactionServiceTest {
 
 		@Test
 		void success() {
-			final Transaction expected = mock();
+			final PaymentTransaction expected = mock();
 			when(storage.getAll()).thenReturn(List.of(expected));
 
 			final var result = service.getAll();
@@ -44,7 +45,7 @@ class TransactionServiceTest {
 
 		@Test
 		void success() {
-			final Optional<Transaction> expected = Optional.of(mock());
+			final Optional<Transaction> expected = Optional.of(mock(PaymentTransaction.class));
 			when(storage.find(TRANSACTION_ID)).thenReturn(expected);
 
 			final var result = service.find(TRANSACTION_ID);
@@ -58,11 +59,11 @@ class TransactionServiceTest {
 
 		@Test
 		void success() {
-			final TransactionAction.Create action = mock();
-			final Transaction create = mock();
+			final TransactionAction.CreatePayment action = mock();
+			final PaymentTransaction create = mock();
 			when(action.toBdo()).thenReturn(create);
 
-			final Transaction created = mock();
+			final PaymentTransaction created = mock();
 			when(storage.create(create)).thenReturn(created);
 
 			final var result = service.create(action);
@@ -84,10 +85,10 @@ class TransactionServiceTest {
 
 		@Test
 		void success() {
-			final TransactionAction.Update action = mock();
-			final Transaction existing = mock();
+			final TransactionAction.UpdatePayment action = mock();
+			final PaymentTransaction existing = mock();
 
-			final Transaction updated = mock();
+			final PaymentTransaction updated = mock();
 			when(storage.find(TRANSACTION_ID))
 					.thenReturn(Optional.of(existing));
 			when(storage.update(existing)).thenReturn(updated);
@@ -110,7 +111,7 @@ class TransactionServiceTest {
 
 		@Test
 		void missingEntity() {
-			final TransactionAction.Update action = mock();
+			final TransactionAction.UpdatePayment action = mock();
 			when(storage.find(TRANSACTION_ID)).thenReturn(Optional.empty());
 
 			assertThatThrownBy(() -> service.update(TRANSACTION_ID, action))

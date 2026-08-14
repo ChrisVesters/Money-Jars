@@ -1,34 +1,50 @@
 query GetTransactions {
 	getTransactions {
+		__typename
+
 		id
 		date
 		amount
 		beneficiary
 		description
-		jar {
-			id
-			name
+
+		... on PaymentTransaction {
+			jar {
+				id
+				name
+			}
+			account {
+				id
+				name
+			}
+			direction
 		}
 	}
 }
 
-mutation CreateTransaction($req: CreateTransaction!) {
-	createTransaction(req: $req) {
+mutation CreatePaymentTransaction($req: CreatePaymentTransaction!) {
+	createPaymentTransaction(req: $req) {
 		id
 		date
 		amount
 		beneficiary
 		description
+		jarId
+		accountId
+		direction
 	}
 }
 
-mutation UpdateTransaction($id: ID!, $req: CreateTransaction!) {
-	updateTransaction(id: $id, req: $req) {
+mutation UpdatePaymentTransaction($id: ID!, $req: CreatePaymentTransaction!) {
+	updatePaymentTransaction(id: $id, req: $req) {
 		id
 		date
 		amount
 		beneficiary
 		description
+		jarId
+		accountId
+		direction
 	}
 }
 

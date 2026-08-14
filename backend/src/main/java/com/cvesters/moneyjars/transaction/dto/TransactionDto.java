@@ -10,22 +10,20 @@ import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @Getter
 @NoArgsConstructor
-public class TransactionDto {
+public abstract sealed class TransactionDto permits PaymentTransactionDto {
 
 	private Long id;
 	private String date;
 	private BigDecimal amount;
-	private long jarId;
 	private String beneficiary;
 	private String description;
 
-	public TransactionDto(final Transaction bdo) {
+	protected TransactionDto(final Transaction bdo) {
 		Objects.requireNonNull(bdo);
 
 		this.id = bdo.getId();
 		this.date = bdo.getDate().toString();
 		this.amount = bdo.getAmount();
-		this.jarId = bdo.getJarId();
 		this.beneficiary = bdo.getBeneficiary();
 		this.description = bdo.getDescription();
 	}

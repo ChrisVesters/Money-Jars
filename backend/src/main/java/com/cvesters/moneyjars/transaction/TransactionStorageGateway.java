@@ -6,7 +6,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
 @Service
@@ -33,7 +36,7 @@ public class TransactionStorageGateway {
 	public Transaction create(final Transaction transaction) {
 		Objects.requireNonNull(transaction);
 
-		final var dao = new TransactionDao(transaction);
+		final TransactionDao dao = createDao(transaction);
 		final TransactionDao created = transactionRepository.save(dao);
 
 		return created.toBdo();
@@ -44,7 +47,7 @@ public class TransactionStorageGateway {
 
 		final TransactionDao dao = transactionRepository
 				.findById(transaction.getId())
-				.orElseThrow(IllegalArgumentException::new);
+				.orElseThrow(MissingEntityException::new);
 		dao.updateWith(transaction);
 		final TransactionDao updated = transactionRepository.save(dao);
 
@@ -55,4 +58,10 @@ public class TransactionStorageGateway {
 		transactionRepository.deleteById(id);
 	}
 
+	private static TransactionDao createDao(final Transaction transaction) {
+		return switch (transaction) {
+			case PaymentTransaction paymentTransaction -> new PaymentTransactionDao(
+					paymentTransaction);
+		};
+	}
 }
