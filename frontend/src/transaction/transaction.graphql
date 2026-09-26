@@ -29,8 +29,6 @@ mutation CreatePaymentTransaction($req: CreatePaymentTransaction!) {
 		amount
 		beneficiary
 		description
-		jarId
-		accountId
 		direction
 	}
 }
@@ -42,8 +40,6 @@ mutation UpdatePaymentTransaction($id: ID!, $req: CreatePaymentTransaction!) {
 		amount
 		beneficiary
 		description
-		jarId
-		accountId
 		direction
 	}
 }

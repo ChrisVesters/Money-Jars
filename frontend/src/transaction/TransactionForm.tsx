@@ -2,15 +2,23 @@ import type { JSX } from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { CreateTransaction, Jar } from "@gql/graphql";
+import {
+	Direction,
+	type Account,
+	type CreatePaymentTransaction,
+	type Jar
+} from "@gql/graphql";
 import type { TransactionItem } from "./transactionTypes";
+import IconOutgoing from "@assets/icons/IconOutgoing";
+import IconIncoming from "@assets/icons/IconIncoming";
 
 export type TransactionFormProps = {
 	transaction?: TransactionItem;
 	jars: Array<Jar>;
+	accounts: Array<Account>;
 
 	onClose: () => void;
-	onConfirm: (transaction: CreateTransaction) => void;
+	onConfirm: (transaction: CreatePaymentTransaction) => void;
 };
 
 // TODO: we can not re-use create for update, since most fields will be locked.
@@ -24,6 +32,8 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 	const [beneficiary, setBeneficiary] = useState("");
 	const [description, setDescription] = useState("");
 	const [jarId, setJarId] = useState("");
+	const [accountId, setAccountId] = useState("");
+	const [direction, setDirection] = useState(Direction.Outgoing);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	useEffect(() => {
@@ -32,14 +42,18 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			setAmount(props.transaction.amount?.toString() ?? "");
 			setBeneficiary(props.transaction.beneficiary ?? "");
 			setDescription(props.transaction.description ?? "");
+			setJarId(props.transaction.jar?.id ?? "");
+			setAccountId(props.transaction.account?.id ?? "");
 		} else {
 			setDate(new Date().toISOString().split("T")[0]);
 			setAmount("");
 			setBeneficiary("");
 			setDescription("");
 			setJarId(props.jars.length > 0 ? props.jars[0].id : "");
+			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
+			setDirection(Direction.Outgoing);
 		}
-	}, [props.transaction, props.jars]);
+	}, [props.transaction, props.jars, props.accounts]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};
@@ -65,6 +79,14 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			newErrors.jarId = t("validationJarRequired");
 		}
 
+		if (!accountId) {
+			newErrors.accountId = t("validationAccountRequired");
+		}
+
+		if (!direction) {
+			newErrors.direction = t("validationDirectionRequired");
+		}
+
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
@@ -77,12 +99,33 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 		}
 
 		props.onConfirm({
+			date,
 			amount: Number.parseFloat(amount),
 			beneficiary,
-			date,
 			description: description || "",
-			jarId
+			jarId,
+			accountId,
+			direction
 		});
+
+		clear();
+	};
+
+	const handleCancel = (e: React.MouseEvent) => {
+		e.preventDefault();
+		props.onClose();
+
+		clear();
+	};
+
+	const clear = (): void => {
+		setDate(new Date().toISOString().split("T")[0]);
+		setAmount("");
+		setBeneficiary("");
+		setDescription("");
+		setJarId(props.jars.length > 0 ? props.jars[0].id : "");
+		setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
+		setDirection(Direction.Outgoing);
 	};
 
 	return (
@@ -115,6 +158,22 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 					onChange={e => setAmount(e.target.value)}
 					className={errors.amount ? "input-error" : ""}
 				/>
+				{/*  TODO: Generic component */}
+				<button
+					type="button"
+					onClick={() =>
+						setDirection(
+							direction === Direction.Outgoing
+								? Direction.Incoming
+								: Direction.Outgoing
+						)
+					}>
+					{direction === Direction.Outgoing ? (
+						<IconOutgoing />
+					) : (
+						<IconIncoming />
+					)}
+				</button>
 				{errors.amount && (
 					<span className="error-message">{errors.amount}</span>
 				)}
@@ -166,8 +225,28 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 				)}
 			</div>
 
+			<div className="form-group">
+				<label htmlFor="accountId">
+					{t("account")} <span className="required">*</span>
+				</label>
+				<select
+					id="accountId"
+					value={accountId}
+					onChange={e => setAccountId(e.target.value)}
+					className={errors.accountId ? "input-error" : ""}>
+					{props.accounts.map(account => (
+						<option key={account.id} value={account.id}>
+							{account.name}
+						</option>
+					))}
+				</select>
+				{errors.accountId && (
+					<span className="error-message">{errors.accountId}</span>
+				)}
+			</div>
+
 			<div className="form-actions">
-				<button type="button" onClick={props.onClose}>
+				<button type="button" onClick={handleCancel}>
 					{t("cancel")}
 				</button>
 				<button type="submit">

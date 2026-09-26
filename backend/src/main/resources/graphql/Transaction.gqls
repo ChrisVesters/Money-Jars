@@ -6,6 +6,7 @@ interface Transaction {
 	description: String!
 }
 
+# TODO Spring wants some mapping?
 enum Direction {
 	INCOMING,
 	OUTGOING

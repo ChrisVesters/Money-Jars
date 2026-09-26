@@ -1,15 +1,18 @@
-import { useState, type JSX } from "react";
+import { useState } from "react";
+import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
-	CreateTransactionDocument,
+	CreatePaymentTransactionDocument,
 	DeleteTransactionDocument,
+	Direction,
+	GetAccountsDocument,
 	GetJarsDocument,
 	GetTransactionsDocument,
-	UpdateTransactionDocument,
-	type CreateTransaction
+	UpdatePaymentTransactionDocument
 } from "@gql/graphql";
+import type { CreatePaymentTransaction } from "@gql/graphql";
 
 import IconPlus from "@assets/icons/IconPlus";
 import IconEdit from "@assets/icons/IconEdit";
@@ -19,15 +22,18 @@ import Modal from "../common/Modal";
 import TransactionForm from "./TransactionForm";
 import "./transaction.css";
 import type { TransactionItem } from "./transactionTypes";
+import IconIncoming from "@assets/icons/IconIncoming";
+import IconOutgoing from "@assets/icons/IconOutgoing";
 
 const TransactionsOverview = (): JSX.Element => {
 	const { t } = useTranslation();
 
 	const transactions = useQuery(GetTransactionsDocument);
 	const jars = useQuery(GetJarsDocument);
+	const accounts = useQuery(GetAccountsDocument);
 
-	const [createTransaction] = useMutation(CreateTransactionDocument);
-	const [updateTransaction] = useMutation(UpdateTransactionDocument);
+	const [createTransaction] = useMutation(CreatePaymentTransactionDocument);
+	const [updateTransaction] = useMutation(UpdatePaymentTransactionDocument);
 	const [deleteTransaction] = useMutation(DeleteTransactionDocument);
 
 	const [transactionFormVisible, setTransactionFormVisible] = useState(false);
@@ -60,8 +66,9 @@ const TransactionsOverview = (): JSX.Element => {
 	};
 
 	const handleSubmitTransaction = async (
-		data: CreateTransaction
+		data: CreatePaymentTransaction
 	): Promise<void> => {
+		console.log("Submit transaction data:", data);
 		try {
 			if (selectedTransaction) {
 				const result = await updateTransaction({
@@ -114,7 +121,7 @@ const TransactionsOverview = (): JSX.Element => {
 	return (
 		<div className="transactions-overview">
 			<div className="transactions-actions">
-				{selectedTransaction && (
+				{selectedTransaction ? (
 					<>
 						<button
 							className="icon-button"
@@ -129,23 +136,26 @@ const TransactionsOverview = (): JSX.Element => {
 							<IconDelete />
 						</button>
 					</>
+				) : (
+					<button
+						className="icon-button"
+						onClick={openCreateTransaction}
+						title={t("createTransaction")}>
+						<IconPlus />
+					</button>
 				)}
-				<button
-					className="icon-button"
-					onClick={openCreateTransaction}
-					title={t("createTransaction")}>
-					<IconPlus />
-				</button>
 			</div>
 
 			<table className="transactions-table">
 				<thead>
 					<tr>
-						<th>Date</th>
-						<th>Amount</th>
-						<th>Beneficiary</th>
-						<th>Description</th>
-						<th>Jar</th>
+						<th>{t("date")}</th>
+						<th>{t("amount")}</th>
+						<th>{t("direction")}</th>
+						<th>{t("beneficiary")}</th>
+						<th>{t("description")}</th>
+						<th>{t("jar")}</th>
+						<th>{t("account")}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -155,10 +165,19 @@ const TransactionsOverview = (): JSX.Element => {
 							className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
 							onClick={() => selectTransaction(transaction)}>
 							<td>{transaction.date}</td>
-							<td>${transaction.amount.toFixed(2)}</td>
+							<td>€{transaction.amount.toFixed(2)}</td>
+							<td>
+								{transaction.direction ===
+								Direction.Outgoing ? (
+									<IconOutgoing />
+								) : (
+									<IconIncoming />
+								)}
+							</td>
 							<td>{transaction.beneficiary}</td>
 							<td>{transaction.description}</td>
 							<td>{transaction.jar.name}</td>
+							<td>{transaction.account.name}</td>
 						</tr>
 					))}
 				</tbody>
@@ -170,6 +189,7 @@ const TransactionsOverview = (): JSX.Element => {
 				<TransactionForm
 					transaction={selectedTransaction}
 					jars={jars.data?.getJars ?? []}
+					accounts={accounts.data?.getAccounts ?? []}
 					onClose={closeTransactionForm}
 					onConfirm={handleSubmitTransaction}
 				/>

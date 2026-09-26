@@ -31,6 +31,17 @@ const AccountForm = (props: Readonly<AccountFormProps>): JSX.Element => {
 		}
 
 		props.onConfirm({ name: name.trim(), description: description.trim() });
+		clear();
+	};
+
+	const handleCancel = (): void => {
+		props.onClose();
+		clear();
+	};
+
+	const clear = (): void => {
+		setName("");
+		setDescription("");
 	};
 
 	return (
@@ -55,7 +66,7 @@ const AccountForm = (props: Readonly<AccountFormProps>): JSX.Element => {
 			</div>
 
 			<div className="form-actions">
-				<button type="button" onClick={props.onClose}>
+				<button type="button" onClick={handleCancel}>
 					{t("cancel")}
 				</button>
 				<button type="submit">
