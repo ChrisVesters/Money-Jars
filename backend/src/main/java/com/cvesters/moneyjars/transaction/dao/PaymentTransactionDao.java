@@ -38,8 +38,8 @@ public class PaymentTransactionDao extends TransactionDao {
 
 	@Override
 	public PaymentTransaction toBdo() {
-		return new PaymentTransaction(getId(), getDate(), getAmount(),
-				getBeneficiary(), getDescription(), jarId, accountId,
-				PaymentTransactionDirectionDao.toBdo(direction));
+		return new PaymentTransaction(getId(), getDate(), getSequence(),
+				getAmount(), getBeneficiary(), getDescription(), jarId,
+				accountId, PaymentTransactionDirectionDao.toBdo(direction));
 	}
 }

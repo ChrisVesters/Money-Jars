@@ -13,18 +13,20 @@ public abstract sealed class Transaction permits PaymentTransaction {
 
 	private final Long id;
 	private LocalDate date;
+	private int sequence;
 	private BigDecimal amount;
 	private String beneficiary;
 	private String description;
 
-	protected Transaction(final LocalDate date, final BigDecimal amount,
-			final String beneficiary, final String description) {
-		this(null, date, amount, beneficiary, description);
+	protected Transaction(final LocalDate date, final int sequence,
+			final BigDecimal amount, final String beneficiary,
+			final String description) {
+		this(null, date, sequence, amount, beneficiary, description);
 	}
 
 	protected Transaction(final Long id, final LocalDate date,
-			final BigDecimal amount, final String beneficiary,
-			final String description) {
+			final int sequence, final BigDecimal amount,
+			final String beneficiary, final String description) {
 		Objects.requireNonNull(date);
 		Objects.requireNonNull(amount);
 		Validate.notBlank(beneficiary);
@@ -32,6 +34,7 @@ public abstract sealed class Transaction permits PaymentTransaction {
 
 		this.id = id;
 		this.date = date;
+		this.sequence = sequence;
 		this.amount = amount;
 		this.beneficiary = beneficiary;
 		this.description = description;
@@ -41,6 +44,10 @@ public abstract sealed class Transaction permits PaymentTransaction {
 		Objects.requireNonNull(date);
 
 		this.date = date;
+	}
+
+	public void setSequence(final int sequence) {
+		this.sequence = sequence;
 	}
 
 	public void setAmount(final BigDecimal amount) {

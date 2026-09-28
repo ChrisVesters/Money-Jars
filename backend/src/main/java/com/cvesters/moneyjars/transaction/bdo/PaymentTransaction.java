@@ -15,21 +15,22 @@ public final class PaymentTransaction extends Transaction {
 	private long accountId;
 	private PaymentTransactionDirection direction;
 
-	public PaymentTransaction(final LocalDate date, final BigDecimal amount,
-			final String beneficiary, final String description,
-			final long jarId, final long accountId,
-			final PaymentTransactionDirection direction) {
-		this(null, date, amount, beneficiary, description, jarId, accountId,
-				direction);
-	}
-
-	public PaymentTransaction(final Long id, final LocalDate date,
+	public PaymentTransaction(final LocalDate date, final int sequence,
 			final BigDecimal amount, final String beneficiary,
 			final String description, final long jarId, final long accountId,
 			final PaymentTransactionDirection direction) {
+		this(null, date, sequence, amount, beneficiary, description, jarId,
+				accountId, direction);
+	}
+
+	public PaymentTransaction(final Long id, final LocalDate date,
+			final int sequence, final BigDecimal amount,
+			final String beneficiary, final String description,
+			final long jarId, final long accountId,
+			final PaymentTransactionDirection direction) {
 		Objects.requireNonNull(direction);
 
-		super(id, date, amount, beneficiary, description);
+		super(id, date, sequence, amount, beneficiary, description);
 
 		this.jarId = jarId;
 		this.accountId = accountId;

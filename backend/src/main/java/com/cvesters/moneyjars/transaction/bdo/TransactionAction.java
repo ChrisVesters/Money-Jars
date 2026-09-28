@@ -23,8 +23,9 @@ public final class TransactionAction {
 			Objects.requireNonNull(direction);
 		}
 
+		// TODO This can not be done by the DTO since the sequence needs to be determined!
 		public PaymentTransaction toBdo() {
-			return new PaymentTransaction(date, amount, beneficiary,
+			return new PaymentTransaction(date, 0, amount, beneficiary,
 					description, jarId, accountId, direction);
 		}
 	}
