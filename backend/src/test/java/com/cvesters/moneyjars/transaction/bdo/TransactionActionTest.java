@@ -2,8 +2,6 @@ package com.cvesters.moneyjars.transaction.bdo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -134,35 +132,6 @@ class TransactionActionTest {
 					amount, beneficiary, description, jarId, accountId,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
-
-		@Test
-		void toBdo() {
-			final LocalDate date = TRANSACTION.getDate();
-			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
-			final String description = TRANSACTION.getDescription();
-			final long jarId = TRANSACTION.getJar().getId();
-			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
-
-			final var action = new TransactionAction.CreatePayment(date, amount,
-					beneficiary, description, jarId, accountId, direction);
-
-			final PaymentTransaction bdo = action.toBdo();
-
-			assertThat(bdo.getDate()).isEqualTo(TRANSACTION.getDate());
-			assertThat(bdo.getAmount())
-					.isEqualByComparingTo(TRANSACTION.getAmount());
-			assertThat(bdo.getBeneficiary())
-					.isEqualTo(TRANSACTION.getBeneficiary());
-			assertThat(bdo.getDescription())
-					.isEqualTo(TRANSACTION.getDescription());
-			assertThat(bdo.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
-			assertThat(bdo.getAccountId())
-					.isEqualTo(TRANSACTION.getAccount().getId());
-			assertThat(bdo.getDirection())
-					.isEqualTo(TRANSACTION.getDirection());
-		}
 	}
 
 	@Nested
@@ -284,33 +253,6 @@ class TransactionActionTest {
 					amount, beneficiary, description, jarId, accountId,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
-
-		@Test
-		void applyOn() {
-			final LocalDate date = TRANSACTION.getDate();
-			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
-			final String description = TRANSACTION.getDescription();
-			final long jarId = TRANSACTION.getJar().getId();
-			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
-
-			final var action = new TransactionAction.UpdatePayment(date, amount,
-					beneficiary, description, jarId, accountId, direction);
-
-			final PaymentTransaction transaction = mock();
-
-			action.applyOn(transaction);
-
-			verify(transaction).setDate(date);
-			verify(transaction).setAmount(amount);
-			verify(transaction).setBeneficiary(beneficiary);
-			verify(transaction).setDescription(description);
-			verify(transaction).setJarId(jarId);
-			verify(transaction).setAccountId(accountId);
-			verify(transaction).setDirection(direction);
-		}
-
 	}
 
 }

@@ -21,14 +21,14 @@ CREATE TABLE accounts(
 CREATE TABLE transactions(
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
 	date DATE NOT NULL,
+	sequence INTEGER NOT NULL,
 	amount NUMERIC NOT NULL,
 	beneficiary TEXT NOT NULL,
 	description TEXT NOT NULL,
 
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	UNIQUE (date, sequence)
 );
-
-CREATE INDEX ON transactions(date);
 
 
 CREATE TABLE payment_transactions(

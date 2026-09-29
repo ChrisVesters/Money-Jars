@@ -43,6 +43,7 @@ class PaymentTransactionDaoTest {
 		void success() {
 			final var updatedDate = TRANSACTION.getDate().plusDays(1);
 			final var updatedAmount = TRANSACTION.getAmount().negate();
+			final var updatedSequence = 1;
 			final var updatedBeneficiary = "Vendor";
 			final var updatedDescription = "Updated description";
 			final var updatedJar = TRANSACTION.getJar().getId();
@@ -50,14 +51,16 @@ class PaymentTransactionDaoTest {
 			final var updatedDirection = TRANSACTION.getDirection();
 
 			final var updatedTransaction = new PaymentTransaction(updatedDate,
-					updatedAmount, updatedBeneficiary, updatedDescription,
-					updatedJar, updatedAccount, updatedDirection);
+					updatedSequence, updatedAmount, updatedBeneficiary,
+					updatedDescription, updatedJar, updatedAccount,
+					updatedDirection);
 
 			final var dao = new PaymentTransactionDao(TRANSACTION.bdo());
 			dao.updateWith(updatedTransaction);
 
 			assertThat(dao.getId()).isNull();
 			assertThat(dao.getDate()).isEqualTo(updatedDate);
+			assertThat(dao.getSequence()).isEqualTo(updatedSequence);
 			assertThat(dao.getAmount()).isEqualTo(updatedAmount);
 			assertThat(dao.getBeneficiary()).isEqualTo(updatedBeneficiary);
 			assertThat(dao.getDescription()).isEqualTo(updatedDescription);

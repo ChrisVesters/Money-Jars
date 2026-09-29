@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,26 @@ class TransactionStorageGatewayTest {
 			when(repository.findAll()).thenReturn(List.of(dao));
 
 			final var result = gateway.getAll();
+
+			assertThat(result).containsExactly(bdo);
+		}
+	}
+
+	@Nested
+	class GetAllInPeriod {
+
+		@Test
+		void success() {
+			final LocalDate start = LocalDate.of(2026, 1, 1);
+			final LocalDate end = LocalDate.of(2026, 1, 31);
+
+			final TransactionDao dao = mock();
+			final PaymentTransaction bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+			when(repository.findAllInPeriod(start, end))
+					.thenReturn(List.of(dao));
+
+			final var result = gateway.getAllInPeriod(start, end);
 
 			assertThat(result).containsExactly(bdo);
 		}
@@ -86,7 +107,7 @@ class TransactionStorageGatewayTest {
 				assertThat(paymentDao.getAccountId())
 						.isEqualTo(TRANSACTION.getAccount().getId());
 				assertThat(paymentDao.getDirection())
-						.isEqualTo(TRANSACTION.getDirection().name());
+						.isEqualTo(TRANSACTION.getDirectionId());
 				assertThat(paymentDao.getBeneficiary())
 						.isEqualTo(TRANSACTION.getBeneficiary());
 				assertThat(paymentDao.getDescription())
