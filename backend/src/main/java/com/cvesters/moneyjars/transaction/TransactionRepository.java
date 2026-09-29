@@ -12,11 +12,19 @@ public interface TransactionRepository
 		extends ListCrudRepository<TransactionDao, Long> {
 
 	@Query("""
-		SELECT t 
-		FROM TransactionDao t 
-		WHERE t.date 
-		BETWEEN :start AND :end
-		ORDER BY t.date, t.sequence
-		""")
-	List<TransactionDao> findInPeriod(final LocalDate start, final LocalDate end);
+			SELECT t
+			FROM TransactionDao t
+			ORDER BY t.date, t.sequence
+			""")
+	List<TransactionDao> findAll();
+
+	@Query("""
+			SELECT t
+			FROM TransactionDao t
+			WHERE t.date
+			BETWEEN :start AND :end
+			ORDER BY t.date, t.sequence
+			""")
+	List<TransactionDao> findAllInPeriod(final LocalDate start,
+			final LocalDate end);
 }

@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.transaction;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,6 +25,14 @@ public class TransactionStorageGateway {
 
 	public List<Transaction> getAll() {
 		return transactionRepository.findAll()
+				.stream()
+				.map(TransactionDao::toBdo)
+				.toList();
+	}
+
+	public List<Transaction> getAllInPeriod(final LocalDate start,
+			final LocalDate end) {
+		return transactionRepository.findAllInPeriod(start, end)
 				.stream()
 				.map(TransactionDao::toBdo)
 				.toList();

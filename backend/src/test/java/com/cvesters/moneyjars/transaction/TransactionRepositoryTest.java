@@ -20,15 +20,29 @@ class TransactionRepositoryTest extends RepositoryTest {
 	@Autowired
 	private TransactionRepository repository;
 
+	@Nested 
+	class FindAll {
+
+		@Test
+		void success() {
+			final List<TransactionDao> result = repository.findAll();
+
+			assertThat(result).satisfiesExactly(
+					t -> assertEquals(t, TestPaymentTransaction.GROCERY),
+					t -> assertEquals(t, TestPaymentTransaction.RENT),
+					t -> assertEquals(t, TestPaymentTransaction.CAFE));
+		}
+	}
+
 	@Nested
-	class findInPeriod {
+	class FindAllInPeriod {
 
 		@Test
 		void single() {
 			final LocalDate start = LocalDate.of(2026, 1, 15);
 			final LocalDate end = LocalDate.of(2026, 1, 15);
 
-			final List<TransactionDao> result = repository.findInPeriod(start,
+			final List<TransactionDao> result = repository.findAllInPeriod(start,
 					end);
 
 			assertThat(result).satisfiesExactly(
@@ -40,7 +54,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2026, 1, 1);
 			final LocalDate end = LocalDate.of(2026, 1, 31);
 
-			final List<TransactionDao> result = repository.findInPeriod(start,
+			final List<TransactionDao> result = repository.findAllInPeriod(start,
 					end);
 
 			assertThat(result).satisfiesExactly(
@@ -54,7 +68,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2025, 1, 1);
 			final LocalDate end = LocalDate.of(2025, 12, 31);
 
-			final List<TransactionDao> result = repository.findInPeriod(start,
+			final List<TransactionDao> result = repository.findAllInPeriod(start,
 					end);
 
 			assertThat(result).isEmpty();
@@ -65,7 +79,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2026, 1, 31);
 			final LocalDate end = LocalDate.of(2026, 1, 1);
 
-			final List<TransactionDao> result = repository.findInPeriod(start,
+			final List<TransactionDao> result = repository.findAllInPeriod(start,
 					end);
 
 			assertThat(result).isEmpty();
@@ -75,7 +89,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 		void startNull() {
 			final LocalDate end = LocalDate.of(2026, 1, 31);
 
-			final List<TransactionDao> result = repository.findInPeriod(null,
+			final List<TransactionDao> result = repository.findAllInPeriod(null,
 					end);
 
 			assertThat(result).isEmpty();
@@ -85,7 +99,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 		void endNull() {
 			final LocalDate start = LocalDate.of(2026, 1, 1);
 
-			final List<TransactionDao> result = repository.findInPeriod(start,
+			final List<TransactionDao> result = repository.findAllInPeriod(start,
 					null);
 
 			assertThat(result).isEmpty();

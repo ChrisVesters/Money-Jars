@@ -22,12 +22,6 @@ public final class TransactionAction {
 			Objects.requireNonNull(description);
 			Objects.requireNonNull(direction);
 		}
-
-		// TODO This can not be done by the DTO since the sequence needs to be determined!
-		public PaymentTransaction toBdo() {
-			return new PaymentTransaction(date, 0, amount, beneficiary,
-					description, jarId, accountId, direction);
-		}
 	}
 
 	public static record UpdatePayment(LocalDate date, BigDecimal amount,
@@ -40,18 +34,6 @@ public final class TransactionAction {
 			Validate.notBlank(beneficiary);
 			Objects.requireNonNull(description);
 			Objects.requireNonNull(direction);
-		}
-
-		public void applyOn(final PaymentTransaction transaction) {
-			Objects.requireNonNull(transaction);
-
-			transaction.setDate(date);
-			transaction.setAmount(amount);
-			transaction.setBeneficiary(beneficiary);
-			transaction.setDescription(description);
-			transaction.setJarId(jarId);
-			transaction.setAccountId(accountId);
-			transaction.setDirection(direction);
 		}
 	}
 }
