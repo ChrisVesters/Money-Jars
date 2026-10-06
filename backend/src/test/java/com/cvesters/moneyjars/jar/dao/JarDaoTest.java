@@ -31,7 +31,6 @@ class JarDaoTest {
 			assertThatThrownBy(() -> new JarDao(null))
 					.isInstanceOf(NullPointerException.class);
 		}
-
 	}
 
 	@Nested

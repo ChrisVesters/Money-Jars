@@ -84,6 +84,62 @@ class TransactionStorageGatewayTest {
 	}
 
 	@Nested
+	class FindFirstForDate {
+
+		@Test
+		void success() {
+			final TransactionDao dao = mock();
+			final PaymentTransaction bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findFirstForDate(TRANSACTION.getDate()))
+					.thenReturn(Optional.of(dao));
+
+			final var result = gateway.findFirstForDate(TRANSACTION.getDate());
+
+			assertThat(result).containsSame(bdo);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findFirstForDate(TRANSACTION.getDate()))
+					.thenReturn(Optional.empty());
+
+			final var result = gateway.findFirstForDate(TRANSACTION.getDate());
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
+	class FindLastForDate {
+
+		@Test
+		void success() {
+			final TransactionDao dao = mock();
+			final PaymentTransaction bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findLastForDate(TRANSACTION.getDate()))
+					.thenReturn(Optional.of(dao));
+
+			final var result = gateway.findLastForDate(TRANSACTION.getDate());
+
+			assertThat(result).containsSame(bdo);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findLastForDate(TRANSACTION.getDate()))
+					.thenReturn(Optional.empty());
+
+			final var result = gateway.findLastForDate(TRANSACTION.getDate());
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class Create {
 
 		@Test
@@ -102,16 +158,16 @@ class TransactionStorageGatewayTest {
 						.isEqualTo(TRANSACTION.getDate());
 				assertThat(paymentDao.getAmount())
 						.isEqualTo(TRANSACTION.getAmount());
+				assertThat(paymentDao.getDescription())
+						.isEqualTo(TRANSACTION.getDescription());
 				assertThat(paymentDao.getJarId())
 						.isEqualTo(TRANSACTION.getJar().getId());
 				assertThat(paymentDao.getAccountId())
 						.isEqualTo(TRANSACTION.getAccount().getId());
+				assertThat(paymentDao.getCounterparty())
+						.isEqualTo(TRANSACTION.getCounterparty());
 				assertThat(paymentDao.getDirection())
 						.isEqualTo(TRANSACTION.getDirectionId());
-				assertThat(paymentDao.getBeneficiary())
-						.isEqualTo(TRANSACTION.getBeneficiary());
-				assertThat(paymentDao.getDescription())
-						.isEqualTo(TRANSACTION.getDescription());
 				return true;
 			}))).thenReturn(createdDao);
 

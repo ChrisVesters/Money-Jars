@@ -24,13 +24,13 @@ class PaymentTransactionDtoTest {
 			assertThat(dto.getDate())
 					.isEqualTo(TRANSACTION.getDate().toString());
 			assertThat(dto.getAmount()).isEqualTo(TRANSACTION.getAmount());
-			assertThat(dto.getBeneficiary())
-					.isEqualTo(TRANSACTION.getBeneficiary());
 			assertThat(dto.getDescription())
 					.isEqualTo(TRANSACTION.getDescription());
 			assertThat(dto.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(dto.getAccountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(dto.getCounterparty())
+					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(dto.getDirection())
 					.isEqualTo(TRANSACTION.getDirectionString());
 		}

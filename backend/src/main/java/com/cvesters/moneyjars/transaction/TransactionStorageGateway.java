@@ -42,6 +42,16 @@ public class TransactionStorageGateway {
 		return transactionRepository.findById(id).map(TransactionDao::toBdo);
 	}
 
+	public Optional<Transaction> findFirstForDate(final LocalDate date) {
+		return transactionRepository.findFirstForDate(date)
+				.map(TransactionDao::toBdo);
+	}
+
+	public Optional<Transaction> findLastForDate(final LocalDate date) {
+		return transactionRepository.findLastForDate(date)
+				.map(TransactionDao::toBdo);
+	}
+
 	public Transaction create(final Transaction transaction) {
 		Objects.requireNonNull(transaction);
 

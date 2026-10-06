@@ -41,7 +41,6 @@ public abstract class TransactionDao {
 	@Column(nullable = false)
 	private BigDecimal amount;
 
-	private String beneficiary;
 	private String description;
 
 	protected TransactionDao(final Transaction bdo) {
@@ -50,7 +49,6 @@ public abstract class TransactionDao {
 		this.date = bdo.getDate();
 		this.sequence = bdo.getSequence();
 		this.amount = bdo.getAmount();
-		this.beneficiary = bdo.getBeneficiary();
 		this.description = bdo.getDescription();
 	}
 
@@ -60,7 +58,6 @@ public abstract class TransactionDao {
 		this.date = bdo.getDate();
 		this.sequence = bdo.getSequence();
 		this.amount = bdo.getAmount();
-		this.beneficiary = bdo.getBeneficiary();
 		this.description = bdo.getDescription();
 	}
 

@@ -9,8 +9,6 @@ import java.time.Month;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 abstract class TransactionTest {
 
@@ -53,32 +51,6 @@ abstract class TransactionTest {
 		void amountNull() {
 			assertThatThrownBy(() -> transaction.setAmount(null))
 					.isInstanceOf(NullPointerException.class);
-		}
-	}
-
-	@Nested
-	class SetBeneficiary {
-
-		@Test
-		void success() {
-			final var beneficiary = "Bank";
-
-			transaction.setBeneficiary(beneficiary);
-
-			assertThat(transaction.getBeneficiary()).isEqualTo(beneficiary);
-		}
-
-		@Test
-		void beneficiaryNull() {
-			assertThatThrownBy(() -> transaction.setBeneficiary(null))
-					.isInstanceOf(NullPointerException.class);
-		}
-
-		@ParameterizedTest
-		@ValueSource(strings = { "", " " })
-		void beneficiaryInvalid(final String beneficiary) {
-			assertThatThrownBy(() -> transaction.setBeneficiary(beneficiary))
-					.isInstanceOf(IllegalArgumentException.class);
 		}
 	}
 

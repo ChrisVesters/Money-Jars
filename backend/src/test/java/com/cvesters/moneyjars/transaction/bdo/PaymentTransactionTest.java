@@ -8,6 +8,8 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 
@@ -23,23 +25,23 @@ class PaymentTransactionTest extends TransactionTest {
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
 
 			final var transaction = new PaymentTransaction(date, sequence,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					PaymentTransactionDirection.OUTGOING);
 
 			assertThat(transaction.getId()).isNull();
 			assertThat(transaction.getDate()).isEqualTo(date);
 			assertThat(transaction.getSequence()).isEqualTo(sequence);
 			assertThat(transaction.getAmount()).isEqualByComparingTo(amount);
-			assertThat(transaction.getBeneficiary()).isEqualTo(beneficiary);
 			assertThat(transaction.getDescription()).isEqualTo(description);
 			assertThat(transaction.getJarId()).isEqualTo(jarId);
 			assertThat(transaction.getAccountId()).isEqualTo(accountId);
+			assertThat(transaction.getCounterparty()).isEqualTo(counterparty);
 			assertThat(transaction.getDirection())
 					.isEqualTo(TRANSACTION.getDirection());
 		}
@@ -50,18 +52,23 @@ class PaymentTransactionTest extends TransactionTest {
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
 
 			final var transaction = new PaymentTransaction(id, date, sequence,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					PaymentTransactionDirection.OUTGOING);
 
 			assertThat(transaction.getId()).isEqualTo(id);
+			assertThat(transaction.getDate()).isEqualTo(date);
+			assertThat(transaction.getSequence()).isEqualTo(sequence);
+			assertThat(transaction.getAmount()).isEqualByComparingTo(amount);
+			assertThat(transaction.getDescription()).isEqualTo(description);
 			assertThat(transaction.getJarId()).isEqualTo(jarId);
 			assertThat(transaction.getAccountId()).isEqualTo(accountId);
+			assertThat(transaction.getCounterparty()).isEqualTo(counterparty);
 			assertThat(transaction.getDirection())
 					.isEqualTo(TRANSACTION.getDirection());
 		}
@@ -71,14 +78,42 @@ class PaymentTransactionTest extends TransactionTest {
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
 
 			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
-					amount, beneficiary, description, jarId, accountId, null))
+					amount, description, jarId, accountId, counterparty, null))
 							.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class SetCounterparty {
+
+		private final PaymentTransaction transaction = getTransaction();
+
+		@Test
+		void success() {
+			final var counterparty = "Bank";
+
+			transaction.setCounterparty(counterparty);
+
+			assertThat(transaction.getCounterparty()).isEqualTo(counterparty);
+		}
+
+		@Test
+		void counterpartyNull() {
+			assertThatThrownBy(() -> transaction.setCounterparty(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+
+		@ParameterizedTest
+		@ValueSource(strings = { "", " " })
+		void counterpartyInvalid(final String counterparty) {
+			assertThatThrownBy(() -> transaction.setCounterparty(counterparty))
+					.isInstanceOf(IllegalArgumentException.class);
 		}
 	}
 

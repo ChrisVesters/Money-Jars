@@ -15,7 +15,6 @@ public abstract sealed class TransactionDto permits PaymentTransactionDto {
 	private Long id;
 	private String date;
 	private BigDecimal amount;
-	private String beneficiary;
 	private String description;
 
 	protected TransactionDto(final Transaction bdo) {
@@ -24,7 +23,6 @@ public abstract sealed class TransactionDto permits PaymentTransactionDto {
 		this.id = bdo.getId();
 		this.date = bdo.getDate().toString();
 		this.amount = bdo.getAmount();
-		this.beneficiary = bdo.getBeneficiary();
 		this.description = bdo.getDescription();
 	}
 }

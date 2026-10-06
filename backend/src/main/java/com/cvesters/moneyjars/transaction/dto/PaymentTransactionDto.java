@@ -13,6 +13,7 @@ public final class PaymentTransactionDto extends TransactionDto {
 
 	private long jarId;
 	private long accountId;
+	private String counterparty;
 	private String direction;
 
 	public PaymentTransactionDto(final PaymentTransaction bdo) {
@@ -22,6 +23,7 @@ public final class PaymentTransactionDto extends TransactionDto {
 
 		this.jarId = bdo.getJarId();
 		this.accountId = bdo.getAccountId();
+		this.counterparty = bdo.getCounterparty();
 		this.direction = PaymentTransactionDirectionDto
 				.toDto(bdo.getDirection());
 	}

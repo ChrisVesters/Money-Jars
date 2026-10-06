@@ -24,37 +24,43 @@ class TransactionActionTest {
 		void success() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			final var action = new TransactionAction.CreatePayment(date, amount,
-					beneficiary, description, jarId, accountId, direction);
+					description, jarId, accountId, counterparty, direction);
 
 			assertThat(action.date()).isEqualTo(TRANSACTION.getDate());
 			assertThat(action.amount())
 					.isEqualByComparingTo(TRANSACTION.getAmount());
-			assertThat(action.jarId()).isEqualTo(TRANSACTION.getJar().getId());
-			assertThat(action.beneficiary())
-					.isEqualTo(TRANSACTION.getBeneficiary());
 			assertThat(action.description())
 					.isEqualTo(TRANSACTION.getDescription());
+			assertThat(action.jarId()).isEqualTo(TRANSACTION.getJar().getId());
+			assertThat(action.accountId())
+					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(action.counterparty())
+					.isEqualTo(TRANSACTION.getCounterparty());
+			assertThat(action.direction())
+					.isEqualTo(TRANSACTION.getDirection());
 		}
 
 		@Test
 		void dateNull() {
 			final LocalDate date = null;
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
@@ -62,44 +68,47 @@ class TransactionActionTest {
 		void amountNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = null;
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
-		void beneficiaryNull() {
+		void counterpartyNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = null;
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = null;
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
 		@ParameterizedTest
 		@ValueSource(strings = { "", " " })
-		void beneficiaryInvalid(final String beneficiary) {
+		void counterpartyInvalid(final String counterparty) {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -107,14 +116,15 @@ class TransactionActionTest {
 		void descriptionNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = null;
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
@@ -122,14 +132,14 @@ class TransactionActionTest {
 		void directionNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = null;
 
 			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 	}
@@ -141,25 +151,26 @@ class TransactionActionTest {
 		void success() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			final var action = new TransactionAction.UpdatePayment(date, amount,
-					beneficiary, description, jarId, accountId, direction);
+					description, jarId, accountId, counterparty, direction);
 
 			assertThat(action.date()).isEqualTo(TRANSACTION.getDate());
 			assertThat(action.amount())
 					.isEqualByComparingTo(TRANSACTION.getAmount());
-			assertThat(action.beneficiary())
-					.isEqualTo(TRANSACTION.getBeneficiary());
 			assertThat(action.description())
 					.isEqualTo(TRANSACTION.getDescription());
 			assertThat(action.jarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(action.accountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(action.counterparty())
+					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(action.direction())
 					.isEqualTo(TRANSACTION.getDirection());
 		}
@@ -168,14 +179,15 @@ class TransactionActionTest {
 		void dateNull() {
 			final LocalDate date = null;
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
@@ -183,44 +195,47 @@ class TransactionActionTest {
 		void amountNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = null;
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
-		void beneficiaryNull() {
+		void counterpartyNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = null;
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = null;
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
 		@ParameterizedTest
 		@ValueSource(strings = { "", " " })
-		void beneficiaryInvalid(final String beneficiary) {
+		void counterpartyInvalid(final String counterparty) {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -228,14 +243,15 @@ class TransactionActionTest {
 		void descriptionNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = null;
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
-			final PaymentTransactionDirection direction = TRANSACTION.getDirection();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
 
 			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 
@@ -243,14 +259,14 @@ class TransactionActionTest {
 		void directionNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final BigDecimal amount = TRANSACTION.getAmount();
-			final String beneficiary = TRANSACTION.getBeneficiary();
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = null;
 
 			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
-					amount, beneficiary, description, jarId, accountId,
+					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
 	}
