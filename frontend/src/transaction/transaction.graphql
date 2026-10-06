@@ -5,7 +5,6 @@ query GetTransactions {
 		id
 		date
 		amount
-		beneficiary
 		description
 
 		... on PaymentTransaction {
@@ -17,6 +16,7 @@ query GetTransactions {
 				id
 				name
 			}
+			counterparty
 			direction
 		}
 	}
@@ -27,8 +27,8 @@ mutation CreatePaymentTransaction($req: CreatePaymentTransaction!) {
 		id
 		date
 		amount
-		beneficiary
 		description
+		counterparty
 		direction
 	}
 }
@@ -38,8 +38,8 @@ mutation UpdatePaymentTransaction($id: ID!, $req: CreatePaymentTransaction!) {
 		id
 		date
 		amount
-		beneficiary
 		description
+		counterparty
 		direction
 	}
 }
