@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.jarentry.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
@@ -15,15 +18,20 @@ import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 public class PaymentTransactionService {
 
 	private final TransactionSequenceService sequenceService;
+	private final JarEntryService jarEntryService;
+
 	private final PaymentTransactionStorageGateway storage;
 
 	public PaymentTransactionService(
 			final TransactionSequenceService sequenceService,
+			final JarEntryService jarEntryService,
 			final PaymentTransactionStorageGateway storage) {
 		this.sequenceService = sequenceService;
+		this.jarEntryService = jarEntryService;
 		this.storage = storage;
 	}
 
+	@Transactional 
 	public PaymentTransaction create(
 			final TransactionAction.CreatePayment action) {
 		Objects.requireNonNull(action);
@@ -38,12 +46,13 @@ public class PaymentTransactionService {
 		final String counterparty = action.counterparty();
 		final PaymentTransactionDirection direction = action.direction();
 
-		// TODO: create jar entry
-
 		final var transaction = new PaymentTransaction(date, sequence, amount,
 				description, jarId, accountId, counterparty, direction);
 
-		return storage.create(transaction);
+		final PaymentTransaction created = storage.create(transaction);
+		jarEntryService.create(created);
+
+		return created;
 	}
 
 	public PaymentTransaction update(final long id,

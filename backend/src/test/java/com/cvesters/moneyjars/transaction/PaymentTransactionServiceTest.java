@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.jarentry.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
@@ -27,9 +28,11 @@ import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 class PaymentTransactionServiceTest {
 
 	private final TransactionSequenceService sequenceService = mock();
+	private final JarEntryService jarEntryService = mock();
 	private final PaymentTransactionStorageGateway storage = mock();
+
 	private final PaymentTransactionService service = new PaymentTransactionService(
-			sequenceService, storage);
+			sequenceService, jarEntryService, storage);
 
 	@Nested
 	class Create {
@@ -58,8 +61,7 @@ class PaymentTransactionServiceTest {
 				assertThat(transaction.getDate()).isEqualTo(date);
 				assertThat(transaction.getSequence()).isEqualTo(4);
 				assertThat(transaction.getAmount()).isEqualTo(amount);
-				assertThat(transaction.getDescription())
-						.isEqualTo(description);
+				assertThat(transaction.getDescription()).isEqualTo(description);
 				assertThat(transaction.getJarId()).isEqualTo(jarId);
 				assertThat(transaction.getAccountId()).isEqualTo(accountId);
 				assertThat(transaction.getCounterparty())
@@ -71,6 +73,7 @@ class PaymentTransactionServiceTest {
 			final var result = service.create(action);
 
 			assertThat(result).isSameAs(created);
+			verify(jarEntryService).create(created);
 		}
 
 		@Test
