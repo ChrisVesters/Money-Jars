@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
+// TODO: Should this include the sub elements? Where else would we test it?
 @GraphQlTest(TransactionController.class)
 @Import(TransactionGraphqlConfig.class)
 class TransactionControllerTest {

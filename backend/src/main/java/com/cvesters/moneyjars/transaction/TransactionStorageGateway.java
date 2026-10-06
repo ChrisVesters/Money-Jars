@@ -74,6 +74,7 @@ public class TransactionStorageGateway {
 	}
 
 	public void delete(final long id) {
+		// TODO: delete by id, or first get it?
 		transactionRepository.deleteById(id);
 	}
 

@@ -12,6 +12,7 @@ import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 public interface TransactionRepository
 		extends Repository<TransactionDao, Long> {
 
+	// TODO: should this not be descending?
 	@Query("""
 			SELECT t
 			FROM TransactionDao t
