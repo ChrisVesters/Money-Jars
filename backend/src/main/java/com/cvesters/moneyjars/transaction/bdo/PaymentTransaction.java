@@ -53,4 +53,12 @@ public final class PaymentTransaction extends Transaction {
 
 		this.direction = direction;
 	}
+
+	public BigDecimal getSignedAmount() {
+		final BigDecimal amount = getAmount();
+		return switch (direction) {
+			case INCOMING -> amount;
+			case OUTGOING -> amount.negate();
+		};
+	}
 }

@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.jarentry;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +28,7 @@ public class JarEntryService {
 		final long jarId = transaction.getJarId();
 		final LocalDate date = transaction.getDate();
 		final int sequence = transaction.getSequence();
+		final BigDecimal amount = transaction.getSignedAmount();
 
 		final JarEntry entry = gateway.findBefore(jarId, date, sequence)
 				.map(previous -> previous.next(transaction))
@@ -34,7 +36,7 @@ public class JarEntryService {
 
 		final List<JarEntry> nextEntries = gateway.getAllAfter(jarId, date,
 				sequence);
-		nextEntries.forEach(e -> e.shift(transaction.getAmount()));
+		nextEntries.forEach(e -> e.shift(amount));
 
 		gateway.create(entry);
 		gateway.updateAll(nextEntries);

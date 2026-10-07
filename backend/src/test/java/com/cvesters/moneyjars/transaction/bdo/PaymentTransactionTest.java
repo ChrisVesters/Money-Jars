@@ -138,6 +138,32 @@ class PaymentTransactionTest extends TransactionTest {
 		}
 	}
 
+	@Nested
+	class GetSignedAmount {
+
+		@Test
+		void incoming() {
+			final var testTransaction = TestPaymentTransaction.SALARY;
+			final var transaction = testTransaction.bdo();
+
+			final BigDecimal expected = testTransaction.getAmount();
+
+			assertThat(transaction.getSignedAmount()).isPositive()
+					.isEqualByComparingTo(expected);
+		}
+
+		@Test
+		void outgoing() {
+			final var testTransaction = TestPaymentTransaction.GROCERY;
+			final var transaction = testTransaction.bdo();
+
+			final BigDecimal expected = testTransaction.getAmount().negate();
+
+			assertThat(transaction.getSignedAmount()).isNegative()
+					.isEqualByComparingTo(expected);
+		}
+	}
+
 	@Override
 	public PaymentTransaction getTransaction() {
 		return TRANSACTION.bdo();

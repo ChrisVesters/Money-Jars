@@ -19,7 +19,7 @@ class JarEntryTest {
 	class First {
 
 		@Test
-		void success() {
+		void postiveAmount() {
 			final var testTransaction = TEST_ENTRY.getTransaction();
 			final var transaction = testTransaction.bdo();
 
@@ -34,6 +34,25 @@ class JarEntryTest {
 					.isEqualByComparingTo(BigDecimal.ZERO);
 			assertThat(entry.getBalanceAfter())
 					.isEqualByComparingTo(testTransaction.getAmount());
+		}
+
+		@Test
+		void negativeAmount() {
+			final TestJarEntry testEntry = TestJarEntry.HOLIDAY_FLIGHTS;
+			final var testTransaction = testEntry.getTransaction();
+			final var transaction = testTransaction.bdo();
+
+			final var entry = JarEntry.first(transaction);
+
+			assertThat(entry.getId()).isNull();
+			assertThat(entry.getTransactionId())
+					.isEqualTo(testTransaction.getId());
+			assertThat(entry.getJarId())
+					.isEqualTo(testTransaction.getJar().getId());
+			assertThat(entry.getBalanceBefore())
+					.isEqualByComparingTo(BigDecimal.ZERO);
+			assertThat(entry.getBalanceAfter())
+					.isEqualByComparingTo(testTransaction.getAmount().negate());
 		}
 
 		@Test
@@ -120,9 +139,9 @@ class JarEntryTest {
 	class Next {
 
 		@Test
-		void success() {
+		void positiveAmount() {
 			final var entry = TEST_ENTRY.bdo();
-			final var testTransaction = TestPaymentTransaction.GROCERY;
+			final var testTransaction = TestPaymentTransaction.BONUS;
 			final var transaction = testTransaction.bdo();
 
 			final BigDecimal balance = entry.getBalanceAfter()
@@ -139,7 +158,38 @@ class JarEntryTest {
 					.isEqualByComparingTo(entry.getBalanceAfter());
 			assertThat(nextEntry.getBalanceAfter())
 					.isEqualByComparingTo(balance);
+		}
 
+		@Test
+		void negativeAmount() {
+			final var entry = TEST_ENTRY.bdo();
+			final var testTransaction = TestPaymentTransaction.FLIGHTS;
+			final var transaction = testTransaction.bdo();
+
+			final BigDecimal balance = entry.getBalanceAfter()
+					.subtract(testTransaction.getAmount());
+
+			final JarEntry nextEntry = entry.next(transaction);
+
+			assertThat(nextEntry.getId()).isNull();
+			assertThat(nextEntry.getTransactionId())
+					.isEqualTo(testTransaction.getId());
+			assertThat(nextEntry.getJarId())
+					.isEqualTo(TEST_ENTRY.getJar().getId());
+			assertThat(nextEntry.getBalanceBefore())
+					.isEqualByComparingTo(entry.getBalanceAfter());
+			assertThat(nextEntry.getBalanceAfter())
+					.isEqualByComparingTo(balance);
+		}
+
+		@Test
+		void wrongJar() {
+			final var entry = TEST_ENTRY.bdo();
+			final var testTransaction = TestPaymentTransaction.GROCERY;
+			final var transaction = testTransaction.bdo();
+
+			assertThatThrownBy(() -> entry.next(transaction))
+					.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Test

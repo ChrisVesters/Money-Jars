@@ -153,6 +153,39 @@ class JarEntryServiceTest {
 			verify(entry, never()).shift(any());
 		}
 
+		@Test 
+		void negativeAmount() {
+			final var testTransaction = TestPaymentTransaction.GROCERY;
+			final PaymentTransaction transaction = testTransaction.bdo();
+			final long jarId = testTransaction.getJar().getId();
+			final LocalDate date = testTransaction.getDate();
+			final int sequence = testTransaction.getSequence();
+			final BigDecimal amount = testTransaction.getAmount().negate();
+
+			final JarEntry previous = mock();
+			final JarEntry entry = mock();
+			when(previous.next(transaction)).thenReturn(entry);
+
+			final JarEntry next1 = mock();
+			final JarEntry next2 = mock();
+			final List<JarEntry> nextEntries = List.of(next1, next2);
+
+			when(gateway.findBefore(jarId, date, sequence))
+					.thenReturn(Optional.of(previous));
+			when(gateway.getAllAfter(jarId, date, sequence))
+					.thenReturn(nextEntries);
+
+			service.create(transaction);
+
+			final InOrder inOrder = inOrder(gateway, next1, next2);
+			inOrder.verify(next1).shift(amount);
+			inOrder.verify(next2).shift(amount);
+			inOrder.verify(gateway).create(entry);
+			inOrder.verify(gateway).updateAll(nextEntries);
+
+			verify(entry, never()).shift(any());
+		}
+
 		@Test
 		void transactionNull() {
 			assertThatThrownBy(() -> service.create(null))

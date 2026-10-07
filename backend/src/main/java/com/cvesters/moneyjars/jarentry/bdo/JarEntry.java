@@ -3,10 +3,11 @@ package com.cvesters.moneyjars.jarentry.bdo;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import org.apache.commons.lang3.Validate;
+
 import lombok.Getter;
 
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
-import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @Getter
 public class JarEntry {
@@ -17,13 +18,12 @@ public class JarEntry {
 	private BigDecimal balanceBefore;
 	private BigDecimal balanceAfter;
 
-	// TODO: PaymentTransaction or just pass jarId?
 	public static JarEntry first(final PaymentTransaction transaction) {
 		Objects.requireNonNull(transaction);
 
 		final long transactionId = transaction.getId();
 		final long jarId = transaction.getJarId();
-		final BigDecimal amount = transaction.getAmount();
+		final BigDecimal amount = transaction.getSignedAmount();
 		final BigDecimal balanceBefore = BigDecimal.ZERO;
 		final BigDecimal balanceAfter = amount;
 
@@ -43,12 +43,13 @@ public class JarEntry {
 		this.balanceAfter = balanceAfter;
 	}
 
-	public JarEntry next(final Transaction transaction) {
+	public JarEntry next(final PaymentTransaction transaction) {
 		Objects.requireNonNull(transaction);
+		Validate.isTrue(transaction.getJarId() == this.jarId);
 
 		final long transactionId = transaction.getId();
 		final long jarId = this.jarId;
-		final BigDecimal amount = transaction.getAmount();
+		final BigDecimal amount = transaction.getSignedAmount();
 		final BigDecimal balanceBefore = this.getBalanceAfter();
 		final BigDecimal balanceAfter = balanceBefore.add(amount);
 
