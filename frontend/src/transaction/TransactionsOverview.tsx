@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
 	CreatePaymentTransactionDocument,
-	DeleteTransactionDocument,
+	DeletePaymentTransactionDocument,
 	Direction,
 	GetAccountsDocument,
 	GetJarsDocument,
@@ -34,7 +34,7 @@ const TransactionsOverview = (): JSX.Element => {
 
 	const [createTransaction] = useMutation(CreatePaymentTransactionDocument);
 	const [updateTransaction] = useMutation(UpdatePaymentTransactionDocument);
-	const [deleteTransaction] = useMutation(DeleteTransactionDocument);
+	const [deleteTransaction] = useMutation(DeletePaymentTransactionDocument);
 
 	const [transactionFormVisible, setTransactionFormVisible] = useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState<

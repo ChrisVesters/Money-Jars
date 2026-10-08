@@ -44,6 +44,6 @@ mutation UpdatePaymentTransaction($id: ID!, $req: CreatePaymentTransaction!) {
 	}
 }
 
-mutation DeleteTransaction($id: ID!) {
-	deleteTransaction(id: $id)
+mutation DeletePaymentTransaction($id: ID!) {
+	deletePaymentTransaction(id: $id)
 }
