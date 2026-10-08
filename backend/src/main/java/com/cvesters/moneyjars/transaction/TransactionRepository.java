@@ -49,8 +49,4 @@ public interface TransactionRepository
 			LIMIT 1
 			""")
 	Optional<TransactionDao> findLastForDate(final LocalDate date);
-
-	TransactionDao save(final TransactionDao transaction);
-
-	void deleteById(final long id);
 }

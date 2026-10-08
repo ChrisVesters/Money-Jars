@@ -3,6 +3,7 @@ package com.cvesters.moneyjars.transaction;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Nested;
@@ -137,6 +138,28 @@ class PaymentTransactionControllerTest {
 					.execute();
 
 			assertEquals(response, TRANSACTION, "updatePaymentTransaction");
+		}
+	}
+
+	@Nested
+	class DeletePaymentTransaction {
+
+		@Test
+		void success() {
+			final String document = """
+					mutation {
+						deletePaymentTransaction(id: 1)
+					}
+					""";
+
+			final Response response = graphQlTester.document(document)
+					.execute();
+
+			response.path("deletePaymentTransaction")
+					.entity(Boolean.class)
+					.isEqualTo(true);
+
+			verify(paymentTransactionService).delete(1L);
 		}
 	}
 

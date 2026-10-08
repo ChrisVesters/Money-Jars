@@ -202,7 +202,10 @@ class JarControllerTest {
 					}
 					""";
 
-			graphQlTester.document(document).execute();
+			final Response response = graphQlTester.document(document)
+					.execute();
+
+			response.path("deleteJar").entity(Boolean.class).isEqualTo(true);
 
 			verify(jarService).delete(1L);
 		}

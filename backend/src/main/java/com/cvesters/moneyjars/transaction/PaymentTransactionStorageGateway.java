@@ -1,7 +1,6 @@
 package com.cvesters.moneyjars.transaction;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,8 +18,10 @@ public class PaymentTransactionStorageGateway {
 		this.repository = repository;
 	}
 
-	public Optional<PaymentTransaction> find(final long id) {
-		return repository.findById(id).map(PaymentTransactionDao::toBdo);
+	public PaymentTransaction get(final long id) {
+		return repository.findById(id)
+				.map(PaymentTransactionDao::toBdo)
+				.orElseThrow(MissingEntityException::new);
 	}
 
 	public PaymentTransaction create(final PaymentTransaction transaction) {
@@ -42,5 +43,14 @@ public class PaymentTransactionStorageGateway {
 		final PaymentTransactionDao updated = repository.save(dao);
 
 		return updated.toBdo();
+	}
+
+	public void delete(final PaymentTransaction transaction) {
+		Objects.requireNonNull(transaction);
+
+		final PaymentTransactionDao dao = repository
+				.findById(transaction.getId())
+				.orElseThrow(MissingEntityException::new);
+		repository.delete(dao);
 	}
 }

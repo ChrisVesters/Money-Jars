@@ -8,7 +8,6 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jarentry.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
@@ -31,7 +30,7 @@ public class PaymentTransactionService {
 		this.storage = storage;
 	}
 
-	@Transactional 
+	@Transactional
 	public PaymentTransaction create(
 			final TransactionAction.CreatePayment action) {
 		Objects.requireNonNull(action);
@@ -55,14 +54,13 @@ public class PaymentTransactionService {
 		return created;
 	}
 
+	@Transactional
 	public PaymentTransaction update(final long id,
 			final TransactionAction.UpdatePayment action) {
 		Objects.requireNonNull(action);
 
-		final PaymentTransaction transaction = storage.find(id)
-				.filter(PaymentTransaction.class::isInstance)
-				.map(PaymentTransaction.class::cast)
-				.orElseThrow(MissingEntityException::new);
+		final PaymentTransaction transaction = storage.get(id);
+		jarEntryService.delete(transaction);
 
 		final LocalDate currentDate = transaction.getDate();
 		final LocalDate newDate = action.date();
@@ -79,9 +77,16 @@ public class PaymentTransactionService {
 		transaction.setCounterparty(action.counterparty());
 		transaction.setDirection(action.direction());
 
-		// TODO: update jar entry
-		// Or, delete the old one, and create a new one?
+		final PaymentTransaction updated = storage.update(transaction);
+		jarEntryService.create(updated);
 
-		return storage.update(transaction);
+		return updated;
+	}
+
+	@Transactional
+	public void delete(final long id) {
+		final PaymentTransaction transaction = storage.get(id);
+		jarEntryService.delete(transaction);
+		storage.delete(transaction);
 	}
 }

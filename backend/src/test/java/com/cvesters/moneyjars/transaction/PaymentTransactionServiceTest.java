@@ -13,13 +13,11 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jarentry.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
@@ -107,15 +105,16 @@ class PaymentTransactionServiceTest {
 			when(existing.getDate()).thenReturn(date);
 
 			final PaymentTransaction updated = mock();
-			when(storage.find(id)).thenReturn(Optional.of(existing));
+			when(storage.get(id)).thenReturn(existing);
 			when(storage.update(existing)).thenReturn(updated);
 
 			final var result = service.update(id, action);
 
 			assertThat(result).isSameAs(updated);
 
-			final InOrder inOrder = inOrder(storage, existing);
-			inOrder.verify(storage).find(id);
+			final InOrder inOrder = inOrder(storage, jarEntryService, existing);
+			inOrder.verify(storage).get(id);
+			inOrder.verify(jarEntryService).delete(existing);
 			inOrder.verify(existing).setAmount(amount);
 			inOrder.verify(existing).setDescription(description);
 			inOrder.verify(existing).setJarId(jarId);
@@ -123,6 +122,7 @@ class PaymentTransactionServiceTest {
 			inOrder.verify(existing).setCounterparty(counterparty);
 			inOrder.verify(existing).setDirection(direction);
 			inOrder.verify(storage).update(existing);
+			inOrder.verify(jarEntryService).create(updated);
 
 			verify(existing, never()).setDate(any());
 			verify(existing, never()).setSequence(anyInt());
@@ -151,15 +151,16 @@ class PaymentTransactionServiceTest {
 			when(sequenceService.getNextSequence(date)).thenReturn(4);
 
 			final PaymentTransaction updated = mock();
-			when(storage.find(id)).thenReturn(Optional.of(existing));
+			when(storage.get(id)).thenReturn(existing);
 			when(storage.update(existing)).thenReturn(updated);
 
 			final var result = service.update(id, action);
 
 			assertThat(result).isSameAs(updated);
 
-			final InOrder inOrder = inOrder(storage, existing);
-			inOrder.verify(storage).find(id);
+			final InOrder inOrder = inOrder(storage, jarEntryService, existing);
+			inOrder.verify(storage).get(id);
+			inOrder.verify(jarEntryService).delete(existing);
 			inOrder.verify(existing).setDate(date);
 			inOrder.verify(existing).setSequence(4);
 			inOrder.verify(existing).setAmount(amount);
@@ -169,6 +170,7 @@ class PaymentTransactionServiceTest {
 			inOrder.verify(existing).setCounterparty(counterparty);
 			inOrder.verify(existing).setDirection(direction);
 			inOrder.verify(storage).update(existing);
+			inOrder.verify(jarEntryService).create(updated);
 		}
 
 		@Test
@@ -178,16 +180,26 @@ class PaymentTransactionServiceTest {
 			assertThatThrownBy(() -> service.update(id, null))
 					.isInstanceOf(NullPointerException.class);
 		}
+	}
+
+	@Nested
+	class Delete {
+
+		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
 
 		@Test
-		void missingEntity() {
+		void success() {
 			final long id = TRANSACTION.getId();
 
-			final TransactionAction.UpdatePayment action = mock();
-			when(storage.find(id)).thenReturn(Optional.empty());
+			final PaymentTransaction existing = mock();
+			when(storage.get(id)).thenReturn(existing);
 
-			assertThatThrownBy(() -> service.update(id, action))
-					.isInstanceOf(MissingEntityException.class);
+			service.delete(id);
+
+			final InOrder inOrder = inOrder(storage, jarEntryService);
+			inOrder.verify(storage).get(id);
+			inOrder.verify(jarEntryService).delete(existing);
+			inOrder.verify(storage).delete(existing);
 		}
 	}
 }

@@ -23,8 +23,4 @@ public class TransactionService {
 	public Optional<Transaction> find(final long id) {
 		return storage.find(id);
 	}
-
-	public void delete(final long id) {
-		storage.delete(id);
-	}
 }

@@ -12,4 +12,6 @@ public interface PaymentTransactionRepository
 	Optional<PaymentTransactionDao> findById(final long id);
 
 	PaymentTransactionDao save(final PaymentTransactionDao transaction);
+
+	void delete(final PaymentTransactionDao transaction);
 }

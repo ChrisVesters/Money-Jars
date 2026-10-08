@@ -20,6 +20,12 @@ public class JarEntryStorageGateway {
 		this.repository = repository;
 	}
 
+	public Optional<JarEntry> findByJarIdAndTransactionId(final long jarId,
+			final long transactionId) {
+		return repository.findByJarIdAndTransactionId(jarId, transactionId)
+				.map(JarEntryDao::toBdo);
+	}
+
 	public Optional<JarEntry> findBefore(final long jarId, final LocalDate date,
 			final int sequence) {
 		return repository.findBefore(jarId, date, sequence)
@@ -64,5 +70,13 @@ public class JarEntryStorageGateway {
 		}
 
 		return updatedEntries;
+	}
+
+	public void delete(final JarEntry entry) {
+		Objects.requireNonNull(entry);
+
+		final JarEntryDao found = repository.findById(entry.getId())
+				.orElseThrow(IllegalArgumentException::new);
+		repository.delete(found);
 	}
 }

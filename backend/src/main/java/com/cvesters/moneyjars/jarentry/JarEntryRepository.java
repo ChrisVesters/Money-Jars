@@ -13,6 +13,9 @@ public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 
 	Optional<JarEntryDao> findById(Long id);
 
+	Optional<JarEntryDao> findByJarIdAndTransactionId(long jarId,
+			long transactionId);
+
 	@Query("""
 			SELECT e
 			FROM JarEntryDao e
@@ -37,5 +40,7 @@ public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 	List<JarEntryDao> findAllAfter(long jarId, LocalDate date, int sequence);
 
 	JarEntryDao save(JarEntryDao entry);
+
+	void delete(JarEntryDao entry);
 
 }

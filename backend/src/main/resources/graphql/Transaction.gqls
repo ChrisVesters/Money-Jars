@@ -15,7 +15,3 @@ extend type Query {
 	getTransactions: [Transaction!]!
 	getTransaction(id: ID!): Transaction
 }
-
-extend type Mutation {
-	deleteTransaction(id: ID!): Boolean
-}

@@ -1,6 +1,5 @@
 package com.cvesters.moneyjars.transaction;
 
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -125,22 +124,7 @@ class TransactionControllerTest {
 		}
 	}
 
-	@Nested
-	class DeleteTransaction {
-
-		@Test
-		void success() {
-			final String document = """
-					mutation {
-						deleteTransaction(id: 1)
-					}
-					""";
-
-			graphQlTester.document(document).execute();
-
-			verify(transactionService).delete(1L);
-		}
-	}
+	
 
 	void assertEquals(final Response response,
 			final TestPaymentTransaction expected, final String prefix) {

@@ -23,4 +23,5 @@ input CreatePaymentTransaction {
 extend type Mutation {
 	createPaymentTransaction(req: CreatePaymentTransaction!): PaymentTransaction
 	updatePaymentTransaction(id: ID!, req: CreatePaymentTransaction!): PaymentTransaction
+	deletePaymentTransaction(id: ID!): Boolean
 }

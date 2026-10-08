@@ -29,6 +29,42 @@ class JarEntryStorageGatewayTest {
 			repository);
 
 	@Nested
+	class FindByJarIdAndTransactionId {
+
+		@Test
+		public void found() {
+			final long jarId = 1L;
+			final long transactionId = 2L;
+
+			final JarEntryDao dao = mock();
+			final JarEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findByJarIdAndTransactionId(jarId, transactionId))
+					.thenReturn(Optional.of(dao));
+
+			final Optional<JarEntry> result = gateway
+					.findByJarIdAndTransactionId(jarId, transactionId);
+
+			assertThat(result).contains(bdo);
+		}
+
+		@Test
+		public void notFound() {
+			final long jarId = 1L;
+			final long transactionId = 2L;
+
+			when(repository.findByJarIdAndTransactionId(jarId, transactionId))
+					.thenReturn(Optional.empty());
+
+			final Optional<JarEntry> result = gateway
+					.findByJarIdAndTransactionId(jarId, transactionId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class FindBefore {
 
 		@Test
@@ -309,6 +345,46 @@ class JarEntryStorageGatewayTest {
 		@Test
 		void entriesNull() {
 			assertThatThrownBy(() -> gateway.updateAll(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class Delete {
+
+		private static final TestJarEntry JAR_ENTRY = TestJarEntry.HOUSEHOLD_CAFE;
+
+		@Test
+		void success() {
+			final JarEntry entry = mock();
+			when(entry.getId()).thenReturn(JAR_ENTRY.getId());
+
+			final JarEntryDao existing = mock();
+			when(repository.findById(JAR_ENTRY.getId()))
+					.thenReturn(Optional.of(existing));
+
+			gateway.delete(entry);
+
+			verify(repository).delete(existing);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findById(JAR_ENTRY.getId()))
+					.thenReturn(Optional.empty());
+
+			final JarEntry entry = mock();
+			when(entry.getId()).thenReturn(JAR_ENTRY.getId());
+
+			assertThatThrownBy(() -> gateway.delete(entry))
+					.isInstanceOf(IllegalArgumentException.class);
+
+			verify(repository, never()).delete(any());
+		}
+
+		@Test
+		void entryNull() {
+			assertThatThrownBy(() -> gateway.delete(null))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}

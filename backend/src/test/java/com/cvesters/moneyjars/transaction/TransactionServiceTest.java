@@ -2,7 +2,6 @@ package com.cvesters.moneyjars.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -50,16 +49,4 @@ class TransactionServiceTest {
 		}
 	}
 
-	@Nested
-	class Delete {
-
-		private static final long TRANSACTION_ID = 1L;
-
-		@Test
-		void success() {
-			service.delete(TRANSACTION_ID);
-
-			verify(storage).delete(TRANSACTION_ID);
-		}
-	}
 }

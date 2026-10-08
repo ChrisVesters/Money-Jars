@@ -33,7 +33,14 @@ public class PaymentTransactionController {
 	public TransactionDto updatePaymentTransaction(@Argument final long id,
 			@Argument final PaymentTransactionActionDto.UpdatePayment req) {
 		final TransactionAction.UpdatePayment action = req.toBdo();
-		final PaymentTransaction updated = paymentTransactionService.update(id, action);
+		final PaymentTransaction updated = paymentTransactionService.update(id,
+				action);
 		return new PaymentTransactionDto(updated);
+	}
+
+	@MutationMapping
+	public boolean deletePaymentTransaction(@Argument final long id) {
+		paymentTransactionService.delete(id);
+		return true;
 	}
 }

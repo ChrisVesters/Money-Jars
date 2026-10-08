@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
@@ -39,6 +40,27 @@ public class JarEntryService {
 		nextEntries.forEach(e -> e.shift(amount));
 
 		gateway.create(entry);
+		gateway.updateAll(nextEntries);
+	}
+
+	@Transactional
+	public void delete(final PaymentTransaction transaction) {
+		Objects.requireNonNull(transaction);
+
+		final long jarId = transaction.getJarId();
+		final LocalDate date = transaction.getDate();
+		final int sequence = transaction.getSequence();
+		final BigDecimal amount = transaction.getSignedAmount().negate();
+
+		final JarEntry entry = gateway
+				.findByJarIdAndTransactionId(jarId, transaction.getId())
+				.orElseThrow(MissingEntityException::new);
+
+		final List<JarEntry> nextEntries = gateway.getAllAfter(jarId, date,
+				sequence);
+		nextEntries.forEach(e -> e.shift(amount));
+
+		gateway.delete(entry);
 		gateway.updateAll(nextEntries);
 	}
 }

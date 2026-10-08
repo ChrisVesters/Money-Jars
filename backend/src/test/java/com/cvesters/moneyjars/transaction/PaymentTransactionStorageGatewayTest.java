@@ -2,9 +2,12 @@ package com.cvesters.moneyjars.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -26,7 +29,7 @@ class PaymentTransactionStorageGatewayTest {
 			repository);
 
 	@Nested
-	class Find {
+	class Get {
 
 		@Test
 		void success() {
@@ -37,19 +40,18 @@ class PaymentTransactionStorageGatewayTest {
 			when(repository.findById(TRANSACTION.getId()))
 					.thenReturn(Optional.of(dao));
 
-			final var result = gateway.find(TRANSACTION.getId());
+			final var result = gateway.get(TRANSACTION.getId());
 
-			assertThat(result).containsSame(bdo);
+			assertThat(result).isSameAs(bdo);
 		}
 
 		@Test
 		void notFound() {
-			when(repository.findById(TRANSACTION.getId()))
-					.thenReturn(Optional.empty());
+			final long id = TRANSACTION.getId();
+			when(repository.findById(id)).thenReturn(Optional.empty());
 
-			final var result = gateway.find(TRANSACTION.getId());
-
-			assertThat(result).isEmpty();
+			assertThatThrownBy(() -> gateway.get(id))
+					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 
@@ -135,6 +137,44 @@ class PaymentTransactionStorageGatewayTest {
 		@Test
 		void transactionNull() {
 			assertThatThrownBy(() -> gateway.update(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class Delete {
+
+		@Test
+		void success() {
+			final PaymentTransaction transaction = mock();
+			when(transaction.getId()).thenReturn(TRANSACTION.getId());
+
+			final PaymentTransactionDao existing = mock();
+			when(repository.findById(TRANSACTION.getId()))
+					.thenReturn(Optional.of(existing));
+
+			gateway.delete(transaction);
+
+			verify(repository).delete(existing);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findById(TRANSACTION.getId()))
+					.thenReturn(Optional.empty());
+
+			final PaymentTransaction transaction = mock();
+			when(transaction.getId()).thenReturn(TRANSACTION.getId());
+
+			assertThatThrownBy(() -> gateway.delete(transaction))
+					.isInstanceOf(MissingEntityException.class);
+
+			verify(repository, never()).delete(any());
+		}
+
+		@Test
+		void transactionNull() {
+			assertThatThrownBy(() -> gateway.delete(null))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}

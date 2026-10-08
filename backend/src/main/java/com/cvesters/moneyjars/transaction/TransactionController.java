@@ -3,7 +3,6 @@ package com.cvesters.moneyjars.transaction;
 import java.util.List;
 
 import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
@@ -34,12 +33,6 @@ public class TransactionController {
 		return transactionService.find(id)
 				.map(TransactionController::toDto)
 				.orElse(null);
-	}
-
-	@MutationMapping
-	public boolean deleteTransaction(@Argument final long id) {
-		transactionService.delete(id);
-		return true;
 	}
 
 	private static TransactionDto toDto(final Transaction transaction) {
