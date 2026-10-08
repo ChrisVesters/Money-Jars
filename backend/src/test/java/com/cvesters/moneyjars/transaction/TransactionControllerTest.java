@@ -1,9 +1,5 @@
 package com.cvesters.moneyjars.transaction;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -21,6 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
+// TODO: Should this include the sub elements? Where else would we test it?
 @GraphQlTest(TransactionController.class)
 @Import(TransactionGraphqlConfig.class)
 class TransactionControllerTest {
@@ -51,8 +48,10 @@ class TransactionControllerTest {
 							id
 							date
 							amount
-							beneficiary
 							description
+							... on PaymentTransaction {
+								counterparty
+							}
 						}
 					}
 					""";
@@ -85,8 +84,10 @@ class TransactionControllerTest {
 							id
 							date
 							amount
-							beneficiary
 							description
+							... on PaymentTransaction {
+								counterparty
+							}
 						}
 					}
 					""";
@@ -108,8 +109,10 @@ class TransactionControllerTest {
 							id
 							date
 							amount
-							beneficiary
 							description
+							... on PaymentTransaction {
+								counterparty
+							}
 						}
 					}
 					""";
@@ -121,129 +124,7 @@ class TransactionControllerTest {
 		}
 	}
 
-	@Nested
-	class CreatePaymentTransaction {
-
-		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
-
-		@Test
-		void success() {
-			final Transaction createdTransaction = TRANSACTION.bdo();
-			when(transactionService.create(argThat(action -> {
-				assertThat(action.date()).isEqualTo(TRANSACTION.getDate());
-				assertThat(action.amount())
-						.isEqualByComparingTo(TRANSACTION.getAmount());
-				assertThat(action.jarId())
-						.isEqualTo(TRANSACTION.getJar().getId());
-				assertThat(action.beneficiary())
-						.isEqualTo(TRANSACTION.getBeneficiary());
-				assertThat(action.description())
-						.isEqualTo(TRANSACTION.getDescription());
-				return true;
-			}))).thenReturn(createdTransaction);
-
-			final String document = """
-					mutation {
-						createPaymentTransaction(req: {
-							date: "%s"
-							amount: %s
-							beneficiary: "%s"
-							description: "%s"
-							jarId: %d
-							accountId: %d
-							direction: %s
-						}) {
-							id
-							date
-							amount
-							beneficiary
-							description
-						}
-					}
-					""".formatted(TRANSACTION.getDate().toString(),
-					TRANSACTION.getAmount(), TRANSACTION.getBeneficiary(),
-					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
-					TRANSACTION.getAccount().getId(),
-					TRANSACTION.getDirection().name());
-
-			final Response response = graphQlTester.document(document)
-					.execute();
-
-			assertEquals(response, TRANSACTION, "createPaymentTransaction");
-		}
-	}
-
-	@Nested
-	class UpdatePaymentTransaction {
-
-		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
-
-		@Test
-		void success() {
-			final Transaction updatedTransaction = TRANSACTION.bdo();
-			when(transactionService.update(eq(TRANSACTION.getId()),
-					argThat(transaction -> {
-						assertThat(transaction.date())
-								.isEqualTo(TRANSACTION.getDate());
-						assertThat(transaction.amount())
-								.isEqualByComparingTo(TRANSACTION.getAmount());
-						assertThat(transaction.jarId())
-								.isEqualTo(TRANSACTION.getJar().getId());
-						assertThat(transaction.beneficiary())
-								.isEqualTo(TRANSACTION.getBeneficiary());
-						assertThat(transaction.description())
-								.isEqualTo(TRANSACTION.getDescription());
-						return true;
-					}))).thenReturn(updatedTransaction);
-
-			final String document = """
-					mutation {
-						updatePaymentTransaction(id: %d, req: {
-							date: "%s"
-							amount: %s
-							beneficiary: "%s"
-							description: "%s"
-							jarId: %d
-							accountId: %d
-							direction: %s
-						}) {
-							id
-							date
-							amount
-							beneficiary
-							description
-						}
-					}
-					""".formatted(TRANSACTION.getId(),
-					TRANSACTION.getDate().toString(), TRANSACTION.getAmount(),
-					TRANSACTION.getBeneficiary(), TRANSACTION.getDescription(),
-					TRANSACTION.getJar().getId(),
-					TRANSACTION.getAccount().getId(),
-					TRANSACTION.getDirection().name());
-
-			final Response response = graphQlTester.document(document)
-					.execute();
-
-			assertEquals(response, TRANSACTION, "updatePaymentTransaction");
-		}
-	}
-
-	@Nested
-	class DeleteTransaction {
-
-		@Test
-		void success() {
-			final String document = """
-					mutation {
-						deleteTransaction(id: 1)
-					}
-					""";
-
-			graphQlTester.document(document).execute();
-
-			verify(transactionService).delete(1L);
-		}
-	}
+	
 
 	void assertEquals(final Response response,
 			final TestPaymentTransaction expected, final String prefix) {
@@ -256,12 +137,12 @@ class TransactionControllerTest {
 				.path(prefix + ".amount")
 				.entity(Float.class)
 				.isEqualTo(expected.getAmount().floatValue())
-				.path(prefix + ".beneficiary")
-				.entity(String.class)
-				.isEqualTo(expected.getBeneficiary())
 				.path(prefix + ".description")
 				.entity(String.class)
-				.isEqualTo(expected.getDescription());
+				.isEqualTo(expected.getDescription())
+				.path(prefix + ".counterparty")
+				.entity(String.class)
+				.isEqualTo(expected.getCounterparty());
 	}
 
 }

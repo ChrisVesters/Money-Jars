@@ -29,10 +29,10 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
-	const [beneficiary, setBeneficiary] = useState("");
 	const [description, setDescription] = useState("");
 	const [jarId, setJarId] = useState("");
 	const [accountId, setAccountId] = useState("");
+	const [counterparty, setCounterparty] = useState("");
 	const [direction, setDirection] = useState(Direction.Outgoing);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -40,14 +40,15 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 		if (props.transaction) {
 			setDate(props.transaction.date);
 			setAmount(props.transaction.amount?.toString() ?? "");
-			setBeneficiary(props.transaction.beneficiary ?? "");
 			setDescription(props.transaction.description ?? "");
 			setJarId(props.transaction.jar?.id ?? "");
 			setAccountId(props.transaction.account?.id ?? "");
+			setCounterparty(props.transaction.counterparty ?? "");
+			setDirection(props.transaction.direction);
 		} else {
 			setDate(new Date().toISOString().split("T")[0]);
 			setAmount("");
-			setBeneficiary("");
+			setCounterparty("");
 			setDescription("");
 			setJarId(props.jars.length > 0 ? props.jars[0].id : "");
 			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
@@ -71,8 +72,8 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			newErrors.amount = t("validationAmountInvalid");
 		}
 
-		if (!beneficiary.trim()) {
-			newErrors.beneficiary = t("validationBeneficiaryRequired");
+		if (!counterparty.trim()) {
+			newErrors.counterparty = t("validationCounterpartyRequired");
 		}
 
 		if (!jarId) {
@@ -101,10 +102,10 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 		props.onConfirm({
 			date,
 			amount: Number.parseFloat(amount),
-			beneficiary,
 			description: description || "",
 			jarId,
 			accountId,
+			counterparty: counterparty,
 			direction
 		});
 
@@ -121,7 +122,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 	const clear = (): void => {
 		setDate(new Date().toISOString().split("T")[0]);
 		setAmount("");
-		setBeneficiary("");
+		setCounterparty("");
 		setDescription("");
 		setJarId(props.jars.length > 0 ? props.jars[0].id : "");
 		setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
@@ -180,18 +181,18 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="beneficiary">
-					{t("beneficiary")} <span className="required">*</span>
+				<label htmlFor="counterparty">
+					{t("counterparty")} <span className="required">*</span>
 				</label>
 				<input
-					id="beneficiary"
+					id="counterparty"
 					type="text"
-					value={beneficiary}
-					onChange={e => setBeneficiary(e.target.value)}
-					className={errors.beneficiary ? "input-error" : ""}
+					value={counterparty}
+					onChange={e => setCounterparty(e.target.value)}
+					className={errors.counterparty ? "input-error" : ""}
 				/>
-				{errors.beneficiary && (
-					<span className="error-message">{errors.beneficiary}</span>
+				{errors.counterparty && (
+					<span className="error-message">{errors.counterparty}</span>
 				)}
 			</div>
 

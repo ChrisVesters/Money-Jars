@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
 	CreatePaymentTransactionDocument,
-	DeleteTransactionDocument,
+	DeletePaymentTransactionDocument,
 	Direction,
 	GetAccountsDocument,
 	GetJarsDocument,
@@ -34,7 +34,7 @@ const TransactionsOverview = (): JSX.Element => {
 
 	const [createTransaction] = useMutation(CreatePaymentTransactionDocument);
 	const [updateTransaction] = useMutation(UpdatePaymentTransactionDocument);
-	const [deleteTransaction] = useMutation(DeleteTransactionDocument);
+	const [deleteTransaction] = useMutation(DeletePaymentTransactionDocument);
 
 	const [transactionFormVisible, setTransactionFormVisible] = useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState<
@@ -152,7 +152,7 @@ const TransactionsOverview = (): JSX.Element => {
 						<th>{t("date")}</th>
 						<th>{t("amount")}</th>
 						<th>{t("direction")}</th>
-						<th>{t("beneficiary")}</th>
+						<th>{t("counterparty")}</th>
 						<th>{t("description")}</th>
 						<th>{t("jar")}</th>
 						<th>{t("account")}</th>
@@ -174,7 +174,7 @@ const TransactionsOverview = (): JSX.Element => {
 									<IconIncoming />
 								)}
 							</td>
-							<td>{transaction.beneficiary}</td>
+							<td>{transaction.counterparty}</td>
 							<td>{transaction.description}</td>
 							<td>{transaction.jar.name}</td>
 							<td>{transaction.account.name}</td>

@@ -10,7 +10,8 @@ import com.cvesters.moneyjars.jar.bdo.Jar;
 public enum TestJar {
 
 	HOUSEHOLD(1L, "Household", "General expenses", new BigDecimal("734.85")),
-	HOLIDAY(2L, "Holiday", "We need some time off", new BigDecimal("2300.00"));
+	HOLIDAY(2L, "Holiday", "We need some time off", new BigDecimal("2300.00")),
+	CAR(3L, "Car", "Fuel and maintenance", new BigDecimal("434.60"));
 
 	private final long id;
 	private final String name;

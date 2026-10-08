@@ -46,6 +46,7 @@ public class JarStorageGateway {
 		return updated.toBdo();
 	}
 
+	// TODO By Id?
 	public void delete(final long id) {
 		jarRepository.deleteById(id);
 	}

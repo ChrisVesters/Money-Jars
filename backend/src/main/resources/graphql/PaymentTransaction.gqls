@@ -1,0 +1,27 @@
+type PaymentTransaction implements Transaction {
+	id: ID!
+	date: String!
+	amount: Float! # string instead? To not lose precision
+	counterparty: String!
+	description: String!
+	jar: Jar!
+	account: Account!
+	direction: Direction!
+}
+
+input CreatePaymentTransaction {
+	date: String!
+	amount: Float! # string instead? To not lose precision
+	counterparty: String!
+	description: String!
+	jarId: ID!
+	accountId: ID!
+	direction: Direction!
+}
+
+
+extend type Mutation {
+	createPaymentTransaction(req: CreatePaymentTransaction!): PaymentTransaction
+	updatePaymentTransaction(id: ID!, req: CreatePaymentTransaction!): PaymentTransaction
+	deletePaymentTransaction(id: ID!): Boolean
+}

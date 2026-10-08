@@ -13,6 +13,8 @@ public class Jar {
 	private final Long id;
 	private String name;
 	private String description;
+	// TODO: do not keep this in Jar
+	// Instead, fetch the last jarEntry
 	private BigDecimal balance;
 
 	public Jar(final String name, final String description) {

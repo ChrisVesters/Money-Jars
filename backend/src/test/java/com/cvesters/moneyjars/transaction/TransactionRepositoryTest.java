@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,9 +29,15 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final List<TransactionDao> result = repository.findAll();
 
 			assertThat(result).satisfiesExactly(
+					t -> assertEquals(t, TestPaymentTransaction.SALARY),
+					t -> assertEquals(t, TestPaymentTransaction.BONUS),
+					t -> assertEquals(t, TestPaymentTransaction.CAR_ALLOWANCE),
 					t -> assertEquals(t, TestPaymentTransaction.GROCERY),
 					t -> assertEquals(t, TestPaymentTransaction.RENT),
-					t -> assertEquals(t, TestPaymentTransaction.CAFE));
+					t -> assertEquals(t, TestPaymentTransaction.CAFE),
+					t -> assertEquals(t, TestPaymentTransaction.FLIGHTS),
+					t -> assertEquals(t, TestPaymentTransaction.FUEL),
+					t -> assertEquals(t, TestPaymentTransaction.MARKET));
 		}
 	}
 
@@ -58,9 +65,13 @@ class TransactionRepositoryTest extends RepositoryTest {
 					end);
 
 			assertThat(result).satisfiesExactly(
+					t -> assertEquals(t, TestPaymentTransaction.SALARY),
+					t -> assertEquals(t, TestPaymentTransaction.BONUS),
+					t -> assertEquals(t, TestPaymentTransaction.CAR_ALLOWANCE),
 					t -> assertEquals(t, TestPaymentTransaction.GROCERY),
 					t -> assertEquals(t, TestPaymentTransaction.RENT),
-					t -> assertEquals(t, TestPaymentTransaction.CAFE));
+					t -> assertEquals(t, TestPaymentTransaction.CAFE),
+					t -> assertEquals(t, TestPaymentTransaction.FLIGHTS));
 		}
 
 		@Test
@@ -106,7 +117,95 @@ class TransactionRepositoryTest extends RepositoryTest {
 		}
 	}
 
-	private void assertEquals(final TransactionDao t,
+	@Nested
+	class FindFirstForDate {
+
+		@Test
+		void single() {
+			final LocalDate date = LocalDate.of(2026, 1, 15);
+
+			final Optional<TransactionDao> result = repository
+					.findFirstForDate(date);
+
+			assertThat(result).hasValueSatisfying(
+					t -> assertEquals(t, TestPaymentTransaction.CAFE));
+		}
+
+		@Test
+		void multiple() {
+			final LocalDate date = LocalDate.of(2026, 1, 10);
+
+			final Optional<TransactionDao> result = repository
+					.findFirstForDate(date);
+
+			assertThat(result).hasValueSatisfying(
+					t -> assertEquals(t, TestPaymentTransaction.GROCERY));
+		}
+
+		@Test
+		void none() {
+			final LocalDate date = LocalDate.of(2026, 1, 2);
+
+			final Optional<TransactionDao> result = repository
+					.findFirstForDate(date);
+
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		void dateNull() {
+			final Optional<TransactionDao> result = repository
+					.findFirstForDate(null);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
+	class FindLastForDate {
+
+		@Test
+		void single() {
+			final LocalDate date = LocalDate.of(2026, 1, 15);
+
+			final Optional<TransactionDao> result = repository
+					.findLastForDate(date);
+
+			assertThat(result).hasValueSatisfying(
+					t -> assertEquals(t, TestPaymentTransaction.CAFE));
+		}
+
+		@Test
+		void multiple() {
+			final LocalDate date = LocalDate.of(2026, 1, 10);
+
+			final Optional<TransactionDao> result = repository
+					.findLastForDate(date);
+
+			assertThat(result).hasValueSatisfying(
+					t -> assertEquals(t, TestPaymentTransaction.RENT));
+		}
+
+		@Test
+		void none() {
+			final LocalDate date = LocalDate.of(2026, 1, 2);
+
+			final Optional<TransactionDao> result = repository
+					.findLastForDate(date);
+
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		void dateNull() {
+			final Optional<TransactionDao> result = repository
+					.findLastForDate(null);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	private static void assertEquals(final TransactionDao t,
 			final TestPaymentTransaction expected) {
 		assertThat(t).isInstanceOf(PaymentTransactionDao.class);
 		final PaymentTransactionDao pt = (PaymentTransactionDao) t;
@@ -114,11 +213,11 @@ class TransactionRepositoryTest extends RepositoryTest {
 		assertThat(pt.getId()).isEqualTo(expected.getId());
 		assertThat(pt.getDate()).isEqualTo(expected.getDate());
 		assertThat(pt.getSequence()).isEqualTo(expected.getSequence());
-		assertThat(pt.getBeneficiary()).isEqualTo(expected.getBeneficiary());
 		assertThat(pt.getDescription()).isEqualTo(expected.getDescription());
 
 		assertThat(pt.getJarId()).isEqualTo(expected.getJar().getId());
 		assertThat(pt.getAccountId()).isEqualTo(expected.getAccount().getId());
+		assertThat(pt.getCounterparty()).isEqualTo(expected.getCounterparty());
 		assertThat(pt.getDirection()).isEqualTo(expected.getDirectionId());
 	}
 }

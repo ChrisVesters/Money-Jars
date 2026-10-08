@@ -12,23 +12,23 @@ public final class PaymentTransactionActionDto {
 	}
 
 	public static record CreatePayment(LocalDate date, BigDecimal amount,
-			String beneficiary, String description, long jarId, long accountId,
+			String description, long jarId, long accountId, String counterparty,
 			String direction) {
 
 		public TransactionAction.CreatePayment toBdo() {
 			return new TransactionAction.CreatePayment(date, amount,
-					beneficiary, description, jarId, accountId,
+					description, jarId, accountId, counterparty,
 					PaymentTransactionDirection.valueOf(direction));
 		}
 	}
 
 	public static record UpdatePayment(LocalDate date, BigDecimal amount,
-			String beneficiary, String description, long jarId, long accountId,
+			String description, long jarId, long accountId, String counterparty,
 			String direction) {
 
 		public TransactionAction.UpdatePayment toBdo() {
 			return new TransactionAction.UpdatePayment(date, amount,
-					beneficiary, description, jarId, accountId,
+					description, jarId, accountId, counterparty,
 					PaymentTransactionDirection.valueOf(direction));
 		}
 	}

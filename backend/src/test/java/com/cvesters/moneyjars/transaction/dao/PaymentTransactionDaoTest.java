@@ -6,8 +6,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.cvesters.moneyjars.account.TestAccount;
+import com.cvesters.moneyjars.jar.TestJar;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 
 class PaymentTransactionDaoTest {
 
@@ -23,10 +26,15 @@ class PaymentTransactionDaoTest {
 			assertThat(dao.getId()).isNull();
 			assertThat(dao.getDate()).isEqualTo(TRANSACTION.getDate());
 			assertThat(dao.getAmount()).isEqualTo(TRANSACTION.getAmount());
-			assertThat(dao.getBeneficiary())
-					.isEqualTo(TRANSACTION.getBeneficiary());
 			assertThat(dao.getDescription())
 					.isEqualTo(TRANSACTION.getDescription());
+			assertThat(dao.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
+			assertThat(dao.getAccountId())
+					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(dao.getCounterparty())
+					.isEqualTo(TRANSACTION.getCounterparty());
+			assertThat(dao.getDirection())
+					.isEqualTo(TRANSACTION.getDirectionId());
 		}
 
 		@Test
@@ -42,17 +50,17 @@ class PaymentTransactionDaoTest {
 		@Test
 		void success() {
 			final var updatedDate = TRANSACTION.getDate().plusDays(1);
-			final var updatedAmount = TRANSACTION.getAmount().negate();
 			final var updatedSequence = 1;
-			final var updatedBeneficiary = "Vendor";
+			final var updatedAmount = TRANSACTION.getAmount().negate();
 			final var updatedDescription = "Updated description";
-			final var updatedJar = TRANSACTION.getJar().getId();
-			final var updatedAccount = TRANSACTION.getAccount().getId();
-			final var updatedDirection = TRANSACTION.getDirection();
+			final var updatedJar = TestJar.HOLIDAY.getId();
+			final var updatedAccount = TestAccount.SAVINGS.getId();
+			final var updatedCounterparty = "Vendor";
+			final var updatedDirection = PaymentTransactionDirection.INCOMING;
 
 			final var updatedTransaction = new PaymentTransaction(updatedDate,
-					updatedSequence, updatedAmount, updatedBeneficiary,
-					updatedDescription, updatedJar, updatedAccount,
+					updatedSequence, updatedAmount, updatedDescription,
+					updatedJar, updatedAccount, updatedCounterparty,
 					updatedDirection);
 
 			final var dao = new PaymentTransactionDao(TRANSACTION.bdo());
@@ -62,12 +70,12 @@ class PaymentTransactionDaoTest {
 			assertThat(dao.getDate()).isEqualTo(updatedDate);
 			assertThat(dao.getSequence()).isEqualTo(updatedSequence);
 			assertThat(dao.getAmount()).isEqualTo(updatedAmount);
-			assertThat(dao.getBeneficiary()).isEqualTo(updatedBeneficiary);
 			assertThat(dao.getDescription()).isEqualTo(updatedDescription);
 			assertThat(dao.getJarId()).isEqualTo(updatedJar);
 			assertThat(dao.getAccountId()).isEqualTo(updatedAccount);
-			assertThat(dao.getDirection())
-					.isEqualTo(TRANSACTION.getDirectionId());
+			assertThat(dao.getCounterparty()).isEqualTo(updatedCounterparty);
+			assertThat(dao.getDirection()).isEqualTo(
+					PaymentTransactionDirectionDao.toDao(updatedDirection));
 		}
 
 		@Test
@@ -90,13 +98,13 @@ class PaymentTransactionDaoTest {
 			assertThat(bdo.getId()).isNull();
 			assertThat(bdo.getDate()).isEqualTo(TRANSACTION.getDate());
 			assertThat(bdo.getAmount()).isEqualTo(TRANSACTION.getAmount());
-			assertThat(bdo.getBeneficiary())
-					.isEqualTo(TRANSACTION.getBeneficiary());
 			assertThat(bdo.getDescription())
 					.isEqualTo(TRANSACTION.getDescription());
 			assertThat(bdo.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(bdo.getAccountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(bdo.getCounterparty())
+					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(bdo.getDirection())
 					.isEqualTo(TRANSACTION.getDirection());
 		}

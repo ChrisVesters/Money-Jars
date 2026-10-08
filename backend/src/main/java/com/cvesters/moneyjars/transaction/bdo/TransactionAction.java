@@ -12,27 +12,27 @@ public final class TransactionAction {
 	}
 
 	public static record CreatePayment(LocalDate date, BigDecimal amount,
-			String beneficiary, String description, long jarId, long accountId,
+			String description, long jarId, long accountId, String counterparty,
 			PaymentTransactionDirection direction) {
 
 		public CreatePayment {
 			Objects.requireNonNull(date);
 			Objects.requireNonNull(amount);
-			Validate.notBlank(beneficiary);
 			Objects.requireNonNull(description);
+			Validate.notBlank(counterparty);
 			Objects.requireNonNull(direction);
 		}
 	}
 
 	public static record UpdatePayment(LocalDate date, BigDecimal amount,
-			String beneficiary, String description, long jarId, long accountId,
+			String description, long jarId, long accountId, String counterparty,
 			PaymentTransactionDirection direction) {
 
 		public UpdatePayment {
 			Objects.requireNonNull(date);
 			Objects.requireNonNull(amount);
-			Validate.notBlank(beneficiary);
 			Objects.requireNonNull(description);
+			Validate.notBlank(counterparty);
 			Objects.requireNonNull(direction);
 		}
 	}

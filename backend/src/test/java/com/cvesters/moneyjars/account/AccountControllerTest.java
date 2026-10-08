@@ -200,7 +200,12 @@ class AccountControllerTest {
 					}
 					""";
 
-			graphQlTester.document(document).execute();
+			final Response response = graphQlTester.document(document)
+					.execute();
+
+			response.path("deleteAccount")
+					.entity(Boolean.class)
+					.isEqualTo(true);
 
 			verify(accountService).delete(1L);
 		}
