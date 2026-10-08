@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.accountentry.AccountEntryService;
 import com.cvesters.moneyjars.jarentry.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
@@ -18,15 +19,18 @@ public class PaymentTransactionService {
 
 	private final TransactionSequenceService sequenceService;
 	private final JarEntryService jarEntryService;
+	private final AccountEntryService accountEntryService;
 
 	private final PaymentTransactionStorageGateway storage;
 
 	public PaymentTransactionService(
 			final TransactionSequenceService sequenceService,
 			final JarEntryService jarEntryService,
+			final AccountEntryService accountEntryService,
 			final PaymentTransactionStorageGateway storage) {
 		this.sequenceService = sequenceService;
 		this.jarEntryService = jarEntryService;
+		this.accountEntryService = accountEntryService;
 		this.storage = storage;
 	}
 
@@ -50,6 +54,7 @@ public class PaymentTransactionService {
 
 		final PaymentTransaction created = storage.create(transaction);
 		jarEntryService.create(created);
+		accountEntryService.create(created);
 
 		return created;
 	}
@@ -61,6 +66,7 @@ public class PaymentTransactionService {
 
 		final PaymentTransaction transaction = storage.get(id);
 		jarEntryService.delete(transaction);
+		accountEntryService.delete(transaction);
 
 		final LocalDate currentDate = transaction.getDate();
 		final LocalDate newDate = action.date();
@@ -79,6 +85,7 @@ public class PaymentTransactionService {
 
 		final PaymentTransaction updated = storage.update(transaction);
 		jarEntryService.create(updated);
+		accountEntryService.create(updated);
 
 		return updated;
 	}
@@ -87,6 +94,7 @@ public class PaymentTransactionService {
 	public void delete(final long id) {
 		final PaymentTransaction transaction = storage.get(id);
 		jarEntryService.delete(transaction);
+		accountEntryService.delete(transaction);
 		storage.delete(transaction);
 	}
 }

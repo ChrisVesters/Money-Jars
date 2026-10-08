@@ -21,8 +21,8 @@ public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 			FROM JarEntryDao e
 			JOIN TransactionDao t ON t.id = e.transactionId
 			WHERE e.jarId = :jarId
-				AND t.date < :date
-				OR (t.date = :date AND t.sequence < :sequence)
+				AND (t.date < :date
+					OR (t.date = :date AND t.sequence < :sequence))
 			ORDER BY t.date DESC, t.sequence DESC
 			LIMIT 1
 			""")
@@ -33,8 +33,8 @@ public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 			FROM JarEntryDao e
 			JOIN TransactionDao t ON t.id = e.transactionId
 			WHERE e.jarId = :jarId
-				AND t.date > :date
-				OR (t.date = :date AND t.sequence > :sequence)
+				AND (t.date > :date
+					OR (t.date = :date AND t.sequence > :sequence))
 			ORDER BY t.date ASC, t.sequence ASC
 			""")
 	List<JarEntryDao> findAllAfter(long jarId, LocalDate date, int sequence);

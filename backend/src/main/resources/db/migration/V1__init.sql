@@ -62,3 +62,20 @@ CREATE TABLE jar_entries(
 
 CREATE INDEX ON jar_entries(jar_id);
 CREATE INDEX ON jar_entries(transaction_id);
+
+
+CREATE TABLE account_entries(
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+	transaction_id BIGINT NOT NULL,
+	account_id BIGINT NOT NULL,
+	balance_before NUMERIC NOT NULL,
+	balance_after NUMERIC NOT NULL,
+
+	PRIMARY KEY (id),
+	UNIQUE (transaction_id, account_id),
+	FOREIGN KEY (account_id) REFERENCES accounts(id),
+	FOREIGN KEY (transaction_id) REFERENCES transactions(id)
+);
+
+CREATE INDEX ON account_entries(account_id);
+CREATE INDEX ON account_entries(transaction_id);
