@@ -48,6 +48,16 @@ class JarEntryRepositoryTest extends RepositoryTest {
 		}
 
 		@Test
+		void otherJarSameDate() {
+			final LocalDate date = LocalDate.of(2026, 1, 1);
+
+			final Optional<JarEntryDao> result = repository
+					.findBefore(TestJar.CAR.getId(), date, 2);
+
+			assertThat(result).isEmpty();
+		}
+
+		@Test
 		void previousDate() {
 			final LocalDate date = LocalDate.of(2026, 1, 10);
 
@@ -99,6 +109,20 @@ class JarEntryRepositoryTest extends RepositoryTest {
 					.findAllAfter(Integer.MAX_VALUE, date, 0);
 
 			assertThat(result).isEmpty();
+		}
+
+		@Test
+		void otherJarSameDate() {
+			final LocalDate date = LocalDate.of(2026, 1, 1);
+
+			final List<JarEntryDao> result = repository
+					.findAllAfter(TestJar.HOUSEHOLD.getId(), date, 0);
+
+			assertThat(result).satisfiesExactly(
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_GROCERY),
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_RENT),
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAFE),
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET));
 		}
 
 		@Test

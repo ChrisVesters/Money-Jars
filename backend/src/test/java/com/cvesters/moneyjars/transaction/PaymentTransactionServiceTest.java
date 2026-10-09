@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import com.cvesters.moneyjars.accountentry.AccountEntryService;
 import com.cvesters.moneyjars.jarentry.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
@@ -27,10 +28,11 @@ class PaymentTransactionServiceTest {
 
 	private final TransactionSequenceService sequenceService = mock();
 	private final JarEntryService jarEntryService = mock();
+	private final AccountEntryService accountEntryService = mock();
 	private final PaymentTransactionStorageGateway storage = mock();
 
 	private final PaymentTransactionService service = new PaymentTransactionService(
-			sequenceService, jarEntryService, storage);
+			sequenceService, jarEntryService, accountEntryService, storage);
 
 	@Nested
 	class Create {
@@ -72,6 +74,7 @@ class PaymentTransactionServiceTest {
 
 			assertThat(result).isSameAs(created);
 			verify(jarEntryService).create(created);
+			verify(accountEntryService).create(created);
 		}
 
 		@Test
@@ -112,9 +115,11 @@ class PaymentTransactionServiceTest {
 
 			assertThat(result).isSameAs(updated);
 
-			final InOrder inOrder = inOrder(storage, jarEntryService, existing);
+			final InOrder inOrder = inOrder(storage, jarEntryService,
+					accountEntryService, existing);
 			inOrder.verify(storage).get(id);
 			inOrder.verify(jarEntryService).delete(existing);
+			inOrder.verify(accountEntryService).delete(existing);
 			inOrder.verify(existing).setAmount(amount);
 			inOrder.verify(existing).setDescription(description);
 			inOrder.verify(existing).setJarId(jarId);
@@ -123,6 +128,7 @@ class PaymentTransactionServiceTest {
 			inOrder.verify(existing).setDirection(direction);
 			inOrder.verify(storage).update(existing);
 			inOrder.verify(jarEntryService).create(updated);
+			inOrder.verify(accountEntryService).create(updated);
 
 			verify(existing, never()).setDate(any());
 			verify(existing, never()).setSequence(anyInt());
@@ -158,9 +164,11 @@ class PaymentTransactionServiceTest {
 
 			assertThat(result).isSameAs(updated);
 
-			final InOrder inOrder = inOrder(storage, jarEntryService, existing);
+			final InOrder inOrder = inOrder(storage, jarEntryService,
+					accountEntryService, existing);
 			inOrder.verify(storage).get(id);
 			inOrder.verify(jarEntryService).delete(existing);
+			inOrder.verify(accountEntryService).delete(existing);
 			inOrder.verify(existing).setDate(date);
 			inOrder.verify(existing).setSequence(4);
 			inOrder.verify(existing).setAmount(amount);
@@ -171,6 +179,7 @@ class PaymentTransactionServiceTest {
 			inOrder.verify(existing).setDirection(direction);
 			inOrder.verify(storage).update(existing);
 			inOrder.verify(jarEntryService).create(updated);
+			inOrder.verify(accountEntryService).create(updated);
 		}
 
 		@Test
@@ -196,9 +205,11 @@ class PaymentTransactionServiceTest {
 
 			service.delete(id);
 
-			final InOrder inOrder = inOrder(storage, jarEntryService);
+			final InOrder inOrder = inOrder(storage, jarEntryService,
+					accountEntryService);
 			inOrder.verify(storage).get(id);
 			inOrder.verify(jarEntryService).delete(existing);
+			inOrder.verify(accountEntryService).delete(existing);
 			inOrder.verify(storage).delete(existing);
 		}
 	}
