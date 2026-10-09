@@ -39,6 +39,16 @@ public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 			""")
 	List<JarEntryDao> findAllAfter(long jarId, LocalDate date, int sequence);
 
+	@Query("""
+			SELECT e
+			FROM JarEntryDao e
+			JOIN TransactionDao t ON t.id = e.transactionId
+			WHERE e.jarId = :jarId
+			ORDER BY t.date DESC, t.sequence DESC
+			LIMIT 1
+			""")
+	Optional<JarEntryDao> findLastByJarId(long jarId);
+
 	JarEntryDao save(JarEntryDao entry);
 
 	void delete(JarEntryDao entry);

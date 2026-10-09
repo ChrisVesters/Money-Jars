@@ -3,8 +3,6 @@ package com.cvesters.moneyjars.jar.bdo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,18 +24,16 @@ class JarTest {
 			assertThat(jar.getId()).isNull();
 			assertThat(jar.getName()).isEqualTo(JAR.getName());
 			assertThat(jar.getDescription()).isEqualTo(JAR.getDescription());
-			assertThat(jar.getBalance()).isEqualTo(BigDecimal.ZERO);
 		}
 
 		@Test
 		void withId() {
 			final var jar = new Jar(JAR.getId(), JAR.getName(),
-					JAR.getDescription(), JAR.getBalance());
+					JAR.getDescription());
 
 			assertThat(jar.getId()).isEqualTo(JAR.getId());
 			assertThat(jar.getName()).isEqualTo(JAR.getName());
 			assertThat(jar.getDescription()).isEqualTo(JAR.getDescription());
-			assertThat(jar.getBalance()).isEqualTo(JAR.getBalance());
 		}
 
 		@Test
@@ -45,9 +41,8 @@ class JarTest {
 			final long id = JAR.getId();
 			final String name = null;
 			final String description = JAR.getDescription();
-			final BigDecimal balance = JAR.getBalance();
 
-			assertThatThrownBy(() -> new Jar(id, name, description, balance))
+			assertThatThrownBy(() -> new Jar(id, name, description))
 					.isInstanceOf(NullPointerException.class);
 		}
 
@@ -56,9 +51,8 @@ class JarTest {
 		void nameInvalid(final String name) {
 			final long id = JAR.getId();
 			final String description = JAR.getDescription();
-			final BigDecimal balance = JAR.getBalance();
 
-			assertThatThrownBy(() -> new Jar(id, name, description, balance))
+			assertThatThrownBy(() -> new Jar(id, name, description))
 					.isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -67,20 +61,8 @@ class JarTest {
 			final long id = JAR.getId();
 			final String name = JAR.getName();
 			final String description = null;
-			final BigDecimal balance = JAR.getBalance();
 
-			assertThatThrownBy(() -> new Jar(id, name, description, balance))
-					.isInstanceOf(NullPointerException.class);
-		}
-
-		@Test
-		void balanceNull() {
-			final long id = JAR.getId();
-			final String name = JAR.getName();
-			final String description = JAR.getDescription();
-			final BigDecimal balance = null;
-
-			assertThatThrownBy(() -> new Jar(id, name, description, balance))
+			assertThatThrownBy(() -> new Jar(id, name, description))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}
@@ -89,7 +71,7 @@ class JarTest {
 	class SetName {
 
 		final Jar jar = new Jar(JAR.getId(), JAR.getName(),
-				JAR.getDescription(), JAR.getBalance());
+				JAR.getDescription());
 
 		@Test
 		void success() {
@@ -117,7 +99,7 @@ class JarTest {
 	class SetDescription {
 
 		final Jar jar = new Jar(JAR.getId(), JAR.getName(),
-				JAR.getDescription(), JAR.getBalance());
+				JAR.getDescription());
 
 		@Test
 		void success() {

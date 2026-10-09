@@ -1,6 +1,5 @@
 package com.cvesters.moneyjars.jar.dao;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -31,15 +30,11 @@ public class JarDao {
 	@Column(nullable = false)
 	private String description;
 
-	@Column(nullable = false)
-	private BigDecimal balance;
-
 	public JarDao(final Jar bdo) {
 		Objects.requireNonNull(bdo);
 
 		this.name = bdo.getName();
 		this.description = bdo.getDescription();
-		this.balance = bdo.getBalance();
 	}
 
 	public void updateWith(final Jar bdo) {
@@ -50,6 +45,6 @@ public class JarDao {
 	}
 
 	public Jar toBdo() {
-		return new Jar(id, name, description, balance);
+		return new Jar(id, name, description);
 	}
 }

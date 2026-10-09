@@ -22,7 +22,6 @@ class JarDtoTest {
 			assertThat(dto.getId()).isEqualTo(JAR.getId());
 			assertThat(dto.getName()).isEqualTo(JAR.getName());
 			assertThat(dto.getDescription()).isEqualTo(JAR.getDescription());
-			assertThat(dto.getBalance()).isEqualTo(JAR.getBalance());
 		}
 
 		@Test

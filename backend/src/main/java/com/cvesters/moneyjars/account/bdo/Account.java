@@ -1,6 +1,5 @@
 package com.cvesters.moneyjars.account.bdo;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 import org.apache.commons.lang3.Validate;
@@ -13,22 +12,18 @@ public class Account {
 	private final Long id;
 	private String name;
 	private String description;
-	private BigDecimal balance;
 
 	public Account(final String name, final String description) {
-		this(null, name, description, BigDecimal.ZERO);
+		this(null, name, description);
 	}
 
-	public Account(final Long id, final String name, final String description,
-			final BigDecimal balance) {
+	public Account(final Long id, final String name, final String description) {
 		Validate.notBlank(name);
 		Objects.requireNonNull(description);
-		Objects.requireNonNull(balance);
 
 		this.id = id;
 		this.name = name;
 		this.description = description;
-		this.balance = balance;
 	}
 
 	public void setName(final String name) {

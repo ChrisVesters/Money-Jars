@@ -49,7 +49,6 @@ class AccountControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""";
@@ -79,7 +78,6 @@ class AccountControllerTest {
 					    id
 					    name
 					    description
-					    balance
 					  }
 					}
 					""";
@@ -101,7 +99,6 @@ class AccountControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""";
@@ -137,7 +134,6 @@ class AccountControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""".formatted(CHECKING.getName(),
@@ -176,7 +172,6 @@ class AccountControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""".formatted(CHECKING.getId(), CHECKING.getName(),
@@ -221,9 +216,6 @@ class AccountControllerTest {
 				.isEqualTo(expected.getName())
 				.path(prefix + ".description")
 				.entity(String.class)
-				.isEqualTo(expected.getDescription())
-				.path(prefix + ".balance")
-				.entity(Float.class)
-				.isEqualTo(expected.getBalance().floatValue());
+				.isEqualTo(expected.getDescription());
 	}
 }

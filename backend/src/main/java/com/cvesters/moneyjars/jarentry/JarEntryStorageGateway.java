@@ -32,6 +32,10 @@ public class JarEntryStorageGateway {
 				.map(JarEntryDao::toBdo);
 	}
 
+	public Optional<JarEntry> findLast(final long jarId) {
+		return repository.findLastByJarId(jarId).map(JarEntryDao::toBdo);
+	}
+
 	public List<JarEntry> getAllAfter(final long jarId, final LocalDate date,
 			final int sequence) {
 		return repository.findAllAfter(jarId, date, sequence)

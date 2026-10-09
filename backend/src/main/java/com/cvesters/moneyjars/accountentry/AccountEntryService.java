@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
@@ -20,6 +21,10 @@ public class AccountEntryService {
 
 	public AccountEntryService(final AccountEntryStorageGateway gateway) {
 		this.gateway = gateway;
+	}
+
+	public Optional<AccountEntry> findLast(final long accountId) {
+		return gateway.findLast(accountId);
 	}
 
 	@Transactional

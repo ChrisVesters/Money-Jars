@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.math.BigDecimal;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -67,7 +65,6 @@ class JarActionTest {
 			assertThat(bdo.getId()).isNull();
 			assertThat(bdo.getName()).isEqualTo(JAR.getName());
 			assertThat(bdo.getDescription()).isEqualTo(JAR.getDescription());
-			assertThat(bdo.getBalance()).isEqualTo(BigDecimal.ZERO);
 		}
 	}
 

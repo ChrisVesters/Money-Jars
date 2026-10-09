@@ -103,6 +103,36 @@ class JarEntryStorageGatewayTest {
 	}
 
 	@Nested
+	class FindLast {
+
+		@Test
+		public void found() {
+			final long jarId = 1L;
+
+			final JarEntryDao dao = mock();
+			final JarEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findLastByJarId(jarId)).thenReturn(Optional.of(dao));
+
+			final Optional<JarEntry> result = gateway.findLast(jarId);
+
+			assertThat(result).contains(bdo);
+		}
+
+		@Test
+		public void notFound() {
+			final long jarId = 1L;
+
+			when(repository.findLastByJarId(jarId)).thenReturn(Optional.empty());
+
+			final Optional<JarEntry> result = gateway.findLast(jarId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class GetAllAfter {
 
 		@Test

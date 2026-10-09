@@ -47,6 +47,10 @@ public enum TestPaymentTransaction {
 	MARKET(9L, LocalDate.of(2026, Month.FEBRUARY, 3), 1,
 			new BigDecimal("98.20"), "Fresh produce", TestJar.HOUSEHOLD,
 			TestAccount.WALLET, "Farmers market",
+			PaymentTransactionDirection.OUTGOING),
+	HOTEL(10L, LocalDate.of(2026, Month.JANUARY, 20), 1,
+			new BigDecimal("350.00"), "Hotel stay", TestJar.HOLIDAY,
+			TestAccount.CREDIT_CARD, "Hotel",
 			PaymentTransactionDirection.OUTGOING);
 
 	private final long id;

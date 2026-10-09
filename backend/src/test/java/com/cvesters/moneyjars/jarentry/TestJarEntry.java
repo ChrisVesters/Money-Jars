@@ -28,7 +28,9 @@ public enum TestJarEntry {
 	CAR_FUEL(8L, TestPaymentTransaction.FUEL, TestJar.CAR,
 			new BigDecimal("500.00"), new BigDecimal("434.60")),
 	HOUSEHOLD_MARKET(9L, TestPaymentTransaction.MARKET, TestJar.HOUSEHOLD,
-			new BigDecimal("833.05"), new BigDecimal("734.85"));
+			new BigDecimal("833.05"), new BigDecimal("734.85")),
+	HOLIDAY_HOTEL(10L, TestPaymentTransaction.HOTEL, TestJar.HOLIDAY,
+			new BigDecimal("2300.00"), new BigDecimal("1950.00"));
 
 	private final long id;
 	private final TestPaymentTransaction transaction;

@@ -23,7 +23,6 @@ class AccountDtoTest {
 			assertThat(dto.getName()).isEqualTo(ACCOUNT.getName());
 			assertThat(dto.getDescription())
 					.isEqualTo(ACCOUNT.getDescription());
-			assertThat(dto.getBalance()).isEqualTo(ACCOUNT.getBalance());
 		}
 
 		@Test

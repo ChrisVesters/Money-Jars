@@ -49,7 +49,6 @@ class JarControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""";
@@ -81,7 +80,6 @@ class JarControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""";
@@ -103,7 +101,6 @@ class JarControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""";
@@ -140,7 +137,6 @@ class JarControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""".formatted(HOUSEHOLD.getName(),
@@ -178,7 +174,6 @@ class JarControllerTest {
 							id
 							name
 							description
-							balance
 						}
 					}
 					""".formatted(HOUSEHOLD.getId(), HOUSEHOLD.getName(),
@@ -221,10 +216,7 @@ class JarControllerTest {
 				.isEqualTo(expected.getName())
 				.path(prefix + ".description")
 				.entity(String.class)
-				.isEqualTo(expected.getDescription())
-				.path(prefix + ".balance")
-				.entity(Float.class)
-				.isEqualTo(expected.getBalance().floatValue());
+				.isEqualTo(expected.getDescription());
 	}
 
 }
