@@ -1,11 +1,10 @@
-package com.cvesters.moneyjars.jarentry;
+package com.cvesters.moneyjars.jar;
 
 import java.math.BigDecimal;
 
 import lombok.Getter;
 
-import com.cvesters.moneyjars.jar.TestJar;
-import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 
 @Getter

@@ -5,9 +5,8 @@ import java.math.BigDecimal;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dto.JarDto;
-import com.cvesters.moneyjars.jarentry.JarEntryService;
-import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
 
 @Controller
 public class JarResolver {

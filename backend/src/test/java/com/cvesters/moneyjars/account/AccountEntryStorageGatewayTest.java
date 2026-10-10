@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.accountentry;
+package com.cvesters.moneyjars.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,8 +19,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.accountentry.bdo.AccountEntry;
-import com.cvesters.moneyjars.accountentry.dao.AccountEntryDao;
+import com.cvesters.moneyjars.account.bdo.AccountEntry;
+import com.cvesters.moneyjars.account.dao.AccountEntryDao;
 
 class AccountEntryStorageGatewayTest {
 

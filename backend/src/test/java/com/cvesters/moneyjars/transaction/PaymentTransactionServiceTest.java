@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.accountentry.AccountEntryService;
-import com.cvesters.moneyjars.jarentry.JarEntryService;
+import com.cvesters.moneyjars.account.AccountEntryService;
+import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 import com.cvesters.moneyjars.transaction.bdo.TransactionAction;

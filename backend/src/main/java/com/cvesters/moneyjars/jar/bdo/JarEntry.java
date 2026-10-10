@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry.bdo;
+package com.cvesters.moneyjars.jar.bdo;
 
 import java.math.BigDecimal;
 import java.util.Objects;

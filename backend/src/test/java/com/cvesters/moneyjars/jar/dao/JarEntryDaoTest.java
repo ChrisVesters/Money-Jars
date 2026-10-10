@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry.dao;
+package com.cvesters.moneyjars.jar.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.cvesters.moneyjars.jarentry.TestJarEntry;
-import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
+import com.cvesters.moneyjars.jar.TestJarEntry;
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
 
 class JarEntryDaoTest {
 

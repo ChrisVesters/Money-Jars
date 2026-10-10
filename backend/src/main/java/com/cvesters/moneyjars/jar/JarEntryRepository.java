@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry;
+package com.cvesters.moneyjars.jar;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
-import com.cvesters.moneyjars.jarentry.dao.JarEntryDao;
+import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 
 public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 

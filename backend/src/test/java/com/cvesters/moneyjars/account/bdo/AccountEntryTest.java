@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry.bdo;
+package com.cvesters.moneyjars.account.bdo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -8,12 +8,12 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.cvesters.moneyjars.jarentry.TestJarEntry;
+import com.cvesters.moneyjars.account.TestAccountEntry;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 
-class JarEntryTest {
+class AccountEntryTest {
 
-	private static final TestJarEntry TEST_ENTRY = TestJarEntry.HOLIDAY_BONUS;
+	private static final TestAccountEntry TEST_ENTRY = TestAccountEntry.CHECKING_SALARY;
 
 	@Nested
 	class First {
@@ -23,13 +23,13 @@ class JarEntryTest {
 			final var testTransaction = TEST_ENTRY.getTransaction();
 			final var transaction = testTransaction.bdo();
 
-			final var entry = JarEntry.first(transaction);
+			final var entry = AccountEntry.first(transaction);
 
 			assertThat(entry.getId()).isNull();
 			assertThat(entry.getTransactionId())
 					.isEqualTo(testTransaction.getId());
-			assertThat(entry.getJarId())
-					.isEqualTo(testTransaction.getJar().getId());
+			assertThat(entry.getAccountId())
+					.isEqualTo(testTransaction.getAccount().getId());
 			assertThat(entry.getBalanceBefore())
 					.isEqualByComparingTo(BigDecimal.ZERO);
 			assertThat(entry.getBalanceAfter())
@@ -38,17 +38,17 @@ class JarEntryTest {
 
 		@Test
 		void negativeAmount() {
-			final TestJarEntry testEntry = TestJarEntry.HOLIDAY_FLIGHTS;
+			final TestAccountEntry testEntry = TestAccountEntry.CREDIT_CARD_FLIGHTS;
 			final var testTransaction = testEntry.getTransaction();
 			final var transaction = testTransaction.bdo();
 
-			final var entry = JarEntry.first(transaction);
+			final var entry = AccountEntry.first(transaction);
 
 			assertThat(entry.getId()).isNull();
 			assertThat(entry.getTransactionId())
 					.isEqualTo(testTransaction.getId());
-			assertThat(entry.getJarId())
-					.isEqualTo(testTransaction.getJar().getId());
+			assertThat(entry.getAccountId())
+					.isEqualTo(testTransaction.getAccount().getId());
 			assertThat(entry.getBalanceBefore())
 					.isEqualByComparingTo(BigDecimal.ZERO);
 			assertThat(entry.getBalanceAfter())
@@ -57,7 +57,7 @@ class JarEntryTest {
 
 		@Test
 		void transactionNull() {
-			assertThatThrownBy(() -> JarEntry.first(null))
+			assertThatThrownBy(() -> AccountEntry.first(null))
 					.isInstanceOf(NullPointerException.class);
 		}
 
@@ -69,17 +69,17 @@ class JarEntryTest {
 		@Test
 		void withoutId() {
 			final long transactionId = TEST_ENTRY.getTransaction().getId();
-			final long jarId = TEST_ENTRY.getJar().getId();
+			final long accountId = TEST_ENTRY.getAccount().getId();
 			final BigDecimal balanceBefore = TEST_ENTRY.getBalanceBefore();
 			final BigDecimal balanceAfter = TEST_ENTRY.getBalanceAfter();
 
-			final var entry = new JarEntry(null, transactionId, jarId,
+			final var entry = new AccountEntry(null, transactionId, accountId,
 					balanceBefore, balanceAfter);
 
 			assertThat(entry.getId()).isNull();
 			assertThat(entry.getTransactionId())
 					.isEqualTo(TEST_ENTRY.getTransaction().getId());
-			assertThat(entry.getJarId()).isEqualTo(TEST_ENTRY.getJar().getId());
+			assertThat(entry.getAccountId()).isEqualTo(TEST_ENTRY.getAccount().getId());
 			assertThat(entry.getBalanceBefore())
 					.isEqualByComparingTo(TEST_ENTRY.getBalanceBefore());
 			assertThat(entry.getBalanceAfter())
@@ -90,17 +90,17 @@ class JarEntryTest {
 		void withId() {
 			final long id = TEST_ENTRY.getId();
 			final long transactionId = TEST_ENTRY.getTransaction().getId();
-			final long jarId = TEST_ENTRY.getJar().getId();
+			final long accountId = TEST_ENTRY.getAccount().getId();
 			final BigDecimal balanceBefore = TEST_ENTRY.getBalanceBefore();
 			final BigDecimal balanceAfter = TEST_ENTRY.getBalanceAfter();
 
-			final var entry = new JarEntry(id, transactionId, jarId,
+			final var entry = new AccountEntry(id, transactionId, accountId,
 					balanceBefore, balanceAfter);
 
 			assertThat(entry.getId()).isEqualTo(TEST_ENTRY.getId());
 			assertThat(entry.getTransactionId())
 					.isEqualTo(TEST_ENTRY.getTransaction().getId());
-			assertThat(entry.getJarId()).isEqualTo(TEST_ENTRY.getJar().getId());
+			assertThat(entry.getAccountId()).isEqualTo(TEST_ENTRY.getAccount().getId());
 			assertThat(entry.getBalanceBefore())
 					.isEqualByComparingTo(TEST_ENTRY.getBalanceBefore());
 			assertThat(entry.getBalanceAfter())
@@ -111,11 +111,11 @@ class JarEntryTest {
 		void balanceBeforeNull() {
 			final long id = TEST_ENTRY.getId();
 			final long transactionId = TEST_ENTRY.getTransaction().getId();
-			final long jarId = TEST_ENTRY.getJar().getId();
+			final long accountId = TEST_ENTRY.getAccount().getId();
 			final BigDecimal balanceBefore = null;
 			final BigDecimal balanceAfter = TEST_ENTRY.getBalanceAfter();
 
-			assertThatThrownBy(() -> new JarEntry(id, transactionId, jarId,
+			assertThatThrownBy(() -> new AccountEntry(id, transactionId, accountId,
 					balanceBefore, balanceAfter))
 							.isInstanceOf(NullPointerException.class);
 		}
@@ -124,11 +124,11 @@ class JarEntryTest {
 		void balanceAfterNull() {
 			final long id = TEST_ENTRY.getId();
 			final long transactionId = TEST_ENTRY.getTransaction().getId();
-			final long jarId = TEST_ENTRY.getJar().getId();
+			final long accountId = TEST_ENTRY.getAccount().getId();
 			final BigDecimal balanceBefore = TEST_ENTRY.getBalanceBefore();
 			final BigDecimal balanceAfter = null;
 
-			assertThatThrownBy(() -> new JarEntry(id, transactionId, jarId,
+			assertThatThrownBy(() -> new AccountEntry(id, transactionId, accountId,
 					balanceBefore, balanceAfter))
 							.isInstanceOf(NullPointerException.class);
 		}
@@ -141,19 +141,19 @@ class JarEntryTest {
 		@Test
 		void positiveAmount() {
 			final var entry = TEST_ENTRY.bdo();
-			final var testTransaction = TestPaymentTransaction.BONUS;
+			final var testTransaction = TestPaymentTransaction.CAR_ALLOWANCE;
 			final var transaction = testTransaction.bdo();
 
 			final BigDecimal balance = entry.getBalanceAfter()
 					.add(testTransaction.getAmount());
 
-			final JarEntry nextEntry = entry.next(transaction);
+			final AccountEntry nextEntry = entry.next(transaction);
 
 			assertThat(nextEntry.getId()).isNull();
 			assertThat(nextEntry.getTransactionId())
 					.isEqualTo(testTransaction.getId());
-			assertThat(nextEntry.getJarId())
-					.isEqualTo(TEST_ENTRY.getJar().getId());
+			assertThat(nextEntry.getAccountId())
+					.isEqualTo(TEST_ENTRY.getAccount().getId());
 			assertThat(nextEntry.getBalanceBefore())
 					.isEqualByComparingTo(entry.getBalanceAfter());
 			assertThat(nextEntry.getBalanceAfter())
@@ -163,19 +163,19 @@ class JarEntryTest {
 		@Test
 		void negativeAmount() {
 			final var entry = TEST_ENTRY.bdo();
-			final var testTransaction = TestPaymentTransaction.FLIGHTS;
+			final var testTransaction = TestPaymentTransaction.RENT;
 			final var transaction = testTransaction.bdo();
 
 			final BigDecimal balance = entry.getBalanceAfter()
 					.subtract(testTransaction.getAmount());
 
-			final JarEntry nextEntry = entry.next(transaction);
+			final AccountEntry nextEntry = entry.next(transaction);
 
 			assertThat(nextEntry.getId()).isNull();
 			assertThat(nextEntry.getTransactionId())
 					.isEqualTo(testTransaction.getId());
-			assertThat(nextEntry.getJarId())
-					.isEqualTo(TEST_ENTRY.getJar().getId());
+			assertThat(nextEntry.getAccountId())
+					.isEqualTo(TEST_ENTRY.getAccount().getId());
 			assertThat(nextEntry.getBalanceBefore())
 					.isEqualByComparingTo(entry.getBalanceAfter());
 			assertThat(nextEntry.getBalanceAfter())
@@ -183,9 +183,9 @@ class JarEntryTest {
 		}
 
 		@Test
-		void wrongJar() {
+		void wrongAccount() {
 			final var entry = TEST_ENTRY.bdo();
-			final var testTransaction = TestPaymentTransaction.GROCERY;
+			final var testTransaction = TestPaymentTransaction.CAFE;
 			final var transaction = testTransaction.bdo();
 
 			assertThatThrownBy(() -> entry.next(transaction))
@@ -204,7 +204,7 @@ class JarEntryTest {
 	@Nested
 	class Shift {
 
-		private final JarEntry entry = TEST_ENTRY.bdo();
+		private final AccountEntry entry = TEST_ENTRY.bdo();
 
 		@Test
 		void amountPositive() {

@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.accountentry;
+package com.cvesters.moneyjars.account;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.cvesters.moneyjars.accountentry.bdo.AccountEntry;
-import com.cvesters.moneyjars.accountentry.dao.AccountEntryDao;
+import com.cvesters.moneyjars.account.bdo.AccountEntry;
+import com.cvesters.moneyjars.account.dao.AccountEntryDao;
 
 @Service
 public class AccountEntryStorageGateway {

@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.accountentry;
+package com.cvesters.moneyjars.account;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
 
-import com.cvesters.moneyjars.accountentry.dao.AccountEntryDao;
+import com.cvesters.moneyjars.account.dao.AccountEntryDao;
 
 public interface AccountEntryRepository
 		extends Repository<AccountEntryDao, Long> {

@@ -5,9 +5,8 @@ import java.math.BigDecimal;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
+import com.cvesters.moneyjars.account.bdo.AccountEntry;
 import com.cvesters.moneyjars.account.dto.AccountDto;
-import com.cvesters.moneyjars.accountentry.AccountEntryService;
-import com.cvesters.moneyjars.accountentry.bdo.AccountEntry;
 
 @Controller
 public class AccountResolver {

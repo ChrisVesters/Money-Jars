@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.accountentry;
+package com.cvesters.moneyjars.account;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.cvesters.moneyjars.account.TestAccount;
-import com.cvesters.moneyjars.accountentry.dao.AccountEntryDao;
+import com.cvesters.moneyjars.account.dao.AccountEntryDao;
 import com.cvesters.moneyjars.test.RepositoryTest;
 
 @Sql({ "/db/accounts.sql", "/db/jars.sql", "/db/transactions.sql",

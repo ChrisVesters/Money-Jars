@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry;
+package com.cvesters.moneyjars.jar;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
-import com.cvesters.moneyjars.jarentry.dao.JarEntryDao;
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
+import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 
 @Service
 public class JarEntryStorageGateway {

@@ -13,9 +13,6 @@ import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.cvesters.moneyjars.accountentry.AccountEntryService;
-import com.cvesters.moneyjars.accountentry.TestAccountEntry;
-
 @GraphQlTest({ AccountController.class, AccountResolver.class })
 class AccountResolverTest {
 

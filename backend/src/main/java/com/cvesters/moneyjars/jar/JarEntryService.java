@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry;
+package com.cvesters.moneyjars.jar;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
-import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
 @Service

@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.jarentry.dao;
+package com.cvesters.moneyjars.jar.dao;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -14,9 +14,8 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import com.cvesters.moneyjars.jarentry.bdo.JarEntry;
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
 
-// TODO: move to jar package?
 @Getter
 @Entity
 @Table(name = "jar_entries", uniqueConstraints = {

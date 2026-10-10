@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.accountentry.dao;
+package com.cvesters.moneyjars.account.dao;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -14,7 +14,7 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import com.cvesters.moneyjars.accountentry.bdo.AccountEntry;
+import com.cvesters.moneyjars.account.bdo.AccountEntry;
 
 @Getter
 @Entity

@@ -1,4 +1,4 @@
-package com.cvesters.moneyjars.accountentry;
+package com.cvesters.moneyjars.jar;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,39 +21,38 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.accountentry.bdo.AccountEntry;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
-class AccountEntryServiceTest {
+class JarEntryServiceTest {
 
-	private final AccountEntryStorageGateway gateway = mock();
-	private final AccountEntryService service = new AccountEntryService(
-			gateway);
+	private final JarEntryStorageGateway gateway = mock();
+	private final JarEntryService service = new JarEntryService(gateway);
 
 	@Nested
 	class FindLast {
 
 		@Test
 		void found() {
-			final long accountId = 1L;
-			final AccountEntry entry = mock();
+			final long jarId = 1L;
+			final JarEntry entry = mock();
 
-			when(gateway.findLast(accountId)).thenReturn(Optional.of(entry));
+			when(gateway.findLast(jarId)).thenReturn(Optional.of(entry));
 
-			final Optional<AccountEntry> result = service.findLast(accountId);
+			final Optional<JarEntry> result = service.findLast(jarId);
 
 			assertThat(result).contains(entry);
 		}
 
 		@Test
 		void notFound() {
-			final long accountId = 1L;
+			final long jarId = 1L;
 
-			when(gateway.findLast(accountId)).thenReturn(Optional.empty());
+			when(gateway.findLast(jarId)).thenReturn(Optional.empty());
 
-			final Optional<AccountEntry> result = service.findLast(accountId);
+			final Optional<JarEntry> result = service.findLast(jarId);
 
 			assertThat(result).isEmpty();
 		}
@@ -67,13 +66,13 @@ class AccountEntryServiceTest {
 		@Test
 		void firstWithoutNext() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 
-			when(gateway.findBefore(accountId, date, sequence))
+			when(gateway.findBefore(jarId, date, sequence))
 					.thenReturn(Optional.empty());
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(Collections.emptyList());
 
 			service.create(transaction);
@@ -83,7 +82,7 @@ class AccountEntryServiceTest {
 				assertThat(entry.getId()).isNull();
 				assertThat(entry.getTransactionId())
 						.isEqualTo(TRANSACTION.getId());
-				assertThat(entry.getAccountId()).isEqualTo(accountId);
+				assertThat(entry.getJarId()).isEqualTo(jarId);
 				assertThat(entry.getBalanceBefore())
 						.isEqualByComparingTo(BigDecimal.ZERO);
 				assertThat(entry.getBalanceAfter())
@@ -96,17 +95,17 @@ class AccountEntryServiceTest {
 		@Test
 		void firstWithNext() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 
-			final AccountEntry next1 = mock();
-			final AccountEntry next2 = mock();
-			final List<AccountEntry> nextEntries = List.of(next1, next2);
+			final JarEntry next1 = mock();
+			final JarEntry next2 = mock();
+			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findBefore(accountId, date, sequence))
+			when(gateway.findBefore(jarId, date, sequence))
 					.thenReturn(Optional.empty());
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
 			service.create(transaction);
@@ -118,7 +117,7 @@ class AccountEntryServiceTest {
 				assertThat(entry.getId()).isNull();
 				assertThat(entry.getTransactionId())
 						.isEqualTo(TRANSACTION.getId());
-				assertThat(entry.getAccountId()).isEqualTo(accountId);
+				assertThat(entry.getJarId()).isEqualTo(jarId);
 				assertThat(entry.getBalanceBefore())
 						.isEqualByComparingTo(BigDecimal.ZERO);
 				assertThat(entry.getBalanceAfter())
@@ -131,17 +130,17 @@ class AccountEntryServiceTest {
 		@Test
 		void withPreviousWithoutNext() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 
-			final AccountEntry previous = mock();
-			final AccountEntry entry = mock();
+			final JarEntry previous = mock();
+			final JarEntry entry = mock();
 			when(previous.next(transaction)).thenReturn(entry);
 
-			when(gateway.findBefore(accountId, date, sequence))
+			when(gateway.findBefore(jarId, date, sequence))
 					.thenReturn(Optional.of(previous));
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(Collections.emptyList());
 
 			service.create(transaction);
@@ -154,21 +153,21 @@ class AccountEntryServiceTest {
 		@Test
 		void withPreviousWithNext() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 
-			final AccountEntry previous = mock();
-			final AccountEntry entry = mock();
+			final JarEntry previous = mock();
+			final JarEntry entry = mock();
 			when(previous.next(transaction)).thenReturn(entry);
 
-			final AccountEntry next1 = mock();
-			final AccountEntry next2 = mock();
-			final List<AccountEntry> nextEntries = List.of(next1, next2);
+			final JarEntry next1 = mock();
+			final JarEntry next2 = mock();
+			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findBefore(accountId, date, sequence))
+			when(gateway.findBefore(jarId, date, sequence))
 					.thenReturn(Optional.of(previous));
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
 			service.create(transaction);
@@ -182,26 +181,26 @@ class AccountEntryServiceTest {
 			verify(entry, never()).shift(any());
 		}
 
-		@Test
+		@Test 
 		void negativeAmount() {
 			final var testTransaction = TestPaymentTransaction.GROCERY;
 			final PaymentTransaction transaction = testTransaction.bdo();
-			final long accountId = testTransaction.getAccount().getId();
+			final long jarId = testTransaction.getJar().getId();
 			final LocalDate date = testTransaction.getDate();
 			final int sequence = testTransaction.getSequence();
 			final BigDecimal amount = testTransaction.getAmount().negate();
 
-			final AccountEntry previous = mock();
-			final AccountEntry entry = mock();
+			final JarEntry previous = mock();
+			final JarEntry entry = mock();
 			when(previous.next(transaction)).thenReturn(entry);
 
-			final AccountEntry next1 = mock();
-			final AccountEntry next2 = mock();
-			final List<AccountEntry> nextEntries = List.of(next1, next2);
+			final JarEntry next1 = mock();
+			final JarEntry next2 = mock();
+			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findBefore(accountId, date, sequence))
+			when(gateway.findBefore(jarId, date, sequence))
 					.thenReturn(Optional.of(previous));
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
 			service.create(transaction);
@@ -232,15 +231,15 @@ class AccountEntryServiceTest {
 		@Test
 		void withoutNext() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 
-			final AccountEntry entry = mock();
+			final JarEntry entry = mock();
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
+			when(gateway.findByJarIdAndTransactionId(jarId,
 					TRANSACTION.getId())).thenReturn(Optional.of(entry));
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(Collections.emptyList());
 
 			service.delete(transaction);
@@ -253,20 +252,20 @@ class AccountEntryServiceTest {
 		@Test
 		void withNext() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();
 			final BigDecimal amount = TRANSACTION.getAmount().negate();
 
-			final AccountEntry entry = mock();
+			final JarEntry entry = mock();
 
-			final AccountEntry next1 = mock();
-			final AccountEntry next2 = mock();
-			final List<AccountEntry> nextEntries = List.of(next1, next2);
+			final JarEntry next1 = mock();
+			final JarEntry next2 = mock();
+			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
+			when(gateway.findByJarIdAndTransactionId(jarId,
 					TRANSACTION.getId())).thenReturn(Optional.of(entry));
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
 			service.delete(transaction);
@@ -284,20 +283,20 @@ class AccountEntryServiceTest {
 		void negativeAmount() {
 			final var testTransaction = TestPaymentTransaction.GROCERY;
 			final PaymentTransaction transaction = testTransaction.bdo();
-			final long accountId = testTransaction.getAccount().getId();
+			final long jarId = testTransaction.getJar().getId();
 			final LocalDate date = testTransaction.getDate();
 			final int sequence = testTransaction.getSequence();
 			final BigDecimal amount = testTransaction.getAmount();
 
-			final AccountEntry entry = mock();
+			final JarEntry entry = mock();
 
-			final AccountEntry next1 = mock();
-			final AccountEntry next2 = mock();
-			final List<AccountEntry> nextEntries = List.of(next1, next2);
+			final JarEntry next1 = mock();
+			final JarEntry next2 = mock();
+			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
+			when(gateway.findByJarIdAndTransactionId(jarId,
 					testTransaction.getId())).thenReturn(Optional.of(entry));
-			when(gateway.getAllAfter(accountId, date, sequence))
+			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
 			service.delete(transaction);
@@ -314,9 +313,9 @@ class AccountEntryServiceTest {
 		@Test
 		void notFound() {
 			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
+			final long jarId = TRANSACTION.getJar().getId();
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
+			when(gateway.findByJarIdAndTransactionId(jarId,
 					TRANSACTION.getId())).thenReturn(Optional.empty());
 
 			assertThatThrownBy(() -> service.delete(transaction))

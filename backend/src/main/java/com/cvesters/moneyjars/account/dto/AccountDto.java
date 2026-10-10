@@ -1,6 +1,5 @@
 package com.cvesters.moneyjars.account.dto;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 import lombok.Getter;
@@ -13,8 +12,6 @@ public class AccountDto {
 	private Long id;
 	private String name;
 	private String description;
-	// TODO: resolver!
-	private BigDecimal balance;
 
 	public AccountDto(final Account account) {
 		Objects.requireNonNull(account);
