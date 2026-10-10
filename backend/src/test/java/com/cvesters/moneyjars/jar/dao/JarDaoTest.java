@@ -23,7 +23,6 @@ class JarDaoTest {
 			assertThat(dao.getId()).isNull();
 			assertThat(dao.getName()).isEqualTo(JAR.getName());
 			assertThat(dao.getDescription()).isEqualTo(JAR.getDescription());
-			assertThat(dao.getBalance()).isEqualTo(JAR.getBalance());
 		}
 
 		@Test
@@ -48,7 +47,6 @@ class JarDaoTest {
 			assertThat(dao.getId()).isNull();
 			assertThat(dao.getName()).isEqualTo(name);
 			assertThat(dao.getDescription()).isEqualTo(description);
-			assertThat(dao.getBalance()).isEqualTo(JAR.getBalance());
 		}
 
 		@Test
@@ -71,7 +69,6 @@ class JarDaoTest {
 			assertThat(bdo.getId()).isNull();
 			assertThat(bdo.getName()).isEqualTo(JAR.getName());
 			assertThat(bdo.getDescription()).isEqualTo(JAR.getDescription());
-			assertThat(bdo.getBalance()).isEqualTo(JAR.getBalance());
 		}
 	}
 }

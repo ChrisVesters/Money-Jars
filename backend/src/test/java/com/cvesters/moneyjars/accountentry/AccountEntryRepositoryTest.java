@@ -156,6 +156,36 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 		}
 	}
 
+	@Nested
+	class FindLastByAccountId {
+
+		@Test
+		void invalidAccount() {
+			final Optional<AccountEntryDao> result = repository
+					.findLastByAccountId(Integer.MAX_VALUE);
+
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		void latestDate() {
+			final Optional<AccountEntryDao> result = repository
+					.findLastByAccountId(TestAccount.WALLET.getId());
+
+			assertThat(result).hasValueSatisfying(
+					e -> assertEquals(e, TestAccountEntry.WALLET_MARKET));
+		}
+
+		@Test
+		void highestSequenceOnLatestDate() {
+			final Optional<AccountEntryDao> result = repository
+					.findLastByAccountId(ACCOUNT.getId());
+
+			assertThat(result).hasValueSatisfying(
+					e -> assertEquals(e, TestAccountEntry.CHECKING_RENT));
+		}
+	}
+
 	private static void assertEquals(final AccountEntryDao e,
 			final TestAccountEntry expected) {
 		assertThat(e.getId()).isEqualTo(expected.getId());

@@ -36,6 +36,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 					t -> assertEquals(t, TestPaymentTransaction.RENT),
 					t -> assertEquals(t, TestPaymentTransaction.CAFE),
 					t -> assertEquals(t, TestPaymentTransaction.FLIGHTS),
+					t -> assertEquals(t, TestPaymentTransaction.HOTEL),
 					t -> assertEquals(t, TestPaymentTransaction.FUEL),
 					t -> assertEquals(t, TestPaymentTransaction.MARKET));
 		}
@@ -71,7 +72,8 @@ class TransactionRepositoryTest extends RepositoryTest {
 					t -> assertEquals(t, TestPaymentTransaction.GROCERY),
 					t -> assertEquals(t, TestPaymentTransaction.RENT),
 					t -> assertEquals(t, TestPaymentTransaction.CAFE),
-					t -> assertEquals(t, TestPaymentTransaction.FLIGHTS));
+					t -> assertEquals(t, TestPaymentTransaction.FLIGHTS),
+					t -> assertEquals(t, TestPaymentTransaction.HOTEL));
 		}
 
 		@Test

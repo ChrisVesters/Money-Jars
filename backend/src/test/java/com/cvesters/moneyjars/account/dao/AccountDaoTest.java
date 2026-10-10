@@ -24,7 +24,6 @@ class AccountDaoTest {
 			assertThat(dao.getName()).isEqualTo(ACCOUNT.getName());
 			assertThat(dao.getDescription())
 					.isEqualTo(ACCOUNT.getDescription());
-			assertThat(dao.getBalance()).isEqualTo(ACCOUNT.getBalance());
 		}
 
 		@Test
@@ -49,7 +48,6 @@ class AccountDaoTest {
 			assertThat(dao.getId()).isNull();
 			assertThat(dao.getName()).isEqualTo(name);
 			assertThat(dao.getDescription()).isEqualTo(description);
-			assertThat(dao.getBalance()).isEqualTo(ACCOUNT.getBalance());
 		}
 
 		@Test
@@ -73,7 +71,6 @@ class AccountDaoTest {
 			assertThat(bdo.getName()).isEqualTo(ACCOUNT.getName());
 			assertThat(bdo.getDescription())
 					.isEqualTo(ACCOUNT.getDescription());
-			assertThat(bdo.getBalance()).isEqualTo(ACCOUNT.getBalance());
 		}
 	}
 }

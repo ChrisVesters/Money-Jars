@@ -72,7 +72,6 @@ class JarStorageGatewayTest {
 				assertThat(v.getId()).isNull();
 				assertThat(v.getName()).isEqualTo(JAR.getName());
 				assertThat(v.getDescription()).isEqualTo(JAR.getDescription());
-				assertThat(v.getBalance()).isEqualTo(JAR.getBalance());
 				return true;
 			}))).thenReturn(createdDao);
 

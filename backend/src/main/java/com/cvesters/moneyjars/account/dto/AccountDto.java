@@ -13,6 +13,7 @@ public class AccountDto {
 	private Long id;
 	private String name;
 	private String description;
+	// TODO: resolver!
 	private BigDecimal balance;
 
 	public AccountDto(final Account account) {
@@ -21,6 +22,5 @@ public class AccountDto {
 		this.id = account.getId();
 		this.name = account.getName();
 		this.description = account.getDescription();
-		this.balance = account.getBalance();
 	}
 }

@@ -103,6 +103,38 @@ class AccountEntryStorageGatewayTest {
 	}
 
 	@Nested
+	class FindLast {
+
+		@Test
+		public void found() {
+			final long accountId = 1L;
+
+			final AccountEntryDao dao = mock();
+			final AccountEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findLastByAccountId(accountId))
+					.thenReturn(Optional.of(dao));
+
+			final Optional<AccountEntry> result = gateway.findLast(accountId);
+
+			assertThat(result).contains(bdo);
+		}
+
+		@Test
+		public void notFound() {
+			final long accountId = 1L;
+
+			when(repository.findLastByAccountId(accountId))
+					.thenReturn(Optional.empty());
+
+			final Optional<AccountEntry> result = gateway.findLast(accountId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class GetAllAfter {
 
 		@Test

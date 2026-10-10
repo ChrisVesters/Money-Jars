@@ -42,6 +42,16 @@ public interface AccountEntryRepository
 	List<AccountEntryDao> findAllAfter(long accountId, LocalDate date,
 			int sequence);
 
+	@Query("""
+			SELECT e
+			FROM AccountEntryDao e
+			JOIN TransactionDao t ON t.id = e.transactionId
+			WHERE e.accountId = :accountId
+			ORDER BY t.date DESC, t.sequence DESC
+			LIMIT 1
+			""")
+	Optional<AccountEntryDao> findLastByAccountId(long accountId);
+
 	AccountEntryDao save(AccountEntryDao entry);
 
 	void delete(AccountEntryDao entry);

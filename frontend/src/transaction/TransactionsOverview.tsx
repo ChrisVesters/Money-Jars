@@ -76,7 +76,11 @@ const TransactionsOverview = (): JSX.Element => {
 						id: selectedTransaction.id,
 						req: data
 					},
-					refetchQueries: [{ query: GetTransactionsDocument }]
+					refetchQueries: [
+						{ query: GetTransactionsDocument },
+						{ query: GetJarsDocument },
+						{ query: GetAccountsDocument }
+					]
 				});
 				console.log("Update transaction result:", result);
 			} else {
@@ -84,7 +88,11 @@ const TransactionsOverview = (): JSX.Element => {
 					variables: {
 						req: data
 					},
-					refetchQueries: [{ query: GetTransactionsDocument }]
+					refetchQueries: [
+						{ query: GetTransactionsDocument },
+						{ query: GetJarsDocument },
+						{ query: GetAccountsDocument }
+					]
 				});
 				console.log("Create transaction result:", result);
 			}
@@ -109,7 +117,11 @@ const TransactionsOverview = (): JSX.Element => {
 				variables: {
 					id: selectedTransaction.id
 				},
-				refetchQueries: [{ query: GetTransactionsDocument }]
+				refetchQueries: [
+					{ query: GetTransactionsDocument },
+					{ query: GetJarsDocument },
+					{ query: GetAccountsDocument }
+				]
 			});
 			console.log("Delete transaction result:", result);
 			setSelectedTransaction(undefined);

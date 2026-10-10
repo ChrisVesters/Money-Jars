@@ -28,9 +28,12 @@ public enum TestAccountEntry {
 			TestAccount.CREDIT_CARD, new BigDecimal("0.00"),
 			new BigDecimal("-200.00")),
 	CREDIT_CARD_FUEL(8L, TestPaymentTransaction.FUEL, TestAccount.CREDIT_CARD,
-			new BigDecimal("-200.00"), new BigDecimal("-265.40")),
+			new BigDecimal("-550.00"), new BigDecimal("-615.40")),
 	WALLET_MARKET(9L, TestPaymentTransaction.MARKET, TestAccount.WALLET,
-			new BigDecimal("-15.00"), new BigDecimal("-113.20"));
+			new BigDecimal("-15.00"), new BigDecimal("-113.20")),
+	CREDIT_CARD_HOTEL(10L, TestPaymentTransaction.HOTEL,
+			TestAccount.CREDIT_CARD, new BigDecimal("-200.00"),
+			new BigDecimal("-550.00"));
 
 	private final long id;
 	private final TestPaymentTransaction transaction;

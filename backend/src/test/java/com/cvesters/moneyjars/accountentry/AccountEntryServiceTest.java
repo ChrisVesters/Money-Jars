@@ -33,6 +33,33 @@ class AccountEntryServiceTest {
 			gateway);
 
 	@Nested
+	class FindLast {
+
+		@Test
+		void found() {
+			final long accountId = 1L;
+			final AccountEntry entry = mock();
+
+			when(gateway.findLast(accountId)).thenReturn(Optional.of(entry));
+
+			final Optional<AccountEntry> result = service.findLast(accountId);
+
+			assertThat(result).contains(entry);
+		}
+
+		@Test
+		void notFound() {
+			final long accountId = 1L;
+
+			when(gateway.findLast(accountId)).thenReturn(Optional.empty());
+
+			final Optional<AccountEntry> result = service.findLast(accountId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class Create {
 
 		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.SALARY;

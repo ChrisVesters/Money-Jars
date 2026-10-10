@@ -63,7 +63,6 @@ class PaymentTransactionResolverTest {
 									id
 									name
 									description
-									balance
 								}
 							}
 						}
@@ -82,10 +81,7 @@ class PaymentTransactionResolverTest {
 					.isEqualTo(JAR.getName())
 					.path(prefix + ".description")
 					.entity(String.class)
-					.isEqualTo(JAR.getDescription())
-					.path(prefix + ".balance")
-					.entity(Float.class)
-					.isEqualTo(JAR.getBalance().floatValue());
+					.isEqualTo(JAR.getDescription());
 		}
 
 		@Test
@@ -104,7 +100,6 @@ class PaymentTransactionResolverTest {
 									id
 									name
 									description
-									balance
 								}
 							}
 						}
@@ -148,7 +143,6 @@ class PaymentTransactionResolverTest {
 									id
 									name
 									description
-									balance
 								}
 							}
 						}
@@ -167,10 +161,7 @@ class PaymentTransactionResolverTest {
 					.isEqualTo(ACCOUNT.getName())
 					.path(prefix + ".description")
 					.entity(String.class)
-					.isEqualTo(ACCOUNT.getDescription())
-					.path(prefix + ".balance")
-					.entity(Float.class)
-					.isEqualTo(ACCOUNT.getBalance().floatValue());
+					.isEqualTo(ACCOUNT.getDescription());
 		}
 
 		@Test
@@ -190,7 +181,6 @@ class PaymentTransactionResolverTest {
 									id
 									name
 									description
-									balance
 								}
 							}
 						}

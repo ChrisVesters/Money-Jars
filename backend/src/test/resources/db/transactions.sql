@@ -9,7 +9,8 @@ VALUES
   (6, '2026-01-01', 2, 500.00, 'Car allowance'),
   (7, '2026-01-20', 0, 200.00, 'Flight tickets'),
   (8, '2026-02-03', 0, 65.40, 'Fuel'),
-  (9, '2026-02-03', 1, 98.20, 'Fresh produce');
+  (9, '2026-02-03', 1, 98.20, 'Fresh produce'),
+  (10, '2026-01-20', 1, 350.00, 'Hotel stay');
 
 SELECT setval('transactions_id_seq', (SELECT MAX(id) from "transactions"));
 
@@ -24,4 +25,5 @@ VALUES
   (6, 3, 1, 'Employer', 0),
   (7, 2, 4, 'Airline', 1),
   (8, 3, 4, 'Gas station', 1),
-  (9, 1, 2, 'Farmers market', 1);
+  (9, 1, 2, 'Farmers market', 1),
+  (10, 2, 4, 'Hotel', 1);

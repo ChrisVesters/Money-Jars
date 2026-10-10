@@ -1,6 +1,5 @@
 package com.cvesters.moneyjars.account.dao;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -31,15 +30,11 @@ public class AccountDao {
 	@Column(nullable = false)
 	private String description;
 
-	@Column(nullable = false)
-	private BigDecimal balance;
-
 	public AccountDao(final Account account) {
 		Objects.requireNonNull(account);
 
 		this.name = account.getName();
 		this.description = account.getDescription();
-		this.balance = account.getBalance();
 	}
 
 	public void updateWith(final Account account) {
@@ -50,6 +45,6 @@ public class AccountDao {
 	}
 
 	public Account toBdo() {
-		return new Account(id, name, description, balance);
+		return new Account(id, name, description);
 	}
 }

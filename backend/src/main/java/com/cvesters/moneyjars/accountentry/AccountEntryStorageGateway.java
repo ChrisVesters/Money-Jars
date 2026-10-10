@@ -33,6 +33,11 @@ public class AccountEntryStorageGateway {
 				.map(AccountEntryDao::toBdo);
 	}
 
+	public Optional<AccountEntry> findLast(final long accountId) {
+		return repository.findLastByAccountId(accountId)
+				.map(AccountEntryDao::toBdo);
+	}
+
 	public List<AccountEntry> getAllAfter(final long accountId,
 			final LocalDate date, final int sequence) {
 		return repository.findAllAfter(accountId, date, sequence)

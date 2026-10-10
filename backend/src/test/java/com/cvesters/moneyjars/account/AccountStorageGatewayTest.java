@@ -75,7 +75,6 @@ class AccountStorageGatewayTest {
 				assertThat(v.getName()).isEqualTo(ACCOUNT.getName());
 				assertThat(v.getDescription())
 						.isEqualTo(ACCOUNT.getDescription());
-				assertThat(v.getBalance()).isEqualTo(ACCOUNT.getBalance());
 				return true;
 			}))).thenReturn(createdDao);
 

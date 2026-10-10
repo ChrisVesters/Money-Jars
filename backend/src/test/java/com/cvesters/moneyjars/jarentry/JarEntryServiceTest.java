@@ -32,6 +32,33 @@ class JarEntryServiceTest {
 	private final JarEntryService service = new JarEntryService(gateway);
 
 	@Nested
+	class FindLast {
+
+		@Test
+		void found() {
+			final long jarId = 1L;
+			final JarEntry entry = mock();
+
+			when(gateway.findLast(jarId)).thenReturn(Optional.of(entry));
+
+			final Optional<JarEntry> result = service.findLast(jarId);
+
+			assertThat(result).contains(entry);
+		}
+
+		@Test
+		void notFound() {
+			final long jarId = 1L;
+
+			when(gateway.findLast(jarId)).thenReturn(Optional.empty());
+
+			final Optional<JarEntry> result = service.findLast(jarId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class Create {
 
 		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.SALARY;

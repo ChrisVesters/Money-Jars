@@ -159,6 +159,36 @@ class JarEntryRepositoryTest extends RepositoryTest {
 		}
 	}
 
+	@Nested
+	class FindLastByJarId {
+
+		@Test
+		void invalidJar() {
+			final Optional<JarEntryDao> result = repository
+					.findLastByJarId(Integer.MAX_VALUE);
+
+			assertThat(result).isEmpty();
+		}
+
+		@Test
+		void latestDate() {
+			final Optional<JarEntryDao> result = repository
+					.findLastByJarId(TestJar.CAR.getId());
+
+			assertThat(result).hasValueSatisfying(
+					e -> assertEquals(e, TestJarEntry.CAR_FUEL));
+		}
+
+		@Test
+		void highestSequenceOnLatestDate() {
+			final Optional<JarEntryDao> result = repository
+					.findLastByJarId(TestJar.HOLIDAY.getId());
+
+			assertThat(result).hasValueSatisfying(
+					e -> assertEquals(e, TestJarEntry.HOLIDAY_HOTEL));
+		}
+	}
+
 	private static void assertEquals(final JarEntryDao e,
 			final TestJarEntry expected) {
 		assertThat(e.getId()).isEqualTo(expected.getId());
