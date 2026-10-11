@@ -74,6 +74,66 @@ class PaymentTransactionTest extends TransactionTest {
 		}
 
 		@Test
+		void dateNull() {
+			final LocalDate date = null;
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+			final String description = TRANSACTION.getDescription();
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
+
+			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
+					amount, description, jarId, accountId, counterparty, null))
+							.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void amountNull() {
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = null;
+			final String description = TRANSACTION.getDescription();
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
+
+			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
+					amount, description, jarId, accountId, counterparty, null))
+							.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void amountNegative() {
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount().negate();
+			final String description = TRANSACTION.getDescription();
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
+
+			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
+					amount, description, jarId, accountId, counterparty, null))
+							.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void descriptionNull() {
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+			final String description = null;
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
+
+			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
+					amount, description, jarId, accountId, counterparty, null))
+							.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
 		void directionNull() {
 			final LocalDate date = TRANSACTION.getDate();
 			final int sequence = TRANSACTION.getSequence();

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 
 class PaymentTransactionActionDtoTest {
 
@@ -46,7 +46,7 @@ class PaymentTransactionActionDtoTest {
 					TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
-			final TransactionAction.CreatePayment bdo = dto.toBdo();
+			final PaymentTransactionAction.Create bdo = dto.toBdo();
 
 			assertThat(bdo.date()).isEqualTo(TRANSACTION.getDate());
 			assertThat(bdo.amount())
@@ -96,7 +96,7 @@ class PaymentTransactionActionDtoTest {
 					TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
-			final TransactionAction.UpdatePayment bdo = dto.toBdo();
+			final PaymentTransactionAction.Update bdo = dto.toBdo();
 
 			assertThat(bdo.date()).isEqualTo(TRANSACTION.getDate());
 			assertThat(bdo.amount())
