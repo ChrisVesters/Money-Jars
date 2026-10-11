@@ -2,7 +2,7 @@ type Jar {
   id: ID!
   name: String!
   description: String!
-  balance: Float! # string instead? To not lose precision
+  balance: String!
 }
 
 input UpdateJar {

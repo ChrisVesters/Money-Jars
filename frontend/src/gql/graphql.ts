@@ -18,7 +18,7 @@ export type Scalars = {
 
 export type Account = {
   __typename?: 'Account';
-  balance: Scalars['Float']['output'];
+  balance: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
@@ -26,8 +26,7 @@ export type Account = {
 
 export type CreatePaymentTransaction = {
   accountId: Scalars['ID']['input'];
-  amount: Scalars['Float']['input'];
-  /**  string instead? To not lose precision */
+  amount: Scalars['String']['input'];
   counterparty: Scalars['String']['input'];
   date: Scalars['String']['input'];
   description: Scalars['String']['input'];
@@ -43,7 +42,7 @@ export enum Direction {
 
 export type Jar = {
   __typename?: 'Jar';
-  balance: Scalars['Float']['output'];
+  balance: Scalars['String']['output'];
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
@@ -113,8 +112,7 @@ export type MutationUpdatePaymentTransactionArgs = {
 export type PaymentTransaction = Transaction & {
   __typename?: 'PaymentTransaction';
   account: Account;
-  amount: Scalars['Float']['output'];
-  /**  string instead? To not lose precision */
+  amount: Scalars['String']['output'];
   counterparty: Scalars['String']['output'];
   date: Scalars['String']['output'];
   description: Scalars['String']['output'];
@@ -149,9 +147,8 @@ export type QueryGetTransactionArgs = {
 };
 
 export type Transaction = {
-  amount: Scalars['Float']['output'];
+  amount?: Maybe<Scalars['String']['output']>;
   date: Scalars['String']['output'];
-  /**  string instead? To not lose precision */
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
 };
@@ -169,21 +166,21 @@ export type UpdateJar = {
 export type GetAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAccountsQuery = { __typename?: 'Query', getAccounts: Array<{ __typename?: 'Account', id: string, name: string, description: string, balance: number }> };
+export type GetAccountsQuery = { __typename?: 'Query', getAccounts: Array<{ __typename?: 'Account', id: string, name: string, description: string, balance: string }> };
 
 export type GetAccountQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetAccountQuery = { __typename?: 'Query', getAccount?: { __typename?: 'Account', id: string, name: string, description: string, balance: number } | null };
+export type GetAccountQuery = { __typename?: 'Query', getAccount?: { __typename?: 'Account', id: string, name: string, description: string, balance: string } | null };
 
 export type CreateAccountMutationVariables = Exact<{
   req: UpdateAccount;
 }>;
 
 
-export type CreateAccountMutation = { __typename?: 'Mutation', createAccount?: { __typename?: 'Account', id: string, name: string, description: string, balance: number } | null };
+export type CreateAccountMutation = { __typename?: 'Mutation', createAccount?: { __typename?: 'Account', id: string, name: string, description: string, balance: string } | null };
 
 export type UpdateAccountMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -191,7 +188,7 @@ export type UpdateAccountMutationVariables = Exact<{
 }>;
 
 
-export type UpdateAccountMutation = { __typename?: 'Mutation', updateAccount?: { __typename?: 'Account', id: string, name: string, description: string, balance: number } | null };
+export type UpdateAccountMutation = { __typename?: 'Mutation', updateAccount?: { __typename?: 'Account', id: string, name: string, description: string, balance: string } | null };
 
 export type DeleteAccountMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -203,21 +200,21 @@ export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount?: b
 export type GetJarsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetJarsQuery = { __typename?: 'Query', getJars: Array<{ __typename?: 'Jar', id: string, name: string, description: string, balance: number }> };
+export type GetJarsQuery = { __typename?: 'Query', getJars: Array<{ __typename?: 'Jar', id: string, name: string, description: string, balance: string }> };
 
 export type GetJarQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetJarQuery = { __typename?: 'Query', getJar?: { __typename?: 'Jar', id: string, name: string, description: string, balance: number } | null };
+export type GetJarQuery = { __typename?: 'Query', getJar?: { __typename?: 'Jar', id: string, name: string, description: string, balance: string } | null };
 
 export type CreateJarMutationVariables = Exact<{
   req: UpdateJar;
 }>;
 
 
-export type CreateJarMutation = { __typename?: 'Mutation', createJar?: { __typename?: 'Jar', id: string, name: string, description: string, balance: number } | null };
+export type CreateJarMutation = { __typename?: 'Mutation', createJar?: { __typename?: 'Jar', id: string, name: string, description: string, balance: string } | null };
 
 export type UpdateJarMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -225,7 +222,7 @@ export type UpdateJarMutationVariables = Exact<{
 }>;
 
 
-export type UpdateJarMutation = { __typename?: 'Mutation', updateJar?: { __typename?: 'Jar', id: string, name: string, description: string, balance: number } | null };
+export type UpdateJarMutation = { __typename?: 'Mutation', updateJar?: { __typename?: 'Jar', id: string, name: string, description: string, balance: string } | null };
 
 export type DeleteJarMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -237,14 +234,14 @@ export type DeleteJarMutation = { __typename?: 'Mutation', deleteJar?: boolean |
 export type GetTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTransactionsQuery = { __typename?: 'Query', getTransactions: Array<{ __typename: 'PaymentTransaction', counterparty: string, direction: Direction, id: string, date: string, amount: number, description: string, jar: { __typename?: 'Jar', id: string, name: string }, account: { __typename?: 'Account', id: string, name: string } }> };
+export type GetTransactionsQuery = { __typename?: 'Query', getTransactions: Array<{ __typename: 'PaymentTransaction', counterparty: string, direction: Direction, id: string, date: string, amount: string, description: string, jar: { __typename?: 'Jar', id: string, name: string }, account: { __typename?: 'Account', id: string, name: string } }> };
 
 export type CreatePaymentTransactionMutationVariables = Exact<{
   req: CreatePaymentTransaction;
 }>;
 
 
-export type CreatePaymentTransactionMutation = { __typename?: 'Mutation', createPaymentTransaction?: { __typename?: 'PaymentTransaction', id: string, date: string, amount: number, description: string, counterparty: string, direction: Direction } | null };
+export type CreatePaymentTransactionMutation = { __typename?: 'Mutation', createPaymentTransaction?: { __typename?: 'PaymentTransaction', id: string, date: string, amount: string, description: string, counterparty: string, direction: Direction } | null };
 
 export type UpdatePaymentTransactionMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -252,7 +249,7 @@ export type UpdatePaymentTransactionMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePaymentTransactionMutation = { __typename?: 'Mutation', updatePaymentTransaction?: { __typename?: 'PaymentTransaction', id: string, date: string, amount: number, description: string, counterparty: string, direction: Direction } | null };
+export type UpdatePaymentTransactionMutation = { __typename?: 'Mutation', updatePaymentTransaction?: { __typename?: 'PaymentTransaction', id: string, date: string, amount: string, description: string, counterparty: string, direction: Direction } | null };
 
 export type DeletePaymentTransactionMutationVariables = Exact<{
   id: Scalars['ID']['input'];

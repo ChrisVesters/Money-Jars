@@ -18,10 +18,11 @@ public class JarResolver {
 	}
 
 	@SchemaMapping(typeName = "Jar", field = "balance")
-	public BigDecimal balance(final JarDto jar) {
+	public String balance(final JarDto jar) {
 		return entryService.findLast(jar.getId())
 				.map(JarEntry::getBalanceAfter)
-				.orElse(BigDecimal.ZERO);
+				.orElse(BigDecimal.ZERO)
+				.toPlainString();
 	}
 
 }

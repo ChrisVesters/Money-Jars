@@ -1,7 +1,7 @@
 interface Transaction {
 	id: ID!
 	date: String!
-	amount: Float! # string instead? To not lose precision
+	amount: String
 	description: String!
 }
 

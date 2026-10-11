@@ -54,7 +54,7 @@ class PaymentTransactionControllerTest {
 					mutation {
 						createPaymentTransaction(req: {
 							date: "%s"
-							amount: %s
+							amount: "%s"
 							description: "%s"
 							jarId: %d
 							accountId: %d
@@ -69,7 +69,7 @@ class PaymentTransactionControllerTest {
 						}
 					}
 					""".formatted(TRANSACTION.getDate().toString(),
-					TRANSACTION.getAmount(), TRANSACTION.getDescription(),
+					TRANSACTION.getAmountString(), TRANSACTION.getDescription(),
 					TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
 					TRANSACTION.getCounterparty(),
@@ -113,7 +113,7 @@ class PaymentTransactionControllerTest {
 					mutation {
 						updatePaymentTransaction(id: %d, req: {
 							date: "%s"
-							amount: %s
+							amount: "%s"
 							description: "%s"
 							jarId: %d
 							accountId: %d
@@ -128,7 +128,7 @@ class PaymentTransactionControllerTest {
 						}
 					}
 					""".formatted(TRANSACTION.getId(),
-					TRANSACTION.getDate().toString(), TRANSACTION.getAmount(),
+					TRANSACTION.getDate().toString(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
 					TRANSACTION.getCounterparty(),
@@ -172,8 +172,8 @@ class PaymentTransactionControllerTest {
 				.entity(String.class)
 				.isEqualTo(expected.getDate().toString())
 				.path(prefix + ".amount")
-				.entity(Float.class)
-				.isEqualTo(expected.getAmount().floatValue())
+				.entity(String.class)
+				.isEqualTo(expected.getAmountString())
 				.path(prefix + ".description")
 				.entity(String.class)
 				.isEqualTo(expected.getDescription())

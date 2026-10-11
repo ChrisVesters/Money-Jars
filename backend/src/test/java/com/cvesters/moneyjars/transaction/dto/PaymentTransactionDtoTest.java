@@ -23,7 +23,7 @@ class PaymentTransactionDtoTest {
 			assertThat(dto.getId()).isEqualTo(TRANSACTION.getId());
 			assertThat(dto.getDate())
 					.isEqualTo(TRANSACTION.getDate().toString());
-			assertThat(dto.getAmount()).isEqualTo(TRANSACTION.getAmount());
+			assertThat(dto.getAmount()).isEqualTo(TRANSACTION.getAmountString());
 			assertThat(dto.getDescription())
 					.isEqualTo(TRANSACTION.getDescription());
 			assertThat(dto.getJarId()).isEqualTo(TRANSACTION.getJar().getId());

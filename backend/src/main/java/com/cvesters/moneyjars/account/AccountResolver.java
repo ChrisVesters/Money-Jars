@@ -18,10 +18,11 @@ public class AccountResolver {
 	}
 
 	@SchemaMapping(typeName = "Account", field = "balance")
-	public BigDecimal balance(final AccountDto account) {
+	public String balance(final AccountDto account) {
 		return entryService.findLast(account.getId())
 				.map(AccountEntry::getBalanceAfter)
-				.orElse(BigDecimal.ZERO);
+				.orElse(BigDecimal.ZERO)
+				.toPlainString();
 	}
 
 }

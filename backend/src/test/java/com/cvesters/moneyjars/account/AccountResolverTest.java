@@ -49,9 +49,9 @@ class AccountResolverTest {
 			graphQlTester.document(DOCUMENT)
 					.execute()
 					.path("getAccount.balance")
-					.entity(BigDecimal.class)
-					.satisfies(balance -> assertThat(balance)
-							.isEqualByComparingTo(ENTRY.getBalanceAfter()));
+					.entity(String.class)
+					.satisfies(balance -> assertThat(balance).isEqualTo(
+							ENTRY.getBalanceAfter().toPlainString()));
 		}
 
 		@Test
@@ -64,9 +64,9 @@ class AccountResolverTest {
 			graphQlTester.document(DOCUMENT)
 					.execute()
 					.path("getAccount.balance")
-					.entity(BigDecimal.class)
+					.entity(String.class)
 					.satisfies(balance -> assertThat(balance)
-							.isEqualByComparingTo(BigDecimal.ZERO));
+							.isEqualTo(BigDecimal.ZERO.toPlainString()));
 		}
 	}
 }

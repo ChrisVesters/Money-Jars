@@ -84,6 +84,10 @@ public enum TestPaymentTransaction {
 				jar.getId(), account.getId(), counterparty, direction);
 	}
 
+	public String getAmountString() {
+		return amount.toPlainString();
+	}
+
 	public short getDirectionId() {
 		return switch (direction) {
 			case INCOMING -> 0;

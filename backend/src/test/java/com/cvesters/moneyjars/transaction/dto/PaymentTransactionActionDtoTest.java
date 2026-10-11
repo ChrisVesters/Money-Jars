@@ -16,17 +16,16 @@ class PaymentTransactionActionDtoTest {
 	class Create {
 
 		@Test
-		void success() {
+		void constructor() {
 			final var dto = new PaymentTransactionActionDto.CreatePayment(
-					TRANSACTION.getDate(), TRANSACTION.getAmount(),
+					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
 					TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
 			assertThat(dto.date()).isEqualTo(TRANSACTION.getDate().toString());
-			assertThat(dto.amount())
-					.isEqualByComparingTo(TRANSACTION.getAmount());
+			assertThat(dto.amount()).isEqualTo(TRANSACTION.getAmountString());
 			assertThat(dto.description())
 					.isEqualTo(TRANSACTION.getDescription());
 			assertThat(dto.jarId()).isEqualTo(TRANSACTION.getJar().getId());
@@ -41,7 +40,7 @@ class PaymentTransactionActionDtoTest {
 		@Test
 		void toBdo() {
 			final var dto = new PaymentTransactionActionDto.CreatePayment(
-					TRANSACTION.getDate(), TRANSACTION.getAmount(),
+					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
 					TRANSACTION.getCounterparty(),
@@ -67,17 +66,16 @@ class PaymentTransactionActionDtoTest {
 	class Update {
 
 		@Test
-		void success() {
+		void constructor() {
 			final var dto = new PaymentTransactionActionDto.UpdatePayment(
-					TRANSACTION.getDate(), TRANSACTION.getAmount(),
+					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
 					TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
 			assertThat(dto.date()).isEqualTo(TRANSACTION.getDate().toString());
-			assertThat(dto.amount())
-					.isEqualByComparingTo(TRANSACTION.getAmount());
+			assertThat(dto.amount()).isEqualTo(TRANSACTION.getAmountString());
 			assertThat(dto.description())
 					.isEqualTo(TRANSACTION.getDescription());
 			assertThat(dto.jarId()).isEqualTo(TRANSACTION.getJar().getId());
@@ -92,7 +90,7 @@ class PaymentTransactionActionDtoTest {
 		@Test
 		void toBdo() {
 			final var dto = new PaymentTransactionActionDto.UpdatePayment(
-					TRANSACTION.getDate(), TRANSACTION.getAmount(),
+					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
 					TRANSACTION.getCounterparty(),
