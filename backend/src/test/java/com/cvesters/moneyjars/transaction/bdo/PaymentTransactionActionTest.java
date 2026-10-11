@@ -13,12 +13,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 
-class TransactionActionTest {
+class PaymentTransactionActionTest {
 
 	private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.RENT;
 
 	@Nested
-	class CreatePayment {
+	class Create {
 
 		@Test
 		void success() {
@@ -31,7 +31,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			final var action = new TransactionAction.CreatePayment(date, amount,
+			final var action = new PaymentTransactionAction.Create(date, amount,
 					description, jarId, accountId, counterparty, direction);
 
 			assertThat(action.date()).isEqualTo(TRANSACTION.getDate());
@@ -59,7 +59,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -75,9 +75,25 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void amountNegative() {
+			final LocalDate date = TRANSACTION.getDate();
+			final BigDecimal amount = TRANSACTION.getAmount().negate();
+			final String description = TRANSACTION.getDescription();
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
+
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
+					amount, description, jarId, accountId, counterparty,
+					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Test
@@ -91,7 +107,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -107,7 +123,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
@@ -123,7 +139,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -138,7 +154,7 @@ class TransactionActionTest {
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = null;
 
-			assertThatThrownBy(() -> new TransactionAction.CreatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -158,7 +174,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			final var action = new TransactionAction.UpdatePayment(date, amount,
+			final var action = new PaymentTransactionAction.Update(date, amount,
 					description, jarId, accountId, counterparty, direction);
 
 			assertThat(action.date()).isEqualTo(TRANSACTION.getDate());
@@ -186,7 +202,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -202,9 +218,25 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void amountNegative() {
+			final LocalDate date = TRANSACTION.getDate();
+			final BigDecimal amount = TRANSACTION.getAmount().negate();
+			final String description = TRANSACTION.getDescription();
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
+
+			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
+					amount, description, jarId, accountId, counterparty,
+					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Test
@@ -218,7 +250,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -234,7 +266,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
@@ -250,7 +282,7 @@ class TransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}
@@ -265,7 +297,7 @@ class TransactionActionTest {
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = null;
 
-			assertThatThrownBy(() -> new TransactionAction.UpdatePayment(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(NullPointerException.class);
 		}

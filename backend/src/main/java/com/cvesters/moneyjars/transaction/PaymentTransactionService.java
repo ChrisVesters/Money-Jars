@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.cvesters.moneyjars.account.AccountEntryService;
 import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
-import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 
 @Service
 public class PaymentTransactionService {
@@ -36,7 +36,7 @@ public class PaymentTransactionService {
 
 	@Transactional
 	public PaymentTransaction create(
-			final TransactionAction.CreatePayment action) {
+			final PaymentTransactionAction.Create action) {
 		Objects.requireNonNull(action);
 
 		final LocalDate date = action.date();
@@ -61,7 +61,7 @@ public class PaymentTransactionService {
 
 	@Transactional
 	public PaymentTransaction update(final long id,
-			final TransactionAction.UpdatePayment action) {
+			final PaymentTransactionAction.Update action) {
 		Objects.requireNonNull(action);
 
 		final PaymentTransaction transaction = storage.get(id);

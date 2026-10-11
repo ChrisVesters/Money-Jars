@@ -21,8 +21,8 @@ import org.mockito.InOrder;
 import com.cvesters.moneyjars.account.AccountEntryService;
 import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
-import com.cvesters.moneyjars.transaction.bdo.TransactionAction;
 
 class PaymentTransactionServiceTest {
 
@@ -50,7 +50,7 @@ class PaymentTransactionServiceTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			final var action = new TransactionAction.CreatePayment(date, amount,
+			final var action = new PaymentTransactionAction.Create(date, amount,
 					description, jarId, accountId, counterparty, direction);
 
 			when(sequenceService.getNextSequence(date)).thenReturn(4);
@@ -101,7 +101,7 @@ class PaymentTransactionServiceTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			final var action = new TransactionAction.UpdatePayment(date, amount,
+			final var action = new PaymentTransactionAction.Update(date, amount,
 					description, jarId, accountId, counterparty, direction);
 
 			final PaymentTransaction existing = mock();
@@ -147,7 +147,7 @@ class PaymentTransactionServiceTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			final var action = new TransactionAction.UpdatePayment(date, amount,
+			final var action = new PaymentTransactionAction.Update(date, amount,
 					description, jarId, accountId, counterparty, direction);
 
 			final PaymentTransaction existing = mock();

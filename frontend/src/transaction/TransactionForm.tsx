@@ -39,7 +39,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 	useEffect(() => {
 		if (props.transaction) {
 			setDate(props.transaction.date);
-			setAmount(props.transaction.amount?.toString() ?? "");
+			setAmount(props.transaction.amount ?? "");
 			setDescription(props.transaction.description ?? "");
 			setJarId(props.transaction.jar?.id ?? "");
 			setAccountId(props.transaction.account?.id ?? "");
