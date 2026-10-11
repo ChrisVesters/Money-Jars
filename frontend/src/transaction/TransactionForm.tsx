@@ -101,7 +101,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 
 		props.onConfirm({
 			date,
-			amount: Number.parseFloat(amount),
+			amount: amount,
 			description: description || "",
 			jarId,
 			accountId,

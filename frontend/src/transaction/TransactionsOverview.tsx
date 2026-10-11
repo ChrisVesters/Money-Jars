@@ -177,7 +177,7 @@ const TransactionsOverview = (): JSX.Element => {
 							className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
 							onClick={() => selectTransaction(transaction)}>
 							<td>{transaction.date}</td>
-							<td>€{transaction.amount.toFixed(2)}</td>
+							<td>€{transaction.amount}</td>
 							<td>
 								{transaction.direction ===
 								Direction.Outgoing ? (

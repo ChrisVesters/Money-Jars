@@ -2,7 +2,7 @@ type Account {
   id: ID!
   name: String!
   description: String!
-  balance: Float!
+  balance: String!
 }
 
 input UpdateAccount {
