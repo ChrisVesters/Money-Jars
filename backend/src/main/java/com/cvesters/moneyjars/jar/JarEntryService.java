@@ -27,6 +27,10 @@ public class JarEntryService {
 		return gateway.findLast(jarId);
 	}
 
+	public List<JarEntry> getAll(final long jarId) {
+		return gateway.getAll(jarId);
+	}
+
 	@Transactional
 	public void create(final PaymentTransaction transaction) {
 		Objects.requireNonNull(transaction);

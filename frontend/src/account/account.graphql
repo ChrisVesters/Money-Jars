@@ -1,39 +1,58 @@
 query GetAccounts {
-  getAccounts {
-    id
-    name
-    description
-    balance
-  }
+	getAccounts {
+		id
+		name
+		description
+		balance
+	}
 }
 
 query GetAccount($id: ID!) {
-  getAccount(id: $id) {
-    id
-    name
-    description
-    balance
-  }
+	getAccount(id: $id) {
+		id
+		name
+		description
+		balance
+	}
+}
+
+query GetAccountTransactions($id: ID!) {
+	getAccount(id: $id) {
+		id
+		transactions {
+			__typename
+
+			id
+			date
+			amount
+			description
+
+			... on PaymentTransaction {
+				counterparty
+				direction
+			}
+		}
+	}
 }
 
 mutation CreateAccount($req: UpdateAccount!) {
-  createAccount(req: $req) {
-    id
-    name
-    description
-    balance
-  }
+	createAccount(req: $req) {
+		id
+		name
+		description
+		balance
+	}
 }
 
 mutation UpdateAccount($id: ID!, $req: UpdateAccount!) {
-  updateAccount(id: $id, req: $req) {
-    id
-    name
-    description
-    balance
-  }
+	updateAccount(id: $id, req: $req) {
+		id
+		name
+		description
+		balance
+	}
 }
 
 mutation DeleteAccount($id: ID!) {
-  deleteAccount(id: $id)
+	deleteAccount(id: $id)
 }

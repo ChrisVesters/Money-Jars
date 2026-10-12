@@ -1,22 +1,27 @@
 import { useState, type JSX } from "react";
-
 import { useTranslation } from "react-i18next";
+
 import { useMutation, useQuery } from "@apollo/client/react";
 
+import IconIncoming from "@assets/icons/IconIncoming";
+import IconOutgoing from "@assets/icons/IconOutgoing";
 import IconPlus from "@assets/icons/IconPlus";
+
 import {
 	CreateAccountDocument,
 	DeleteAccountDocument,
+	Direction,
 	GetAccountsDocument,
+	GetAccountTransactionsDocument,
 	UpdateAccountDocument,
 	type Account,
 	type UpdateAccount
 } from "@gql/graphql";
 
 import Modal from "../common/Modal";
+import "../jar/jar.css";
 import AccountForm from "./AccountForm";
 import AccountView from "./AccountView";
-import "../jar/jar.css";
 
 const Overview = (): JSX.Element => {
 	const { t } = useTranslation();
@@ -33,6 +38,11 @@ const Overview = (): JSX.Element => {
 	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
 		undefined
 	);
+
+	const transactions = useQuery(GetAccountTransactionsDocument, {
+		variables: { id: selectedCardId ?? "" },
+		skip: !selectedCardId
+	});
 
 	const openCreateAccountForm = (): void => {
 		setSelectedAccount(undefined);
@@ -125,6 +135,42 @@ const Overview = (): JSX.Element => {
 					<IconPlus />
 				</button>
 			</div>
+
+			<table className="transactions-table">
+				<thead>
+					<tr>
+						<th>{t("date")}</th>
+						<th>{t("amount")}</th>
+						<th>{t("direction")}</th>
+						<th>{t("counterparty")}</th>
+						<th>{t("description")}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{transactions.data?.getAccount?.transactions
+						?.filter(transaction => transaction !== null)
+						.map(transaction => (
+							<tr
+								key={transaction.id}
+								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
+								// onClick={() => selectTransaction(transaction)}
+							>
+								<td>{transaction.date}</td>
+								<td>€{transaction.amount}</td>
+								<td>
+									{transaction.direction ===
+									Direction.Outgoing ? (
+										<IconOutgoing />
+									) : (
+										<IconIncoming />
+									)}
+								</td>
+								<td>{transaction.counterparty}</td>
+								<td>{transaction.description}</td>
+							</tr>
+						))}
+				</tbody>
+			</table>
 
 			<Modal isOpen={accountFormVisible} onClose={closeAccountForm}>
 				<AccountForm

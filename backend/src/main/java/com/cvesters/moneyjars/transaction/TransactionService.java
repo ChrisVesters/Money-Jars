@@ -20,6 +20,10 @@ public class TransactionService {
 		return storage.getAll();
 	}
 
+	public Transaction get(final long id) {
+		return storage.get(id);
+	}
+
 	public Optional<Transaction> find(final long id) {
 		return storage.find(id);
 	}

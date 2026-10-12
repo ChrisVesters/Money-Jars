@@ -5,6 +5,7 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @Getter
@@ -15,6 +16,14 @@ public abstract sealed class TransactionDto permits PaymentTransactionDto {
 	private String date;
 	private String amount;
 	private String description;
+
+	public static TransactionDto fromBdo(final Transaction transaction) {
+		Objects.requireNonNull(transaction);
+
+		return switch (transaction) {
+			case PaymentTransaction pt -> new PaymentTransactionDto(pt);
+		};
+	}
 
 	protected TransactionDto(final Transaction bdo) {
 		Objects.requireNonNull(bdo);

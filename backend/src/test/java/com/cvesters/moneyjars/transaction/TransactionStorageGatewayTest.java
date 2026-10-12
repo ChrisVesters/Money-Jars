@@ -1,6 +1,7 @@
 package com.cvesters.moneyjars.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +12,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
@@ -55,6 +57,33 @@ class TransactionStorageGatewayTest {
 			final var result = gateway.getAllInPeriod(start, end);
 
 			assertThat(result).containsExactly(bdo);
+		}
+	}
+
+	@Nested
+	class Get {
+
+		@Test
+		void success() {
+			final TransactionDao dao = mock();
+			final PaymentTransaction bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findById(TRANSACTION.getId()))
+					.thenReturn(Optional.of(dao));
+
+			final var result = gateway.get(TRANSACTION.getId());
+
+			assertThat(result).isSameAs(bdo);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findById(TRANSACTION.getId()))
+					.thenReturn(Optional.empty());
+
+			assertThatThrownBy(() -> gateway.get(TRANSACTION.getId()))
+					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 
