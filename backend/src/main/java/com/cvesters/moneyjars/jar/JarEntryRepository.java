@@ -28,6 +28,8 @@ public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 			""")
 	Optional<JarEntryDao> findBefore(long jarId, LocalDate date, int sequence);
 
+	List<JarEntryDao> findAllByJarId(long jarId);
+
 	@Query("""
 			SELECT e
 			FROM JarEntryDao e

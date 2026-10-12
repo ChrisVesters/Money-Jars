@@ -38,6 +38,13 @@ public class AccountEntryStorageGateway {
 				.map(AccountEntryDao::toBdo);
 	}
 
+	public List<AccountEntry> getAll(final long accountId) {
+		return repository.findAllByAccountId(accountId)
+				.stream()
+				.map(AccountEntryDao::toBdo)
+				.toList();
+	}
+
 	public List<AccountEntry> getAllAfter(final long accountId,
 			final LocalDate date, final int sequence) {
 		return repository.findAllAfter(accountId, date, sequence)

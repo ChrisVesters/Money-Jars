@@ -135,6 +135,58 @@ class AccountEntryStorageGatewayTest {
 	}
 
 	@Nested
+	class GetAll {
+
+		@Test
+		public void single() {
+			final long accountId = 1L;
+
+			final AccountEntryDao dao = mock();
+			final AccountEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findAllByAccountId(accountId))
+					.thenReturn(List.of(dao));
+
+			final List<AccountEntry> result = gateway.getAll(accountId);
+
+			assertThat(result).containsExactly(bdo);
+		}
+
+		@Test
+		public void multiple() {
+			final long accountId = 1L;
+
+			final AccountEntryDao dao1 = mock();
+			final AccountEntry bdo1 = mock();
+			when(dao1.toBdo()).thenReturn(bdo1);
+
+			final AccountEntryDao dao2 = mock();
+			final AccountEntry bdo2 = mock();
+			when(dao2.toBdo()).thenReturn(bdo2);
+
+			when(repository.findAllByAccountId(accountId))
+					.thenReturn(List.of(dao1, dao2));
+
+			final List<AccountEntry> result = gateway.getAll(accountId);
+
+			assertThat(result).containsExactly(bdo1, bdo2);
+		}
+
+		@Test
+		public void empty() {
+			final long accountId = 1L;
+
+			when(repository.findAllByAccountId(accountId))
+					.thenReturn(Collections.emptyList());
+
+			final List<AccountEntry> result = gateway.getAll(accountId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class GetAllAfter {
 
 		@Test

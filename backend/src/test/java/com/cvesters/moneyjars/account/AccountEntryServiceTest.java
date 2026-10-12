@@ -60,6 +60,36 @@ class AccountEntryServiceTest {
 	}
 
 	@Nested
+	class GetAll {
+
+		@Test
+		void found() {
+			final long accountId = 1L;
+			final AccountEntry entry1 = mock();
+			final AccountEntry entry2 = mock();
+
+			when(gateway.getAll(accountId))
+					.thenReturn(List.of(entry1, entry2));
+
+			final List<AccountEntry> result = service.getAll(accountId);
+
+			assertThat(result).containsExactly(entry1, entry2);
+		}
+
+		@Test
+		void empty() {
+			final long accountId = 1L;
+
+			when(gateway.getAll(accountId))
+					.thenReturn(Collections.emptyList());
+
+			final List<AccountEntry> result = service.getAll(accountId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class Create {
 
 		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.SALARY;

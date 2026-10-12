@@ -30,6 +30,8 @@ public interface AccountEntryRepository
 	Optional<AccountEntryDao> findBefore(long accountId, LocalDate date,
 			int sequence);
 
+	List<AccountEntryDao> findAllByAccountId(long accountId);
+
 	@Query("""
 			SELECT e
 			FROM AccountEntryDao e

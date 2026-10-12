@@ -33,6 +33,22 @@ class TransactionServiceTest {
 	}
 
 	@Nested
+	class Get {
+
+		private static final long TRANSACTION_ID = 1L;
+
+		@Test
+		void success() {
+			final PaymentTransaction expected = mock();
+			when(storage.get(TRANSACTION_ID)).thenReturn(expected);
+
+			final var result = service.get(TRANSACTION_ID);
+
+			assertThat(result).isSameAs(expected);
+		}
+	}
+
+	@Nested
 	class Find {
 
 		private static final long TRANSACTION_ID = 1L;

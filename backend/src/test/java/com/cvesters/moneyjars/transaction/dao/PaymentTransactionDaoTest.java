@@ -3,6 +3,8 @@ package com.cvesters.moneyjars.transaction.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +53,8 @@ class PaymentTransactionDaoTest {
 		void success() {
 			final var updatedDate = TRANSACTION.getDate().plusDays(1);
 			final var updatedSequence = 1;
-			final var updatedAmount = TRANSACTION.getAmount().negate();
+			final var updatedAmount = TRANSACTION.getAmount()
+					.add(BigDecimal.ONE);
 			final var updatedDescription = "Updated description";
 			final var updatedJar = TestJar.HOLIDAY.getId();
 			final var updatedAccount = TestAccount.SAVINGS.getId();

@@ -3,6 +3,7 @@ type Jar {
   name: String!
   description: String!
   balance: String!
+  transactions: [Transaction]
 }
 
 input UpdateJar {

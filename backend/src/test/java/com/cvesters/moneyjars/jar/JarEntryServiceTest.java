@@ -59,6 +59,34 @@ class JarEntryServiceTest {
 	}
 
 	@Nested
+	class GetAll {
+
+		@Test
+		void found() {
+			final long jarId = 1L;
+			final JarEntry entry1 = mock();
+			final JarEntry entry2 = mock();
+
+			when(gateway.getAll(jarId)).thenReturn(List.of(entry1, entry2));
+
+			final List<JarEntry> result = service.getAll(jarId);
+
+			assertThat(result).containsExactly(entry1, entry2);
+		}
+
+		@Test
+		void empty() {
+			final long jarId = 1L;
+
+			when(gateway.getAll(jarId)).thenReturn(Collections.emptyList());
+
+			final List<JarEntry> result = service.getAll(jarId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class Create {
 
 		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.SALARY;

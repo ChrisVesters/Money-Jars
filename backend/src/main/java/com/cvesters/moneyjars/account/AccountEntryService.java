@@ -27,6 +27,10 @@ public class AccountEntryService {
 		return gateway.findLast(accountId);
 	}
 
+	public List<AccountEntry> getAll(final long accountId) {
+		return gateway.getAll(accountId);
+	}
+
 	@Transactional
 	public void create(final PaymentTransaction transaction) {
 		Objects.requireNonNull(transaction);

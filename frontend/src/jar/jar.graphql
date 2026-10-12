@@ -1,19 +1,38 @@
 query GetJars {
-  getJars {
-	id
-	name
-	description
-	balance
-  }
+ 	getJars {
+		id
+		name
+		description
+		balance
+	}
 }
 
 query GetJar($id: ID!) {
-  getJar(id: $id) {
-	id
-	name
-	description
-	balance
-  }
+	getJar(id: $id) {
+		id
+		name
+		description
+		balance
+	}
+}
+
+query GetJarTransactions($id: ID!) {
+	getJar(id: $id) {
+		id
+		transactions {
+			__typename
+
+			id
+			date
+			amount
+			description
+
+			... on PaymentTransaction {
+				counterparty
+				direction
+			}
+		}
+	}
 }
 
 mutation CreateJar($req: UpdateJar!) {

@@ -133,6 +133,57 @@ class JarEntryStorageGatewayTest {
 	}
 
 	@Nested
+	class GetAll {
+
+		@Test
+		public void single() {
+			final long jarId = 1L;
+
+			final JarEntryDao dao = mock();
+			final JarEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findAllByJarId(jarId)).thenReturn(List.of(dao));
+
+			final List<JarEntry> result = gateway.getAll(jarId);
+
+			assertThat(result).containsExactly(bdo);
+		}
+
+		@Test
+		public void multiple() {
+			final long jarId = 1L;
+
+			final JarEntryDao dao1 = mock();
+			final JarEntry bdo1 = mock();
+			when(dao1.toBdo()).thenReturn(bdo1);
+
+			final JarEntryDao dao2 = mock();
+			final JarEntry bdo2 = mock();
+			when(dao2.toBdo()).thenReturn(bdo2);
+
+			when(repository.findAllByJarId(jarId))
+					.thenReturn(List.of(dao1, dao2));
+
+			final List<JarEntry> result = gateway.getAll(jarId);
+
+			assertThat(result).containsExactly(bdo1, bdo2);
+		}
+
+		@Test
+		public void empty() {
+			final long jarId = 1L;
+
+			when(repository.findAllByJarId(jarId))
+					.thenReturn(Collections.emptyList());
+
+			final List<JarEntry> result = gateway.getAll(jarId);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class GetAllAfter {
 
 		@Test

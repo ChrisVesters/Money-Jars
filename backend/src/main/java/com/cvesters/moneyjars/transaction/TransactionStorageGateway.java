@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
@@ -34,7 +35,10 @@ public class TransactionStorageGateway {
 				.toList();
 	}
 
-	// TODO: get?
+	public Transaction get(final long id) {
+		return find(id).orElseThrow(MissingEntityException::new);
+	}
+
 	public Optional<Transaction> find(final long id) {
 		return transactionRepository.findById(id).map(TransactionDao::toBdo);
 	}
