@@ -3,8 +3,6 @@ package com.cvesters.moneyjars.transaction;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.cvesters.moneyjars.account.AccountService;
 import com.cvesters.moneyjars.account.TestAccount;
 import com.cvesters.moneyjars.account.bdo.Account;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.config.GraphqlExceptionResolver;
 import com.cvesters.moneyjars.jar.JarService;
 import com.cvesters.moneyjars.jar.TestJar;
@@ -49,11 +48,11 @@ class PaymentTransactionResolverTest {
 		@Test
 		void success() {
 			final Transaction transaction = TRANSACTION.bdo();
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.of(transaction));
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenReturn(transaction);
 
 			final Jar jar = JAR.bdo();
-			when(jarService.find(JAR.getId())).thenReturn(Optional.of(jar));
+			when(jarService.get(JAR.getId())).thenReturn(jar);
 
 			final String document = """
 					query {
@@ -87,10 +86,11 @@ class PaymentTransactionResolverTest {
 		@Test
 		void notFound() {
 			final Transaction transaction = TRANSACTION.bdo();
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.of(transaction));
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenReturn(transaction);
 
-			when(jarService.find(JAR.getId())).thenReturn(Optional.empty());
+			when(jarService.get(JAR.getId()))
+					.thenThrow(MissingEntityException.class);
 
 			final String document = """
 					query {
@@ -128,12 +128,11 @@ class PaymentTransactionResolverTest {
 		@Test
 		void success() {
 			final Transaction transaction = TRANSACTION.bdo();
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.of(transaction));
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenReturn(transaction);
 
 			final Account account = ACCOUNT.bdo();
-			when(accountService.find(ACCOUNT.getId()))
-					.thenReturn(Optional.of(account));
+			when(accountService.get(ACCOUNT.getId())).thenReturn(account);
 
 			final String document = """
 					query {
@@ -167,11 +166,11 @@ class PaymentTransactionResolverTest {
 		@Test
 		void notFound() {
 			final Transaction transaction = TRANSACTION.bdo();
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.of(transaction));
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenReturn(transaction);
 
-			when(accountService.find(ACCOUNT.getId()))
-					.thenReturn(Optional.empty());
+			when(accountService.get(ACCOUNT.getId()))
+					.thenThrow(MissingEntityException.class);
 
 			final String document = """
 					query {
@@ -209,12 +208,11 @@ class PaymentTransactionResolverTest {
 		@Test
 		void success() {
 			final Transaction transaction = TRANSACTION.bdo();
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.of(transaction));
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenReturn(transaction);
 
 			final Account account = ACCOUNT.bdo();
-			when(accountService.find(ACCOUNT.getId()))
-					.thenReturn(Optional.of(account));
+			when(accountService.get(ACCOUNT.getId())).thenReturn(account);
 
 			final String document = """
 					query {

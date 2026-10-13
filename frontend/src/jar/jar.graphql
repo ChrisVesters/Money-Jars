@@ -4,21 +4,7 @@ query GetJars {
 		name
 		description
 		balance
-	}
-}
 
-query GetJar($id: ID!) {
-	getJar(id: $id) {
-		id
-		name
-		description
-		balance
-	}
-}
-
-query GetJarTransactions($id: ID!) {
-	getJar(id: $id) {
-		id
 		transactions {
 			__typename
 

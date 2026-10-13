@@ -28,7 +28,8 @@ public class AccountController {
 
 	@QueryMapping
 	public AccountDto getAccount(@Argument final long id) {
-		return accountService.find(id).map(AccountDto::new).orElse(null);
+		final Account account = accountService.get(id);
+		return new AccountDto(account);
 	}
 
 	@MutationMapping

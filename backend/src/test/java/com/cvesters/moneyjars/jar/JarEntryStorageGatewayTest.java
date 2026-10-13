@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 
@@ -29,7 +30,7 @@ class JarEntryStorageGatewayTest {
 			repository);
 
 	@Nested
-	class FindByJarIdAndTransactionId {
+	class GetByJarIdAndTransactionId {
 
 		@Test
 		public void found() {
@@ -43,10 +44,10 @@ class JarEntryStorageGatewayTest {
 			when(repository.findByJarIdAndTransactionId(jarId, transactionId))
 					.thenReturn(Optional.of(dao));
 
-			final Optional<JarEntry> result = gateway
-					.findByJarIdAndTransactionId(jarId, transactionId);
+			final JarEntry result = gateway.getByJarIdAndTransactionId(jarId,
+					transactionId);
 
-			assertThat(result).contains(bdo);
+			assertThat(result).isSameAs(bdo);
 		}
 
 		@Test
@@ -57,10 +58,9 @@ class JarEntryStorageGatewayTest {
 			when(repository.findByJarIdAndTransactionId(jarId, transactionId))
 					.thenReturn(Optional.empty());
 
-			final Optional<JarEntry> result = gateway
-					.findByJarIdAndTransactionId(jarId, transactionId);
-
-			assertThat(result).isEmpty();
+			assertThatThrownBy(() -> gateway
+					.getByJarIdAndTransactionId(jarId, transactionId))
+					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 

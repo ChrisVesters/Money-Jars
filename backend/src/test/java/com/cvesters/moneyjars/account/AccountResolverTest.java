@@ -53,8 +53,8 @@ class AccountResolverTest {
 
 		@Test
 		void lastEntry() {
-			when(accountService.find(CHECKING.getId()))
-					.thenReturn(Optional.of(CHECKING.bdo()));
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
 			when(entryService.findLast(CHECKING.getId()))
 					.thenReturn(Optional.of(ENTRY.bdo()));
 
@@ -68,8 +68,8 @@ class AccountResolverTest {
 
 		@Test
 		void noEntries() {
-			when(accountService.find(CHECKING.getId()))
-					.thenReturn(Optional.of(CHECKING.bdo()));
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
 			when(entryService.findLast(CHECKING.getId()))
 					.thenReturn(Optional.empty());
 
@@ -107,11 +107,13 @@ class AccountResolverTest {
 
 		@Test
 		void multiple() {
-			final TestPaymentTransaction transaction1 = ENTRY_1.getTransaction();
-			final TestPaymentTransaction transaction2 = ENTRY_2.getTransaction();
+			final TestPaymentTransaction transaction1 = ENTRY_1
+					.getTransaction();
+			final TestPaymentTransaction transaction2 = ENTRY_2
+					.getTransaction();
 
-			when(accountService.find(CHECKING.getId()))
-					.thenReturn(Optional.of(CHECKING.bdo()));
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
 			when(entryService.getAll(CHECKING.getId()))
 					.thenReturn(List.of(ENTRY_1.bdo(), ENTRY_2.bdo()));
 			when(transactionService.get(transaction1.getId()))
@@ -130,8 +132,8 @@ class AccountResolverTest {
 
 		@Test
 		void noEntries() {
-			when(accountService.find(CHECKING.getId()))
-					.thenReturn(Optional.of(CHECKING.bdo()));
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
 			when(entryService.getAll(CHECKING.getId()))
 					.thenReturn(Collections.emptyList());
 

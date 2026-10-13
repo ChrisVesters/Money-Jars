@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
 @Service
@@ -62,8 +61,7 @@ public class AccountEntryService {
 		final BigDecimal amount = transaction.getSignedAmount().negate();
 
 		final AccountEntry entry = gateway
-				.findByAccountIdAndTransactionId(accountId, transaction.getId())
-				.orElseThrow(MissingEntityException::new);
+				.getByAccountIdAndTransactionId(accountId, transaction.getId());
 
 		final List<AccountEntry> nextEntries = gateway.getAllAfter(accountId,
 				date, sequence);

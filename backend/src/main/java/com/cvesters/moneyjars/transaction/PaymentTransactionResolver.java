@@ -4,9 +4,10 @@ import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import com.cvesters.moneyjars.account.AccountService;
+import com.cvesters.moneyjars.account.bdo.Account;
 import com.cvesters.moneyjars.account.dto.AccountDto;
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.JarService;
+import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.jar.dto.JarDto;
 import com.cvesters.moneyjars.transaction.dto.PaymentTransactionDto;
 
@@ -24,15 +25,13 @@ public class PaymentTransactionResolver {
 
 	@SchemaMapping(typeName = "PaymentTransaction", field = "jar")
 	public JarDto jar(final PaymentTransactionDto transaction) {
-		return jarService.find(transaction.getJarId())
-				.map(JarDto::new)
-				.orElseThrow(MissingEntityException::new);
+		final Jar jar = jarService.get(transaction.getJarId());
+		return new JarDto(jar);
 	}
 
 	@SchemaMapping(typeName = "PaymentTransaction", field = "account")
 	public AccountDto account(final PaymentTransactionDto transaction) {
-		return accountService.find(transaction.getAccountId())
-				.map(AccountDto::new)
-				.orElseThrow(MissingEntityException::new);
+		final Account account = accountService.get(transaction.getAccountId());
+		return new AccountDto(account);
 	}
 }

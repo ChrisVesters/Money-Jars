@@ -12,9 +12,7 @@ import {
 	DeleteJarDocument,
 	Direction,
 	GetJarsDocument,
-	GetJarTransactionsDocument,
 	UpdateJarDocument,
-	type Jar,
 	type UpdateJar
 } from "@gql/graphql";
 import JarView from "./JarView";
@@ -22,6 +20,7 @@ import JarView from "./JarView";
 import Modal from "../common/Modal";
 import "./jar.css";
 import JarForm from "./JarForm";
+import type { JarItem } from "./JarTypes";
 
 const Overview = (): JSX.Element => {
 	const { t } = useTranslation();
@@ -33,17 +32,14 @@ const Overview = (): JSX.Element => {
 	const [deleteJar] = useMutation(DeleteJarDocument);
 
 	const [JarFormVisible, setJarFormVisible] = useState(false);
-	const [selectedJar, setSelectedJar] = useState<Jar | undefined>(undefined);
+	const [selectedJar, setSelectedJar] = useState<JarItem | undefined>(
+		undefined
+	);
 
 	// TODO: Can't we get rid of this?
 	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
 		undefined
 	);
-
-	const transactions = useQuery(GetJarTransactionsDocument, {
-		variables: { id: selectedCardId ?? "" },
-		skip: !selectedCardId
-	});
 
 	const openCreateJarForm = (): void => {
 		setSelectedJar(undefined);
@@ -51,7 +47,7 @@ const Overview = (): JSX.Element => {
 		setJarFormVisible(true);
 	};
 
-	const openEditJarForm = (jar: Jar): void => {
+	const openEditJarForm = (jar: JarItem): void => {
 		setSelectedJar(jar);
 		setJarFormVisible(true);
 	};
@@ -120,7 +116,7 @@ const Overview = (): JSX.Element => {
 	return (
 		<>
 			<div className="jar-grid">
-				{data?.getJars.map((jar: Jar) => (
+				{data?.getJars.map(jar => (
 					<JarView
 						key={jar.id}
 						jar={jar}
@@ -148,9 +144,9 @@ const Overview = (): JSX.Element => {
 					</tr>
 				</thead>
 				<tbody>
-					{transactions.data?.getJar?.transactions
-						?.filter(transaction => transaction !== null)
-						.map(transaction => (
+					{data?.getJars
+						.find(jar => jar.id === selectedCardId)
+						?.transactions.map(transaction => (
 							<tr
 								key={transaction.id}
 								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}

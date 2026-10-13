@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.jar.dao.JarDao;
 
@@ -42,7 +43,7 @@ class JarStorageGatewayTest {
 	}
 
 	@Nested
-	class Find {
+	class Get {
 
 		@Test
 		void success() {
@@ -52,9 +53,17 @@ class JarStorageGatewayTest {
 
 			when(repository.findById(JAR.getId())).thenReturn(Optional.of(dao));
 
-			final var result = gateway.find(JAR.getId());
+			final Jar result = gateway.get(JAR.getId());
 
-			assertThat(result).containsSame(bdo);
+			assertThat(result).isSameAs(bdo);
+		}
+
+		@Test
+		void missingEntity() {
+			when(repository.findById(JAR.getId())).thenReturn(Optional.empty());
+
+			assertThatThrownBy(() -> gateway.get(JAR.getId()))
+					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 

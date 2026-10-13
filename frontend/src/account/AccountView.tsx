@@ -1,16 +1,16 @@
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Account } from "@gql/graphql";
-
 import IconDelete from "@assets/icons/IconDelete";
 import IconEdit from "@assets/icons/IconEdit";
 
+import type { AccountItem } from "./accountTypes";
+
 export type AccountViewProps = {
-	account: Account;
+	account: AccountItem;
 	isSelected: boolean;
 	onSelect: () => void;
-	onEdit: (account: Account) => void;
+	onEdit: (account: AccountItem) => void;
 	onDelete: (accountId: string) => void;
 };
 
@@ -52,11 +52,13 @@ const AccountView = (props: Readonly<AccountViewProps>): JSX.Element => {
 					<button className="icon-button" onClick={handleEditClick}>
 						<IconEdit size="1rem" />
 					</button>
-					<button
-						className="icon-button danger"
-						onClick={handleDeleteClick}>
-						<IconDelete size="1ren" />
-					</button>
+					{props.account.transactions.length === 0 && (
+						<button
+							className="icon-button danger"
+							onClick={handleDeleteClick}>
+							<IconDelete size="1rem" />
+						</button>
+					)}
 				</div>
 			)}
 		</div>

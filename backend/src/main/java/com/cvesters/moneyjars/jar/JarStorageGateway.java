@@ -2,10 +2,10 @@ package com.cvesters.moneyjars.jar;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.jar.dao.JarDao;
 
@@ -22,8 +22,10 @@ public class JarStorageGateway {
 		return jarRepository.findAll().stream().map(JarDao::toBdo).toList();
 	}
 
-	public Optional<Jar> find(final long id) {
-		return jarRepository.findById(id).map(JarDao::toBdo);
+	public Jar get(final long id) {
+		return jarRepository.findById(id)
+				.map(JarDao::toBdo)
+				.orElseThrow(MissingEntityException::new);
 	}
 
 	public Jar create(final Jar jar) {

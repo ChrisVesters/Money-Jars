@@ -3,7 +3,7 @@ type Jar {
   name: String!
   description: String!
   balance: String!
-  transactions: [Transaction]
+  transactions: [Transaction!]!
 }
 
 input UpdateJar {
@@ -13,11 +13,11 @@ input UpdateJar {
 
 extend type Query {
   getJars: [Jar!]!
-  getJar(id: ID!): Jar
+  getJar(id: ID!): Jar!
 }
 
 extend type Mutation {
-  createJar(req: UpdateJar!): Jar
-  updateJar(id: ID!, req: UpdateJar!): Jar
-  deleteJar(id: ID!): Boolean
+  createJar(req: UpdateJar!): Jar!
+  updateJar(id: ID!, req: UpdateJar!): Jar!
+  deleteJar(id: ID!): Boolean!
 }

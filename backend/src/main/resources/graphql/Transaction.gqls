@@ -13,5 +13,5 @@ enum Direction {
 
 extend type Query {
 	getTransactions: [Transaction!]!
-	getTransaction(id: ID!): Transaction
+	getTransaction(id: ID!): Transaction!
 }

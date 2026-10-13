@@ -21,6 +21,7 @@ import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
 import com.cvesters.moneyjars.account.dao.AccountEntryDao;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 
 class AccountEntryStorageGatewayTest {
 
@@ -29,7 +30,7 @@ class AccountEntryStorageGatewayTest {
 			repository);
 
 	@Nested
-	class FindByAccountIdAndTransactionId {
+	class GetByAccountIdAndTransactionId {
 
 		@Test
 		public void found() {
@@ -43,10 +44,10 @@ class AccountEntryStorageGatewayTest {
 			when(repository.findByAccountIdAndTransactionId(accountId,
 					transactionId)).thenReturn(Optional.of(dao));
 
-			final Optional<AccountEntry> result = gateway
-					.findByAccountIdAndTransactionId(accountId, transactionId);
+			final AccountEntry result = gateway
+					.getByAccountIdAndTransactionId(accountId, transactionId);
 
-			assertThat(result).contains(bdo);
+			assertThat(result).isSameAs(bdo);
 		}
 
 		@Test
@@ -57,10 +58,9 @@ class AccountEntryStorageGatewayTest {
 			when(repository.findByAccountIdAndTransactionId(accountId,
 					transactionId)).thenReturn(Optional.empty());
 
-			final Optional<AccountEntry> result = gateway
-					.findByAccountIdAndTransactionId(accountId, transactionId);
-
-			assertThat(result).isEmpty();
+			assertThatThrownBy(() -> gateway
+					.getByAccountIdAndTransactionId(accountId, transactionId))
+					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 
