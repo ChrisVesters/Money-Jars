@@ -1,4 +1,5 @@
-import { useState, type JSX } from "react";
+import type { JSX } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
@@ -41,6 +42,14 @@ const Overview = (): JSX.Element => {
 	// TODO: Can't we get rid of this?
 	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
 		undefined
+	);
+
+	const jars = useMemo(
+		() =>
+			[...(data?.getJars ?? [])].sort((a, b) =>
+				a.name.localeCompare(b.name)
+			),
+		[data?.getJars]
 	);
 
 	const openCreateJarForm = (): void => {
@@ -118,7 +127,7 @@ const Overview = (): JSX.Element => {
 	return (
 		<>
 			<div className="jar-grid">
-				{data?.getJars.map(jar => (
+				{jars.map(jar => (
 					<JarView
 						key={jar.id}
 						jar={jar}
@@ -146,7 +155,7 @@ const Overview = (): JSX.Element => {
 					</tr>
 				</thead>
 				<tbody>
-					{data?.getJars
+					{jars
 						.find(jar => jar.id === selectedCardId)
 						?.transactions.map(transaction => (
 							<tr

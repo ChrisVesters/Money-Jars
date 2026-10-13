@@ -1,4 +1,5 @@
-import { useState, type JSX } from "react";
+import type { JSX } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
@@ -39,6 +40,14 @@ const Overview = (): JSX.Element => {
 
 	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
 		undefined
+	);
+
+	const accounts = useMemo(
+		() =>
+			[...(data?.getAccounts ?? [])].sort((a, b) =>
+				a.name.localeCompare(b.name)
+			),
+		[data?.getAccounts]
 	);
 
 	const openCreateAccountForm = (): void => {
@@ -115,7 +124,7 @@ const Overview = (): JSX.Element => {
 	return (
 		<>
 			<div className="jar-grid">
-				{data?.getAccounts.map(account => (
+				{accounts.map(account => (
 					<AccountView
 						key={account.id}
 						account={account}
@@ -144,7 +153,7 @@ const Overview = (): JSX.Element => {
 					</tr>
 				</thead>
 				<tbody>
-					{data?.getAccounts
+					{accounts
 						.find(account => account.id === selectedCardId)
 						?.transactions.map(transaction => (
 							<tr
