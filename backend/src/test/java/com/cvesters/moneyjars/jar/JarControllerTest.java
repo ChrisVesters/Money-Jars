@@ -53,6 +53,7 @@ class JarControllerTest {
 							id
 							name
 							description
+							goal
 						}
 					}
 					""";
@@ -75,8 +76,7 @@ class JarControllerTest {
 		void success() {
 			final Jar jar = HOUSEHOLD.bdo();
 
-			when(jarService.get(HOUSEHOLD.getId()))
-					.thenReturn(jar);
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(jar);
 
 			final String document = """
 					query {
@@ -84,6 +84,7 @@ class JarControllerTest {
 							id
 							name
 							description
+							goal
 						}
 					}
 					""";
@@ -105,6 +106,7 @@ class JarControllerTest {
 							id
 							name
 							description
+							goal
 						}
 					}
 					""";
@@ -125,15 +127,16 @@ class JarControllerTest {
 	@Nested
 	class CreateJar {
 
-		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
+		private static final TestJar HOLIDAY = TestJar.HOLIDAY;
 
 		@Test
 		void success() {
-			final Jar createdJar = HOUSEHOLD.bdo();
+			final Jar createdJar = HOLIDAY.bdo();
 			when(jarService.create(argThat(jar -> {
-				assertThat(jar.name()).isEqualTo(HOUSEHOLD.getName());
+				assertThat(jar.name()).isEqualTo(HOLIDAY.getName());
 				assertThat(jar.description())
-						.isEqualTo(HOUSEHOLD.getDescription());
+						.isEqualTo(HOLIDAY.getDescription());
+				assertThat(jar.goal()).isEqualTo(HOLIDAY.getGoal());
 				return true;
 			}))).thenReturn(createdJar);
 
@@ -141,20 +144,22 @@ class JarControllerTest {
 					mutation {
 						createJar(req: {
 							name: "%s",
-							description: "%s"
+							description: "%s",
+							goal: "%s"
 						}) {
 							id
 							name
 							description
+							goal
 						}
 					}
-					""".formatted(HOUSEHOLD.getName(),
-					HOUSEHOLD.getDescription());
+					""".formatted(HOLIDAY.getName(), HOLIDAY.getDescription(),
+					HOLIDAY.getGoalString());
 
 			final Response response = graphQlTester.document(document)
 					.execute();
 
-			assertEquals(response, HOUSEHOLD, "createJar");
+			assertEquals(response, HOLIDAY, "createJar");
 		}
 
 	}
@@ -162,15 +167,16 @@ class JarControllerTest {
 	@Nested
 	class UpdateJar {
 
-		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
+		private static final TestJar HOLIDAY = TestJar.HOLIDAY;
 
 		@Test
 		void success() {
-			final Jar updatedJar = HOUSEHOLD.bdo();
-			when(jarService.update(eq(HOUSEHOLD.getId()), argThat(jar -> {
-				assertThat(jar.name()).isEqualTo(HOUSEHOLD.getName());
+			final Jar updatedJar = HOLIDAY.bdo();
+			when(jarService.update(eq(HOLIDAY.getId()), argThat(jar -> {
+				assertThat(jar.name()).isEqualTo(HOLIDAY.getName());
 				assertThat(jar.description())
-						.isEqualTo(HOUSEHOLD.getDescription());
+						.isEqualTo(HOLIDAY.getDescription());
+				assertThat(jar.goal()).isEqualTo(HOLIDAY.getGoal());
 				return true;
 			}))).thenReturn(updatedJar);
 
@@ -178,20 +184,22 @@ class JarControllerTest {
 					mutation {
 						updateJar(id: %d, req: {
 							name: "%s",
-							description: "%s"
+							description: "%s",
+							goal: "%s"
 						}) {
 							id
 							name
 							description
+							goal
 						}
 					}
-					""".formatted(HOUSEHOLD.getId(), HOUSEHOLD.getName(),
-					HOUSEHOLD.getDescription());
+					""".formatted(HOLIDAY.getId(), HOLIDAY.getName(),
+					HOLIDAY.getDescription(), HOLIDAY.getGoalString());
 
 			final Response response = graphQlTester.document(document)
 					.execute();
 
-			assertEquals(response, HOUSEHOLD, "updateJar");
+			assertEquals(response, HOLIDAY, "updateJar");
 		}
 	}
 
@@ -226,6 +234,14 @@ class JarControllerTest {
 				.path(prefix + ".description")
 				.entity(String.class)
 				.isEqualTo(expected.getDescription());
+
+		if (expected.getGoal() == null) {
+			response.path(prefix + ".goal").valueIsNull();
+		} else {
+			response.path(prefix + ".goal")
+					.entity(String.class)
+					.isEqualTo(expected.getGoalString());
+		}
 	}
 
 }

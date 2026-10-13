@@ -9,6 +9,8 @@ import java.time.Month;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 abstract class TransactionTest {
 
@@ -32,6 +34,18 @@ abstract class TransactionTest {
 		void dateNull() {
 			assertThatThrownBy(() -> transaction.setDate(null))
 					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class SetSequence {
+
+		@ParameterizedTest
+		@ValueSource(ints = { -1, 0, 1 })
+		void success(final int sequence) {
+			transaction.setSequence(sequence);
+
+			assertThat(transaction.getSequence()).isEqualTo(sequence);
 		}
 	}
 

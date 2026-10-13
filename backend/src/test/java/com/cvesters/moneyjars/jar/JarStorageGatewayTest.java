@@ -21,7 +21,7 @@ import com.cvesters.moneyjars.jar.dao.JarDao;
 
 class JarStorageGatewayTest {
 
-	private static final TestJar JAR = TestJar.HOUSEHOLD;
+	private static final TestJar JAR = TestJar.HOLIDAY;
 
 	private final JarRepository repository = mock();
 	private final JarStorageGateway gateway = new JarStorageGateway(repository);
@@ -81,6 +81,7 @@ class JarStorageGatewayTest {
 				assertThat(v.getId()).isNull();
 				assertThat(v.getName()).isEqualTo(JAR.getName());
 				assertThat(v.getDescription()).isEqualTo(JAR.getDescription());
+				assertThat(v.getGoal()).isEqualTo(JAR.getGoal());
 				return true;
 			}))).thenReturn(createdDao);
 
