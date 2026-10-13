@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
@@ -265,8 +264,8 @@ class JarEntryServiceTest {
 
 			final JarEntry entry = mock();
 
-			when(gateway.findByJarIdAndTransactionId(jarId,
-					TRANSACTION.getId())).thenReturn(Optional.of(entry));
+			when(gateway.getByJarIdAndTransactionId(jarId,
+					TRANSACTION.getId())).thenReturn(entry);
 			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(Collections.emptyList());
 
@@ -291,8 +290,8 @@ class JarEntryServiceTest {
 			final JarEntry next2 = mock();
 			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findByJarIdAndTransactionId(jarId,
-					TRANSACTION.getId())).thenReturn(Optional.of(entry));
+			when(gateway.getByJarIdAndTransactionId(jarId,
+					TRANSACTION.getId())).thenReturn(entry);
 			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
@@ -322,8 +321,8 @@ class JarEntryServiceTest {
 			final JarEntry next2 = mock();
 			final List<JarEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findByJarIdAndTransactionId(jarId,
-					testTransaction.getId())).thenReturn(Optional.of(entry));
+			when(gateway.getByJarIdAndTransactionId(jarId,
+					testTransaction.getId())).thenReturn(entry);
 			when(gateway.getAllAfter(jarId, date, sequence))
 					.thenReturn(nextEntries);
 
@@ -336,21 +335,6 @@ class JarEntryServiceTest {
 			inOrder.verify(gateway).updateAll(nextEntries);
 
 			verify(entry, never()).shift(any());
-		}
-
-		@Test
-		void notFound() {
-			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long jarId = TRANSACTION.getJar().getId();
-
-			when(gateway.findByJarIdAndTransactionId(jarId,
-					TRANSACTION.getId())).thenReturn(Optional.empty());
-
-			assertThatThrownBy(() -> service.delete(transaction))
-					.isInstanceOf(MissingEntityException.class);
-
-			verify(gateway, never()).delete(any());
-			verify(gateway, never()).updateAll(any());
 		}
 
 		@Test

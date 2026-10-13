@@ -2,11 +2,9 @@ package com.cvesters.moneyjars.jar;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.jar.bdo.JarAction;
 
@@ -23,8 +21,8 @@ public class JarService {
 		return storage.getAll();
 	}
 
-	public Optional<Jar> find(final long id) {
-		return storage.find(id);
+	public Jar get(final long id) {
+		return storage.get(id);
 	}
 
 	public Jar create(final JarAction.Create action) {
@@ -37,8 +35,7 @@ public class JarService {
 	public Jar update(final long id, final JarAction.Update action) {
 		Objects.requireNonNull(action);
 
-		final Jar jar = storage.find(id)
-				.orElseThrow(MissingEntityException::new);
+		final Jar jar = storage.get(id);
 		action.applyOn(jar);
 
 		return storage.update(jar);

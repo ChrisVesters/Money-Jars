@@ -12,9 +12,7 @@ import {
 	DeleteAccountDocument,
 	Direction,
 	GetAccountsDocument,
-	GetAccountTransactionsDocument,
 	UpdateAccountDocument,
-	type Account,
 	type UpdateAccount
 } from "@gql/graphql";
 
@@ -22,6 +20,7 @@ import Modal from "../common/Modal";
 import "../jar/jar.css";
 import AccountForm from "./AccountForm";
 import AccountView from "./AccountView";
+import type { AccountItem } from "./accountTypes";
 
 const Overview = (): JSX.Element => {
 	const { t } = useTranslation();
@@ -32,17 +31,13 @@ const Overview = (): JSX.Element => {
 	const [deleteAccount] = useMutation(DeleteAccountDocument);
 
 	const [accountFormVisible, setAccountFormVisible] = useState(false);
-	const [selectedAccount, setSelectedAccount] = useState<Account | undefined>(
-		undefined
-	);
+	const [selectedAccount, setSelectedAccount] = useState<
+		AccountItem | undefined
+	>(undefined);
+
 	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
 		undefined
 	);
-
-	const transactions = useQuery(GetAccountTransactionsDocument, {
-		variables: { id: selectedCardId ?? "" },
-		skip: !selectedCardId
-	});
 
 	const openCreateAccountForm = (): void => {
 		setSelectedAccount(undefined);
@@ -50,7 +45,7 @@ const Overview = (): JSX.Element => {
 		setAccountFormVisible(true);
 	};
 
-	const openEditAccountForm = (account: Account): void => {
+	const openEditAccountForm = (account: AccountItem): void => {
 		setSelectedAccount(account);
 		setAccountFormVisible(true);
 	};
@@ -147,9 +142,9 @@ const Overview = (): JSX.Element => {
 					</tr>
 				</thead>
 				<tbody>
-					{transactions.data?.getAccount?.transactions
-						?.filter(transaction => transaction !== null)
-						.map(transaction => (
+					{data?.getAccounts
+						.find(account => account.id === selectedCardId)
+						?.transactions.map(transaction => (
 							<tr
 								key={transaction.id}
 								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}

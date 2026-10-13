@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
 import com.cvesters.moneyjars.account.dao.AccountEntryDao;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 
 @Service
 public class AccountEntryStorageGateway {
@@ -20,11 +21,12 @@ public class AccountEntryStorageGateway {
 		this.repository = repository;
 	}
 
-	public Optional<AccountEntry> findByAccountIdAndTransactionId(
-			final long accountId, final long transactionId) {
+	public AccountEntry getByAccountIdAndTransactionId(final long accountId,
+			final long transactionId) {
 		return repository
 				.findByAccountIdAndTransactionId(accountId, transactionId)
-				.map(AccountEntryDao::toBdo);
+				.map(AccountEntryDao::toBdo)
+				.orElseThrow(MissingEntityException::new);
 	}
 
 	public Optional<AccountEntry> findBefore(final long accountId,

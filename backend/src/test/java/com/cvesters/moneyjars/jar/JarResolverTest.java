@@ -53,8 +53,8 @@ class JarResolverTest {
 
 		@Test
 		void lastEntry() {
-			when(jarService.find(HOUSEHOLD.getId()))
-					.thenReturn(Optional.of(HOUSEHOLD.bdo()));
+			when(jarService.get(HOUSEHOLD.getId()))
+					.thenReturn(HOUSEHOLD.bdo());
 			when(entryService.findLast(HOUSEHOLD.getId()))
 					.thenReturn(Optional.of(ENTRY.bdo()));
 
@@ -68,8 +68,8 @@ class JarResolverTest {
 
 		@Test
 		void noEntries() {
-			when(jarService.find(HOUSEHOLD.getId()))
-					.thenReturn(Optional.of(HOUSEHOLD.bdo()));
+			when(jarService.get(HOUSEHOLD.getId()))
+					.thenReturn(HOUSEHOLD.bdo());
 			when(entryService.findLast(HOUSEHOLD.getId()))
 					.thenReturn(Optional.empty());
 
@@ -110,8 +110,8 @@ class JarResolverTest {
 			final TestPaymentTransaction transaction1 = ENTRY_1.getTransaction();
 			final TestPaymentTransaction transaction2 = ENTRY_2.getTransaction();
 
-			when(jarService.find(HOUSEHOLD.getId()))
-					.thenReturn(Optional.of(HOUSEHOLD.bdo()));
+			when(jarService.get(HOUSEHOLD.getId()))
+					.thenReturn(HOUSEHOLD.bdo());
 			when(entryService.getAll(HOUSEHOLD.getId()))
 					.thenReturn(List.of(ENTRY_1.bdo(), ENTRY_2.bdo()));
 			when(transactionService.get(transaction1.getId()))
@@ -130,8 +130,8 @@ class JarResolverTest {
 
 		@Test
 		void noEntries() {
-			when(jarService.find(HOUSEHOLD.getId()))
-					.thenReturn(Optional.of(HOUSEHOLD.bdo()));
+			when(jarService.get(HOUSEHOLD.getId()))
+					.thenReturn(HOUSEHOLD.bdo());
 			when(entryService.getAll(HOUSEHOLD.getId()))
 					.thenReturn(Collections.emptyList());
 

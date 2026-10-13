@@ -7,20 +7,24 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cvesters.moneyjars.account.bdo.Account;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.config.GraphqlExceptionResolver;
 
 @GraphQlTest(AccountController.class)
+@Import(GraphqlExceptionResolver.class)
 class AccountControllerTest {
 
 	@Autowired
@@ -69,8 +73,8 @@ class AccountControllerTest {
 		@Test
 		void success() {
 			final Account account = CHECKING.bdo();
-			when(accountService.find(CHECKING.getId()))
-					.thenReturn(Optional.of(account));
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(account);
 
 			final String document = """
 					query {
@@ -90,8 +94,8 @@ class AccountControllerTest {
 
 		@Test
 		void notFound() {
-			when(accountService.find(CHECKING.getId()))
-					.thenReturn(Optional.empty());
+			when(accountService.get(CHECKING.getId()))
+					.thenThrow(MissingEntityException.class);
 
 			final String document = """
 					query {
@@ -105,8 +109,13 @@ class AccountControllerTest {
 
 			graphQlTester.document(document)
 					.execute()
-					.path("getAccount")
-					.valueIsNull();
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.NOT_FOUND);
+						assertThat(error.getPath()).isEqualTo("getAccount");
+						return true;
+					});
 		}
 	}
 

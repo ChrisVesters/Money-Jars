@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
@@ -268,8 +267,8 @@ class AccountEntryServiceTest {
 
 			final AccountEntry entry = mock();
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
-					TRANSACTION.getId())).thenReturn(Optional.of(entry));
+			when(gateway.getByAccountIdAndTransactionId(accountId,
+					TRANSACTION.getId())).thenReturn(entry);
 			when(gateway.getAllAfter(accountId, date, sequence))
 					.thenReturn(Collections.emptyList());
 
@@ -294,8 +293,8 @@ class AccountEntryServiceTest {
 			final AccountEntry next2 = mock();
 			final List<AccountEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
-					TRANSACTION.getId())).thenReturn(Optional.of(entry));
+			when(gateway.getByAccountIdAndTransactionId(accountId,
+					TRANSACTION.getId())).thenReturn(entry);
 			when(gateway.getAllAfter(accountId, date, sequence))
 					.thenReturn(nextEntries);
 
@@ -325,8 +324,8 @@ class AccountEntryServiceTest {
 			final AccountEntry next2 = mock();
 			final List<AccountEntry> nextEntries = List.of(next1, next2);
 
-			when(gateway.findByAccountIdAndTransactionId(accountId,
-					testTransaction.getId())).thenReturn(Optional.of(entry));
+			when(gateway.getByAccountIdAndTransactionId(accountId,
+					testTransaction.getId())).thenReturn(entry);
 			when(gateway.getAllAfter(accountId, date, sequence))
 					.thenReturn(nextEntries);
 
@@ -339,21 +338,6 @@ class AccountEntryServiceTest {
 			inOrder.verify(gateway).updateAll(nextEntries);
 
 			verify(entry, never()).shift(any());
-		}
-
-		@Test
-		void notFound() {
-			final PaymentTransaction transaction = TRANSACTION.bdo();
-			final long accountId = TRANSACTION.getAccount().getId();
-
-			when(gateway.findByAccountIdAndTransactionId(accountId,
-					TRANSACTION.getId())).thenReturn(Optional.empty());
-
-			assertThatThrownBy(() -> service.delete(transaction))
-					.isInstanceOf(MissingEntityException.class);
-
-			verify(gateway, never()).delete(any());
-			verify(gateway, never()).updateAll(any());
 		}
 
 		@Test

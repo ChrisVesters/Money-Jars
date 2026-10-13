@@ -8,13 +8,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.jar.bdo.JarAction;
 
@@ -38,16 +36,16 @@ class JarServiceTest {
 	}
 
 	@Nested
-	class Find {
+	class Get {
 
 		private static final long JAR_ID = 2L;
 
 		@Test
 		void success() {
-			final Optional<Jar> expected = Optional.of(mock());
-			when(storage.find(JAR_ID)).thenReturn(expected);
+			final Jar expected = mock();
+			when(storage.get(JAR_ID)).thenReturn(expected);
 
-			final Optional<Jar> result = service.find(JAR_ID);
+			final Jar result = service.get(JAR_ID);
 
 			assertThat(result).isSameAs(expected);
 		}
@@ -88,7 +86,7 @@ class JarServiceTest {
 			final Jar existing = mock();
 
 			final Jar updated = mock();
-			when(storage.find(JAR_ID)).thenReturn(Optional.of(existing));
+			when(storage.get(JAR_ID)).thenReturn(existing);
 			when(storage.update(existing)).thenReturn(updated);
 
 			final Jar result = service.update(JAR_ID, action);
@@ -96,7 +94,7 @@ class JarServiceTest {
 			assertThat(result).isSameAs(updated);
 
 			final InOrder inOrder = inOrder(storage, action);
-			inOrder.verify(storage).find(JAR_ID);
+			inOrder.verify(storage).get(JAR_ID);
 			inOrder.verify(action).applyOn(existing);
 			inOrder.verify(storage).update(existing);
 		}
@@ -105,15 +103,6 @@ class JarServiceTest {
 		void actionNull() {
 			assertThatThrownBy(() -> service.update(JAR_ID, null))
 					.isInstanceOf(NullPointerException.class);
-		}
-
-		@Test
-		void missingEntity() {
-			final JarAction.Update action = mock();
-			when(storage.find(JAR_ID)).thenReturn(Optional.empty());
-
-			assertThatThrownBy(() -> service.update(JAR_ID, action))
-					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 

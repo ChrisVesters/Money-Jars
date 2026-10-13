@@ -1,7 +1,6 @@
 package com.cvesters.moneyjars.transaction;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,9 +21,5 @@ public class TransactionService {
 
 	public Transaction get(final long id) {
 		return storage.get(id);
-	}
-
-	public Optional<Transaction> find(final long id) {
-		return storage.find(id);
 	}
 }

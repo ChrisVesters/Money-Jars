@@ -88,24 +88,6 @@ class TransactionStorageGatewayTest {
 	}
 
 	@Nested
-	class Find {
-
-		@Test
-		void success() {
-			final TransactionDao dao = mock();
-			final PaymentTransaction bdo = mock();
-			when(dao.toBdo()).thenReturn(bdo);
-
-			when(repository.findById(TRANSACTION.getId()))
-					.thenReturn(Optional.of(dao));
-
-			final var result = gateway.find(TRANSACTION.getId());
-
-			assertThat(result).containsSame(bdo);
-		}
-	}
-
-	@Nested
 	class FindFirstForDate {
 
 		@Test

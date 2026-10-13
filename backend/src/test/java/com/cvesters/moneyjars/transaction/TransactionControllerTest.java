@@ -1,9 +1,9 @@
 package com.cvesters.moneyjars.transaction;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Nested;
@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @GraphQlTest(TransactionController.class)
@@ -74,8 +76,8 @@ class TransactionControllerTest {
 		void success() {
 			final Transaction transaction = TRANSACTION.bdo();
 
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.of(transaction));
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenReturn(transaction);
 
 			final String document = """
 					query {
@@ -99,8 +101,8 @@ class TransactionControllerTest {
 
 		@Test
 		void notFound() {
-			when(transactionService.find(TRANSACTION.getId()))
-					.thenReturn(Optional.empty());
+			when(transactionService.get(TRANSACTION.getId()))
+					.thenThrow(MissingEntityException.class);
 
 			final String document = """
 					query {
@@ -118,12 +120,15 @@ class TransactionControllerTest {
 
 			graphQlTester.document(document)
 					.execute()
-					.path("getTransaction")
-					.valueIsNull();
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.NOT_FOUND);
+						assertThat(error.getPath()).isEqualTo("getTransaction");
+						return true;
+					});
 		}
 	}
-
-	
 
 	void assertEquals(final Response response,
 			final TestPaymentTransaction expected, final String prefix) {

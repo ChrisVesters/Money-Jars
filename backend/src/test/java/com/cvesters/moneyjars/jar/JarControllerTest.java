@@ -7,20 +7,24 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.config.GraphqlExceptionResolver;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 
 @GraphQlTest(JarController.class)
+@Import(GraphqlExceptionResolver.class)
 class JarControllerTest {
 
 	@Autowired
@@ -71,8 +75,8 @@ class JarControllerTest {
 		void success() {
 			final Jar jar = HOUSEHOLD.bdo();
 
-			when(jarService.find(HOUSEHOLD.getId()))
-					.thenReturn(Optional.of(jar));
+			when(jarService.get(HOUSEHOLD.getId()))
+					.thenReturn(jar);
 
 			final String document = """
 					query {
@@ -92,8 +96,8 @@ class JarControllerTest {
 
 		@Test
 		void notFound() {
-			when(jarService.find(HOUSEHOLD.getId()))
-					.thenReturn(Optional.empty());
+			when(jarService.get(HOUSEHOLD.getId()))
+					.thenThrow(MissingEntityException.class);
 
 			final String document = """
 					query {
@@ -107,8 +111,13 @@ class JarControllerTest {
 
 			graphQlTester.document(document)
 					.execute()
-					.path("getJar")
-					.valueIsNull();
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.NOT_FOUND);
+						assertThat(error.getPath()).isEqualTo("getJar");
+						return true;
+					});
 		}
 
 	}

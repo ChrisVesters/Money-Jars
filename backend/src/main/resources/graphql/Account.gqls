@@ -3,7 +3,7 @@ type Account {
   name: String!
   description: String!
   balance: String!
-  transactions: [Transaction]
+  transactions: [Transaction!]!
 }
 
 input UpdateAccount {
@@ -13,11 +13,11 @@ input UpdateAccount {
 
 extend type Query {
   getAccounts: [Account!]!
-  getAccount(id: ID!): Account
+  getAccount(id: ID!): Account!
 }
 
 extend type Mutation {
-  createAccount(req: UpdateAccount!): Account
-  updateAccount(id: ID!, req: UpdateAccount!): Account
-  deleteAccount(id: ID!): Boolean
+  createAccount(req: UpdateAccount!): Account!
+  updateAccount(id: ID!, req: UpdateAccount!): Account!
+  deleteAccount(id: ID!): Boolean!
 }

@@ -4,21 +4,7 @@ query GetAccounts {
 		name
 		description
 		balance
-	}
-}
 
-query GetAccount($id: ID!) {
-	getAccount(id: $id) {
-		id
-		name
-		description
-		balance
-	}
-}
-
-query GetAccountTransactions($id: ID!) {
-	getAccount(id: $id) {
-		id
 		transactions {
 			__typename
 

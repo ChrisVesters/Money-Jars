@@ -28,7 +28,8 @@ public class JarController {
 
 	@QueryMapping
 	public JarDto getJar(@Argument final long id) {
-		return jarService.find(id).map(JarDto::new).orElse(null);
+		final Jar jar = jarService.get(id);
+		return new JarDto(jar);
 	}
 
 	@MutationMapping

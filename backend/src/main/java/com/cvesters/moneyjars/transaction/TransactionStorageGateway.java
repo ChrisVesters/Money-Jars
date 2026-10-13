@@ -36,11 +36,9 @@ public class TransactionStorageGateway {
 	}
 
 	public Transaction get(final long id) {
-		return find(id).orElseThrow(MissingEntityException::new);
-	}
-
-	public Optional<Transaction> find(final long id) {
-		return transactionRepository.findById(id).map(TransactionDao::toBdo);
+		return transactionRepository.findById(id)
+				.map(TransactionDao::toBdo)
+				.orElseThrow(MissingEntityException::new);
 	}
 
 	public Optional<Transaction> findFirstForDate(final LocalDate date) {

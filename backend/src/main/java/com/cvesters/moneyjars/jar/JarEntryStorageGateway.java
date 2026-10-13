@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 
@@ -20,10 +21,11 @@ public class JarEntryStorageGateway {
 		this.repository = repository;
 	}
 
-	public Optional<JarEntry> findByJarIdAndTransactionId(final long jarId,
+	public JarEntry getByJarIdAndTransactionId(final long jarId,
 			final long transactionId) {
 		return repository.findByJarIdAndTransactionId(jarId, transactionId)
-				.map(JarEntryDao::toBdo);
+				.map(JarEntryDao::toBdo)
+				.orElseThrow(MissingEntityException::new);
 	}
 
 	public Optional<JarEntry> findBefore(final long jarId, final LocalDate date,

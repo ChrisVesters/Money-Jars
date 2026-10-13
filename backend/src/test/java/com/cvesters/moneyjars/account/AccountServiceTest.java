@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.bdo.Account;
 import com.cvesters.moneyjars.account.bdo.AccountAction;
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 
 class AccountServiceTest {
 
@@ -37,16 +35,16 @@ class AccountServiceTest {
 	}
 
 	@Nested
-	class Find {
+	class Get {
 
 		private static final long ACCOUNT_ID = 2L;
 
 		@Test
 		void success() {
-			final Optional<Account> expected = Optional.of(mock());
-			when(storage.find(ACCOUNT_ID)).thenReturn(expected);
+			final Account expected = mock();
+			when(storage.get(ACCOUNT_ID)).thenReturn(expected);
 
-			final Optional<Account> result = service.find(ACCOUNT_ID);
+			final Account result = service.get(ACCOUNT_ID);
 
 			assertThat(result).isSameAs(expected);
 		}
@@ -87,7 +85,7 @@ class AccountServiceTest {
 			final Account existing = mock();
 
 			final Account updated = mock();
-			when(storage.find(ACCOUNT_ID)).thenReturn(Optional.of(existing));
+			when(storage.get(ACCOUNT_ID)).thenReturn(existing);
 			when(storage.update(existing)).thenReturn(updated);
 
 			final Account result = service.update(ACCOUNT_ID, action);
@@ -95,7 +93,7 @@ class AccountServiceTest {
 			assertThat(result).isSameAs(updated);
 
 			final InOrder inOrder = inOrder(storage, action);
-			inOrder.verify(storage).find(ACCOUNT_ID);
+			inOrder.verify(storage).get(ACCOUNT_ID);
 			inOrder.verify(action).applyOn(existing);
 			inOrder.verify(storage).update(existing);
 		}
@@ -104,15 +102,6 @@ class AccountServiceTest {
 		void actionNull() {
 			assertThatThrownBy(() -> service.update(ACCOUNT_ID, null))
 					.isInstanceOf(NullPointerException.class);
-		}
-
-		@Test
-		void missingEntity() {
-			final AccountAction.Update action = mock();
-			when(storage.find(ACCOUNT_ID)).thenReturn(Optional.empty());
-
-			assertThatThrownBy(() -> service.update(ACCOUNT_ID, action))
-					.isInstanceOf(MissingEntityException.class);
 		}
 	}
 

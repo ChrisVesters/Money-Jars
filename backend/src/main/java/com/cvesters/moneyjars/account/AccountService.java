@@ -2,13 +2,11 @@ package com.cvesters.moneyjars.account;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.Account;
 import com.cvesters.moneyjars.account.bdo.AccountAction;
-import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 
 @Service
 public class AccountService {
@@ -23,8 +21,8 @@ public class AccountService {
 		return storage.getAll();
 	}
 
-	public Optional<Account> find(final long id) {
-		return storage.find(id);
+	public Account get(final long id) {
+		return storage.get(id);
 	}
 
 	public Account create(final AccountAction.Create action) {
@@ -37,8 +35,7 @@ public class AccountService {
 	public Account update(final long id, final AccountAction.Update action) {
 		Objects.requireNonNull(action);
 
-		final Account account = storage.find(id)
-				.orElseThrow(MissingEntityException::new);
+		final Account account = storage.get(id);
 		action.applyOn(account);
 
 		return storage.update(account);

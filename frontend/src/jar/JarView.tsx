@@ -1,16 +1,16 @@
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Jar } from "@gql/graphql";
-
-import IconEdit from "@assets/icons/IconEdit";
 import IconDelete from "@assets/icons/IconDelete";
+import IconEdit from "@assets/icons/IconEdit";
+
+import type { JarItem } from "./JarTypes";
 
 export type JarViewProps = {
-	jar: Jar;
+	jar: JarItem;
 	isSelected: boolean;
 	onSelect: () => void;
-	onEdit: (jar: Jar) => void;
+	onEdit: (jar: JarItem) => void;
 	onDelete: () => void;
 };
 
@@ -52,11 +52,13 @@ const JarView = (props: Readonly<JarViewProps>): JSX.Element => {
 					<button className="icon-button" onClick={handleEdit}>
 						<IconEdit size="1rem" />
 					</button>
-					<button
-						className="icon-button danger"
-						onClick={handleDelete}>
-						<IconDelete size="1rem" />
-					</button>
+					{props.jar.transactions.length === 0 && (
+						<button
+							className="icon-button danger"
+							onClick={handleDelete}>
+							<IconDelete size="1rem" />
+						</button>
+					)}
 				</div>
 			)}
 		</div>

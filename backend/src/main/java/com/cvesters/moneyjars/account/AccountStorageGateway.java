@@ -2,12 +2,12 @@ package com.cvesters.moneyjars.account;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.Account;
 import com.cvesters.moneyjars.account.dao.AccountDao;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 
 @Service
 public class AccountStorageGateway {
@@ -25,8 +25,10 @@ public class AccountStorageGateway {
 				.toList();
 	}
 
-	public Optional<Account> find(final long id) {
-		return accountRepository.findById(id).map(AccountDao::toBdo);
+	public Account get(final long id) {
+		return accountRepository.findById(id)
+				.map(AccountDao::toBdo)
+				.orElseThrow(MissingEntityException::new);
 	}
 
 	public Account create(final Account account) {
