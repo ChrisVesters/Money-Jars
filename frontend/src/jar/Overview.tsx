@@ -17,10 +17,12 @@ import {
 } from "@gql/graphql";
 import JarView from "./JarView";
 
-import Modal from "../common/Modal";
+import Modal from "@src/common/Modal";
+import { Money } from "@src/common/money";
+
 import "./jar.css";
 import JarForm from "./JarForm";
-import type { JarItem } from "./JarTypes";
+import type { JarItem } from "./jarTypes";
 
 const Overview = (): JSX.Element => {
 	const { t } = useTranslation();
@@ -153,7 +155,7 @@ const Overview = (): JSX.Element => {
 								// onClick={() => selectTransaction(transaction)}
 							>
 								<td>{transaction.date}</td>
-								<td>€{transaction.amount}</td>
+								<td>{Money.toLabel(transaction.amount)}</td>
 								<td>
 									{transaction.direction ===
 									Direction.Outgoing ? (

@@ -1,8 +1,9 @@
-import { useState } from "react";
 import type { JSX } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
+import type { CreatePaymentTransaction } from "@gql/graphql";
 import {
 	CreatePaymentTransactionDocument,
 	DeletePaymentTransactionDocument,
@@ -12,18 +13,19 @@ import {
 	GetTransactionsDocument,
 	UpdatePaymentTransactionDocument
 } from "@gql/graphql";
-import type { CreatePaymentTransaction } from "@gql/graphql";
 
-import IconPlus from "@assets/icons/IconPlus";
-import IconEdit from "@assets/icons/IconEdit";
 import IconDelete from "@assets/icons/IconDelete";
+import IconEdit from "@assets/icons/IconEdit";
+import IconIncoming from "@assets/icons/IconIncoming";
+import IconOutgoing from "@assets/icons/IconOutgoing";
+import IconPlus from "@assets/icons/IconPlus";
 
-import Modal from "../common/Modal";
+import Modal from "@src/common/Modal";
+import { Money } from "@src/common/money";
+
 import TransactionForm from "./TransactionForm";
 import "./transaction.css";
 import type { TransactionItem } from "./transactionTypes";
-import IconIncoming from "@assets/icons/IconIncoming";
-import IconOutgoing from "@assets/icons/IconOutgoing";
 
 const TransactionsOverview = (): JSX.Element => {
 	const { t } = useTranslation();
@@ -177,7 +179,7 @@ const TransactionsOverview = (): JSX.Element => {
 							className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
 							onClick={() => selectTransaction(transaction)}>
 							<td>{transaction.date}</td>
-							<td>€{transaction.amount}</td>
+							<td>{Money.toLabel(transaction.amount)}</td>
 							<td>
 								{transaction.direction ===
 								Direction.Outgoing ? (

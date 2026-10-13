@@ -4,6 +4,7 @@ query GetJars {
 		name
 		description
 		balance
+		goal
 
 		transactions {
 			__typename
