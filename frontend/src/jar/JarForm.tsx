@@ -17,10 +17,12 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 	const [description, setDescription] = useState(
 		props.jar?.description ?? ""
 	);
+	const [goal, setGoal] = useState(props.jar?.goal ?? "");
 
 	useEffect(() => {
 		setName(props.jar?.name ?? "");
 		setDescription(props.jar?.description ?? "");
+		setGoal(props.jar?.goal ?? "");
 	}, [props.jar]);
 
 	// const [error, setError] = useState<string | null>(null);
@@ -36,10 +38,12 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 		// 	setError("Jar name is required");
 		// 	return;
 		// }
+		const goalValue = goal.trim() === "" ? null : goal;
 
 		props.onConfirm({
 			name,
-			description
+			description,
+			goal: goalValue
 		});
 
 		clear();
@@ -53,6 +57,7 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 	const clear = (): void => {
 		setName("");
 		setDescription("");
+		setGoal("");
 	};
 
 	return (
@@ -74,6 +79,17 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 					value={description}
 					onChange={e => setDescription(e.target.value)}
 					rows={3}
+				/>
+			</div>
+
+			<div className="form-group">
+				<label htmlFor="goal">{t("goal")}</label>
+				<input
+					id="goal"
+					type="number"
+					step="0.01"
+					value={goal}
+					onChange={e => setGoal(e.target.value)}
 				/>
 			</div>
 

@@ -23,6 +23,7 @@
 	"errorCreateTransaction": "Error creating transaction",
 	"errorDeleteAccount": "Error deleting account",
 	"errorDeleteTransaction": "Error deleting transaction",
+	"goal": "Goal",
 	"INCOMING": "incoming",
 	"jar": "Jar",
 	"jars": "Jars",

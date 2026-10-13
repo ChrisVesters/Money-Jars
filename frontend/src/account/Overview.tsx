@@ -16,7 +16,9 @@ import {
 	type UpdateAccount
 } from "@gql/graphql";
 
-import Modal from "../common/Modal";
+import Modal from "@src/common/Modal";
+import { Money } from "@src/common/money";
+
 import "../jar/jar.css";
 import AccountForm from "./AccountForm";
 import AccountView from "./AccountView";
@@ -151,7 +153,7 @@ const Overview = (): JSX.Element => {
 								// onClick={() => selectTransaction(transaction)}
 							>
 								<td>{transaction.date}</td>
-								<td>€{transaction.amount}</td>
+								<td>{Money.toLabel(transaction.amount)}</td>
 								<td>
 									{transaction.direction ===
 									Direction.Outgoing ? (

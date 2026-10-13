@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import IconDelete from "@assets/icons/IconDelete";
 import IconEdit from "@assets/icons/IconEdit";
 
-import type { JarItem } from "./JarTypes";
+import { Money } from "@src/common/money";
+
+import type { JarItem } from "./jarTypes";
 
 export type JarViewProps = {
 	jar: JarItem;
@@ -42,8 +44,13 @@ const JarView = (props: Readonly<JarViewProps>): JSX.Element => {
 				</div>
 				<div className="card-footer">
 					<div>
-						{t("balance")}: {props.jar.balance}
+						{t("balance")}: {Money.toLabel(props.jar.balance)}
 					</div>
+					{props.jar.goal && (
+						<div>
+							{t("goal")}: {Money.toLabel(props.jar.goal)}
+						</div>
+					)}
 				</div>
 			</div>
 

@@ -3,12 +3,14 @@ type Jar {
   name: String!
   description: String!
   balance: String!
+  goal: String
   transactions: [Transaction!]!
 }
 
 input UpdateJar {
   name: String!
   description: String!
+  goal: String
 }
 
 extend type Query {

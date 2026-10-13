@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.jar.dto;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import lombok.Getter;
@@ -12,6 +13,7 @@ public class JarDto {
 	private Long id;
 	private String name;
 	private String description;
+	private String goal;
 
 	public JarDto(final Jar bdo) {
 		Objects.requireNonNull(bdo);
@@ -19,5 +21,6 @@ public class JarDto {
 		this.id = bdo.getId();
 		this.name = bdo.getName();
 		this.description = bdo.getDescription();
+		this.goal = bdo.getGoal().map(BigDecimal::toPlainString).orElse(null);
 	}
 }

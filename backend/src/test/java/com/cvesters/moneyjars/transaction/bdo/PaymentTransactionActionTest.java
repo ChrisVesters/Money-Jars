@@ -234,7 +234,7 @@ class PaymentTransactionActionTest {
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
-			assertThatThrownBy(() -> new PaymentTransactionAction.Create(date,
+			assertThatThrownBy(() -> new PaymentTransactionAction.Update(date,
 					amount, description, jarId, accountId, counterparty,
 					direction)).isInstanceOf(IllegalArgumentException.class);
 		}
