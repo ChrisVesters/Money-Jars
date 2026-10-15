@@ -100,7 +100,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 
 		@Test
 		void startNull() {
-			final LocalDate end = LocalDate.of(2026, 1, 31);
+			final LocalDate end = LocalDate.of(2026, 12, 31);
 
 			final List<TransactionDao> result = repository.findAllInPeriod(null,
 					end);

@@ -6,8 +6,12 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 import com.cvesters.moneyjars.transaction.dto.TransactionDto;
+import com.cvesters.moneyjars.transaction.dto.TransactionPageDto;
+import com.cvesters.moneyjars.transaction.dto.TransactionQueryDto;
 
 @Controller
 public class TransactionController {
@@ -24,6 +28,15 @@ public class TransactionController {
 				.stream()
 				.map(TransactionDto::fromBdo)
 				.toList();
+	}
+
+	@QueryMapping
+	public TransactionPageDto queryTransactions(
+			@Argument final TransactionQueryDto query) {
+		final TransactionQuery bdo = query.toBdo();
+		final PagedResult<Transaction> result = transactionService.query(bdo);
+
+		return new TransactionPageDto(result);
 	}
 
 	@QueryMapping
