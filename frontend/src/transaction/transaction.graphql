@@ -22,6 +22,36 @@ query GetTransactions {
 	}
 }
 
+query QueryTransactions($req: TransactionQuery!) {
+	queryTransactions(query: $req) {
+		content {
+			__typename
+
+			id
+			date
+			amount
+			description
+
+			... on PaymentTransaction {
+				jar {
+					id
+					name
+				}
+				account {
+					id
+					name
+				}
+				counterparty
+				direction
+			}
+		}
+		page
+		size
+		totalElements
+	}
+}
+
+
 mutation CreatePaymentTransaction($req: CreatePaymentTransaction!) {
 	createPaymentTransaction(req: $req) {
 		id

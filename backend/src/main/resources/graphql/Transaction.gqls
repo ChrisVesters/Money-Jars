@@ -5,13 +5,32 @@ interface Transaction {
 	description: String!
 }
 
-# TODO Spring wants some mapping?
 enum Direction {
 	INCOMING,
 	OUTGOING
 }
 
+input TransactionFilter {
+	from: String
+	to: String
+}
+
+input TransactionQuery {
+	filter: TransactionFilter!
+	page: Int = 0
+	size: Int = 100
+}
+
+type TransactionPage {
+	content: [Transaction!]!
+	page: Int!
+	size: Int!
+	totalElements: Int!
+}
+
 extend type Query {
 	getTransactions: [Transaction!]!
 	getTransaction(id: ID!): Transaction!
+
+	queryTransactions(query: TransactionQuery!): TransactionPage!
 }

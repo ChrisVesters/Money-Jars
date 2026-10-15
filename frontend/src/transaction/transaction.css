@@ -12,6 +12,44 @@
 	margin-bottom: 1rem;
 }
 
+.transactions-filters {
+	display: flex;
+	gap: 1rem;
+	align-items: flex-end;
+	flex-wrap: wrap;
+}
+
+.transactions-filter {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-weight: 600;
+	color: #e0e0e0;
+}
+
+.transactions-filter input {
+	box-sizing: border-box;
+	width: 11rem;
+	padding: 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-family: inherit;
+	font-size: 1rem;
+}
+
+.text-button {
+	background: none;
+	border: none;
+	color: #4a90e2;
+	cursor: pointer;
+	padding: 0.5rem;
+	font-size: 1rem;
+}
+
+.text-button:hover {
+	color: #6ba3f0;
+}
+
 .transactions-actions {
 	display: flex;
 	gap: 0.5rem;
@@ -65,6 +103,36 @@
 	border-bottom: none;
 }
 
+.transactions-paging {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+	color: #e0e0e0;
+}
+
+.transactions-paging-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.transactions-page-size {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin-right: 1rem;
+}
+
+.transactions-page-size select {
+	padding: 0.25rem 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-family: inherit;
+	font-size: 1rem;
+}
+
 .icon-button {
 	background: none;
 	border: none;
@@ -87,4 +155,10 @@
 
 .icon-button.danger:hover {
 	color: #ff7a8f;
+}
+
+.icon-button:disabled,
+.icon-button:disabled:hover {
+	color: rgba(224, 224, 224, 0.3);
+	cursor: not-allowed;
 }

@@ -3,13 +3,11 @@ package com.cvesters.moneyjars.transaction.dto;
 import java.util.Objects;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @Getter
-@NoArgsConstructor
 public abstract sealed class TransactionDto permits PaymentTransactionDto {
 
 	private Long id;
