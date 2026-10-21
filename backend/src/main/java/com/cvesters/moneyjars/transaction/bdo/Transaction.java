@@ -9,7 +9,8 @@ import org.apache.commons.lang3.Validate;
 import lombok.Getter;
 
 @Getter
-public abstract sealed class Transaction permits PaymentTransaction {
+public abstract sealed class Transaction
+		permits PaymentTransaction, JarTransferTransaction {
 
 	private final Long id;
 	private LocalDate date;

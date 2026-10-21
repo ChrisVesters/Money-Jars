@@ -12,7 +12,7 @@ import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 
 @Getter
-public enum TestPaymentTransaction {
+public enum TestPaymentTransaction implements TestTransaction {
 
 	RENT(1L, LocalDate.of(2026, Month.JANUARY, 10), 1,
 			new BigDecimal("1200.00"), "January rent", TestJar.HOUSEHOLD,
@@ -79,13 +79,10 @@ public enum TestPaymentTransaction {
 		this.direction = direction;
 	}
 
+	@Override
 	public PaymentTransaction bdo() {
 		return new PaymentTransaction(id, date, sequence, amount, description,
 				jar.getId(), account.getId(), counterparty, direction);
-	}
-
-	public String getAmountString() {
-		return amount.toPlainString();
 	}
 
 	public short getDirectionId() {

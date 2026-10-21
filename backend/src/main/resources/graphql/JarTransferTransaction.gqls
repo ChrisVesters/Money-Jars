@@ -1,0 +1,23 @@
+type JarTransferTransaction implements Transaction {
+	id: ID!
+	date: String!
+	amount: String!
+	description: String!
+	sourceJar: Jar!
+	targetJar: Jar!
+}
+
+input CreateJarTransferTransaction {
+	date: String!
+	amount: String!
+	description: String!
+	sourceJarId: ID!
+	targetJarId: ID!
+}
+
+
+extend type Mutation {
+	createJarTransferTransaction(req: CreateJarTransferTransaction!): JarTransferTransaction!
+	updateJarTransferTransaction(id: ID!, req: CreateJarTransferTransaction!): JarTransferTransaction!
+	deleteJarTransferTransaction(id: ID!): Boolean!
+}

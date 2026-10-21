@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.cvesters.moneyjars.test.RepositoryTest;
+import com.cvesters.moneyjars.transaction.dao.JarTransferTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
@@ -38,7 +39,11 @@ class TransactionRepositoryTest extends RepositoryTest {
 					t -> assertEquals(t, TestPaymentTransaction.FLIGHTS),
 					t -> assertEquals(t, TestPaymentTransaction.HOTEL),
 					t -> assertEquals(t, TestPaymentTransaction.FUEL),
-					t -> assertEquals(t, TestPaymentTransaction.MARKET));
+					t -> assertEquals(t, TestPaymentTransaction.MARKET),
+					t -> assertEquals(t, TestJarTransferTransaction.CAR_SAVINGS),
+					t -> assertEquals(t,
+							TestJarTransferTransaction.HOLIDAY_SAVINGS),
+					t -> assertEquals(t, TestJarTransferTransaction.ROAD_TRIP));
 		}
 	}
 
@@ -221,5 +226,22 @@ class TransactionRepositoryTest extends RepositoryTest {
 		assertThat(pt.getAccountId()).isEqualTo(expected.getAccount().getId());
 		assertThat(pt.getCounterparty()).isEqualTo(expected.getCounterparty());
 		assertThat(pt.getDirection()).isEqualTo(expected.getDirectionId());
+	}
+
+	private static void assertEquals(final TransactionDao t,
+			final TestJarTransferTransaction expected) {
+		assertThat(t).isInstanceOf(JarTransferTransactionDao.class);
+		final JarTransferTransactionDao jt = (JarTransferTransactionDao) t;
+
+		assertThat(jt.getId()).isEqualTo(expected.getId());
+		assertThat(jt.getDate()).isEqualTo(expected.getDate());
+		assertThat(jt.getSequence()).isEqualTo(expected.getSequence());
+		assertThat(jt.getAmount()).isEqualByComparingTo(expected.getAmount());
+		assertThat(jt.getDescription()).isEqualTo(expected.getDescription());
+
+		assertThat(jt.getSourceJarId())
+				.isEqualTo(expected.getSourceJar().getId());
+		assertThat(jt.getTargetJarId())
+				.isEqualTo(expected.getTargetJar().getId());
 	}
 }

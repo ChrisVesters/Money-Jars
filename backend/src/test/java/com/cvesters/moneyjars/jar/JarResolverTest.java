@@ -17,7 +17,9 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.cvesters.moneyjars.transaction.TestJarTransferTransaction;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
+import com.cvesters.moneyjars.transaction.TestTransaction;
 import com.cvesters.moneyjars.transaction.TransactionGraphqlConfig;
 import com.cvesters.moneyjars.transaction.TransactionService;
 
@@ -34,7 +36,7 @@ class JarResolverTest {
 	@MockitoBean
 	private JarEntryService entryService;
 
-	@MockitoBean 
+	@MockitoBean
 	private TransactionService transactionService;
 
 	@Nested
@@ -53,8 +55,7 @@ class JarResolverTest {
 
 		@Test
 		void lastEntry() {
-			when(jarService.get(HOUSEHOLD.getId()))
-					.thenReturn(HOUSEHOLD.bdo());
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
 			when(entryService.findLast(HOUSEHOLD.getId()))
 					.thenReturn(Optional.of(ENTRY.bdo()));
 
@@ -68,8 +69,7 @@ class JarResolverTest {
 
 		@Test
 		void noEntries() {
-			when(jarService.get(HOUSEHOLD.getId()))
-					.thenReturn(HOUSEHOLD.bdo());
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
 			when(entryService.findLast(HOUSEHOLD.getId()))
 					.thenReturn(Optional.empty());
 
@@ -88,11 +88,13 @@ class JarResolverTest {
 		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
 		private static final TestJarEntry ENTRY_1 = TestJarEntry.HOUSEHOLD_RENT;
 		private static final TestJarEntry ENTRY_2 = TestJarEntry.HOUSEHOLD_GROCERY;
+		private static final TestJarEntry ENTRY_3 = TestJarEntry.HOUSEHOLD_CAR_SAVINGS;
 
 		private static final String DOCUMENT = """
 				query {
 					getJar(id: %d) {
 						transactions {
+							__typename
 							id
 							date
 							amount
@@ -107,31 +109,37 @@ class JarResolverTest {
 
 		@Test
 		void multiple() {
-			final TestPaymentTransaction transaction1 = ENTRY_1.getTransaction();
-			final TestPaymentTransaction transaction2 = ENTRY_2.getTransaction();
+			final TestPaymentTransaction transaction1 = ENTRY_1
+					.getPaymentTransaction();
+			final TestPaymentTransaction transaction2 = ENTRY_2
+					.getPaymentTransaction();
+			final TestJarTransferTransaction transaction3 = ENTRY_3
+					.getJarTransferTransaction();
 
-			when(jarService.get(HOUSEHOLD.getId()))
-					.thenReturn(HOUSEHOLD.bdo());
-			when(entryService.getAll(HOUSEHOLD.getId()))
-					.thenReturn(List.of(ENTRY_1.bdo(), ENTRY_2.bdo()));
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
+			when(entryService.getAll(HOUSEHOLD.getId())).thenReturn(
+					List.of(ENTRY_1.bdo(), ENTRY_2.bdo(), ENTRY_3.bdo()));
 			when(transactionService.get(transaction1.getId()))
 					.thenReturn(transaction1.bdo());
 			when(transactionService.get(transaction2.getId()))
 					.thenReturn(transaction2.bdo());
+			when(transactionService.get(transaction3.getId()))
+					.thenReturn(transaction3.bdo());
 
 			final Response response = graphQlTester.document(DOCUMENT)
 					.execute();
 
-			assertTransaction(response, transaction1,
+			assertPaymentTransaction(response, transaction1,
 					"getJar.transactions[0]");
-			assertTransaction(response, transaction2,
+			assertPaymentTransaction(response, transaction2,
 					"getJar.transactions[1]");
+			assertJarTransferTransaction(response, transaction3,
+					"getJar.transactions[2]");
 		}
 
 		@Test
 		void noEntries() {
-			when(jarService.get(HOUSEHOLD.getId()))
-					.thenReturn(HOUSEHOLD.bdo());
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
 			when(entryService.getAll(HOUSEHOLD.getId()))
 					.thenReturn(Collections.emptyList());
 
@@ -142,8 +150,28 @@ class JarResolverTest {
 					.hasSize(0);
 		}
 
-		private void assertTransaction(final Response response,
+		private void assertPaymentTransaction(final Response response,
 				final TestPaymentTransaction expected, final String prefix) {
+			assertTransaction(response, expected, prefix);
+			response.path(prefix + ".__typename")
+					.entity(String.class)
+					.isEqualTo("PaymentTransaction")
+					.path(prefix + ".counterparty")
+					.entity(String.class)
+					.isEqualTo(expected.getCounterparty());
+		}
+
+		private void assertJarTransferTransaction(final Response response,
+				final TestJarTransferTransaction expected,
+				final String prefix) {
+			assertTransaction(response, expected, prefix);
+			response.path(prefix + ".__typename")
+					.entity(String.class)
+					.isEqualTo("JarTransferTransaction");
+		}
+
+		private void assertTransaction(final Response response,
+				final TestTransaction expected, final String prefix) {
 			response.path(prefix + ".id")
 					.entity(Long.class)
 					.isEqualTo(expected.getId())
@@ -155,10 +183,7 @@ class JarResolverTest {
 					.isEqualTo(expected.getAmountString())
 					.path(prefix + ".description")
 					.entity(String.class)
-					.isEqualTo(expected.getDescription())
-					.path(prefix + ".counterparty")
-					.entity(String.class)
-					.isEqualTo(expected.getCounterparty());
+					.isEqualTo(expected.getDescription());
 		}
 	}
 }

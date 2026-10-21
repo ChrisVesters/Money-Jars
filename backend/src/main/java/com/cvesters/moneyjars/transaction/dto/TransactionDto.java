@@ -4,11 +4,13 @@ import java.util.Objects;
 
 import lombok.Getter;
 
+import com.cvesters.moneyjars.transaction.bdo.JarTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @Getter
-public abstract sealed class TransactionDto permits PaymentTransactionDto {
+public abstract sealed class TransactionDto
+		permits PaymentTransactionDto, JarTransferTransactionDto {
 
 	private Long id;
 	private String date;
@@ -20,6 +22,8 @@ public abstract sealed class TransactionDto permits PaymentTransactionDto {
 
 		return switch (transaction) {
 			case PaymentTransaction pt -> new PaymentTransactionDto(pt);
+			case JarTransferTransaction jtt -> new JarTransferTransactionDto(
+					jtt);
 		};
 	}
 

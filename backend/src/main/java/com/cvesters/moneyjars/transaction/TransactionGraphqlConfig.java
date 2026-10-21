@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
+import com.cvesters.moneyjars.transaction.dto.JarTransferTransactionDto;
 import com.cvesters.moneyjars.transaction.dto.PaymentTransactionDto;
 
 @Configuration
@@ -26,6 +27,7 @@ public class TransactionGraphqlConfig {
 	private static String getTypeName(final Object source) {
 		return switch (source) {
 			case PaymentTransactionDto _ -> "PaymentTransaction";
+			case JarTransferTransactionDto _ -> "JarTransferTransaction";
 			default -> null;
 		};
 	}

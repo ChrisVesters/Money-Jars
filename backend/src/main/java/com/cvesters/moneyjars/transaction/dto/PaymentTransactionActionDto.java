@@ -11,7 +11,7 @@ public final class PaymentTransactionActionDto {
 	private PaymentTransactionActionDto() {
 	}
 
-	public static record CreatePayment(LocalDate date, String amount,
+	public static record Create(LocalDate date, String amount,
 			String description, long jarId, long accountId, String counterparty,
 			String direction) {
 
@@ -23,7 +23,7 @@ public final class PaymentTransactionActionDto {
 		}
 	}
 
-	public static record UpdatePayment(LocalDate date, String amount,
+	public static record Update(LocalDate date, String amount,
 			String description, long jarId, long accountId, String counterparty,
 			String direction) {
 
