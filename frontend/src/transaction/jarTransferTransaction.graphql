@@ -1,0 +1,21 @@
+mutation CreateJarTransferTransaction($req: CreateJarTransferTransaction!) {
+	createJarTransferTransaction(req: $req) {
+		id
+		date
+		amount
+		description
+	}
+}
+
+mutation UpdateJarTransferTransaction($id: ID!, $req: CreateJarTransferTransaction!) {
+	updateJarTransferTransaction(id: $id, req: $req) {
+		id
+		date
+		amount
+		description
+	}
+}
+
+mutation DeleteJarTransferTransaction($id: ID!) {
+	deleteJarTransferTransaction(id: $id)
+}

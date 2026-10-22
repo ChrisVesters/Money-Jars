@@ -19,6 +19,7 @@ import {
 
 import Modal from "@src/common/Modal";
 import { Money } from "@src/common/money";
+import { TransactionType } from "@src/transaction/transactionTypes";
 
 import "../jar/jar.css";
 import AccountForm from "./AccountForm";
@@ -155,7 +156,13 @@ const Overview = (): JSX.Element => {
 				<tbody>
 					{accounts
 						.find(account => account.id === selectedCardId)
-						?.transactions.map(transaction => (
+						// TODO: this should actually not be possible
+						// But I don't think we can enforce this?
+						?.transactions.filter(
+							transaction =>
+								transaction.__typename === TransactionType.Payment
+						)
+						.map(transaction => (
 							<tr
 								key={transaction.id}
 								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
