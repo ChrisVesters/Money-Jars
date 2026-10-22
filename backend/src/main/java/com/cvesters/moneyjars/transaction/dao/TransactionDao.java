@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,8 @@ import com.cvesters.moneyjars.transaction.bdo.Transaction;
 @Getter
 @Setter
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "date", "sequence" }) })
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public abstract class TransactionDao {

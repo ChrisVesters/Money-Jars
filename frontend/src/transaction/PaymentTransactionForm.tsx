@@ -2,30 +2,36 @@ import type { JSX } from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useMutation } from "@apollo/client/react";
 import {
+	CreatePaymentTransactionDocument,
 	Direction,
+	UpdatePaymentTransactionDocument,
 	type Account,
-	type CreatePaymentTransaction,
 	type Jar
 } from "@gql/graphql";
-import type { TransactionItem } from "./transactionTypes";
+import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
+import type { PaymentTransactionItem } from "./transactionTypes";
 import IconOutgoing from "@assets/icons/IconOutgoing";
 import IconIncoming from "@assets/icons/IconIncoming";
 
-export type TransactionFormProps = {
-	transaction?: TransactionItem;
+export type PaytmentTransactionFormProps = {
+	transaction?: PaymentTransactionItem;
 	jars: Array<Jar>;
 	accounts: Array<Account>;
 
 	onClose: () => void;
-	onConfirm: (transaction: CreatePaymentTransaction) => void;
 };
 
-// TODO: we can not re-use create for update, since most fields will be locked.
-// TODO: Well, we can re-use it, but we won't be able to submit it.
-// TODO: onConfirm should use Transaction instead of CreateTransaction
-const TransactionForm = (props: TransactionFormProps): JSX.Element => {
+const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Element => {
 	const { t } = useTranslation();
+
+	const [createPaymentTransaction] = useMutation(
+		CreatePaymentTransactionDocument
+	);
+	const [updatePaymentTransaction] = useMutation(
+		UpdatePaymentTransactionDocument
+	);
 
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
@@ -41,8 +47,8 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			setDate(props.transaction.date);
 			setAmount(props.transaction.amount ?? "");
 			setDescription(props.transaction.description ?? "");
-			setJarId(props.transaction.jar?.id ?? "");
-			setAccountId(props.transaction.account?.id ?? "");
+			setJarId(props.transaction.jar.id);
+			setAccountId(props.transaction.account.id);
 			setCounterparty(props.transaction.counterparty ?? "");
 			setDirection(props.transaction.direction);
 		} else {
@@ -99,7 +105,7 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			return;
 		}
 
-		props.onConfirm({
+		const data = {
 			date,
 			amount: amount,
 			description: description || "",
@@ -107,8 +113,32 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 			accountId,
 			counterparty: counterparty,
 			direction
-		});
+		};
 
+		try {
+			if (props.transaction) {
+				const result = await updatePaymentTransaction({
+					variables: {
+						id: props.transaction.id,
+						req: data
+					},
+					refetchQueries: TRANSACTION_REFETCH_QUERIES
+				});
+				console.log("Update transaction result:", result);
+			} else {
+				const result = await createPaymentTransaction({
+					variables: {
+						req: data
+					},
+					refetchQueries: TRANSACTION_REFETCH_QUERIES
+				});
+				console.log("Create transaction result:", result);
+			}
+		} catch (error) {
+			console.error("Error saving transaction:", error);
+		}
+
+		props.onClose();
 		clear();
 	};
 
@@ -258,4 +288,4 @@ const TransactionForm = (props: TransactionFormProps): JSX.Element => {
 	);
 };
 
-export default TransactionForm;
+export default PaymentTransactionForm;

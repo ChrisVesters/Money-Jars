@@ -10,7 +10,10 @@ VALUES
   (7, '2026-01-20', 0, 200.00, 'Flight tickets'),
   (8, '2026-02-03', 0, 65.40, 'Fuel'),
   (9, '2026-02-03', 1, 98.20, 'Fresh produce'),
-  (10, '2026-01-20', 1, 350.00, 'Hotel stay');
+  (10, '2026-01-20', 1, 350.00, 'Hotel stay'),
+  (11, '2026-02-03', 2, 100.00, 'Car maintenance savings'),
+  (12, '2026-02-10', 0, 250.00, 'Holiday savings'),
+  (13, '2026-02-10', 1, 50.00, 'Road trip fuel');
 
 SELECT setval('transactions_id_seq', (SELECT MAX(id) from "transactions"));
 
@@ -27,3 +30,10 @@ VALUES
   (8, 3, 4, 'Gas station', 1),
   (9, 1, 2, 'Farmers market', 1),
   (10, 2, 4, 'Hotel', 1);
+
+
+INSERT INTO jar_transfer_transactions(transaction_id, source_jar_id, target_jar_id)
+VALUES
+  (11, 1, 3),
+  (12, 1, 2),
+  (13, 2, 3);

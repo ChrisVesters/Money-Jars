@@ -22,7 +22,7 @@ public class PaymentTransactionController {
 
 	@MutationMapping
 	public PaymentTransactionDto createPaymentTransaction(
-			@Argument final PaymentTransactionActionDto.CreatePayment req) {
+			@Argument final PaymentTransactionActionDto.Create req) {
 		final PaymentTransactionAction.Create action = req.toBdo();
 		final PaymentTransaction created = paymentTransactionService
 				.create(action);
@@ -31,7 +31,7 @@ public class PaymentTransactionController {
 
 	@MutationMapping
 	public TransactionDto updatePaymentTransaction(@Argument final long id,
-			@Argument final PaymentTransactionActionDto.UpdatePayment req) {
+			@Argument final PaymentTransactionActionDto.Update req) {
 		final PaymentTransactionAction.Update action = req.toBdo();
 		final PaymentTransaction updated = paymentTransactionService.update(id,
 				action);

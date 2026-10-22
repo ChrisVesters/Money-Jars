@@ -19,6 +19,17 @@ query GetTransactions {
 			counterparty
 			direction
 		}
+
+		... on JarTransferTransaction {
+			sourceJar {
+				id
+				name
+			}
+			targetJar {
+				id
+				name
+			}
+		}
 	}
 }
 
@@ -44,36 +55,20 @@ query QueryTransactions($req: TransactionQuery!) {
 				counterparty
 				direction
 			}
+
+			... on JarTransferTransaction {
+				sourceJar {
+					id
+					name
+				}
+				targetJar {
+					id
+					name
+				}
+			}
 		}
 		page
 		size
 		totalElements
 	}
-}
-
-
-mutation CreatePaymentTransaction($req: CreatePaymentTransaction!) {
-	createPaymentTransaction(req: $req) {
-		id
-		date
-		amount
-		description
-		counterparty
-		direction
-	}
-}
-
-mutation UpdatePaymentTransaction($id: ID!, $req: CreatePaymentTransaction!) {
-	updatePaymentTransaction(id: $id, req: $req) {
-		id
-		date
-		amount
-		description
-		counterparty
-		direction
-	}
-}
-
-mutation DeletePaymentTransaction($id: ID!) {
-	deletePaymentTransaction(id: $id)
 }

@@ -47,6 +47,7 @@ public class PaymentTransactionDao extends TransactionDao {
 		Objects.requireNonNull(bdo);
 
 		super.updateWith(bdo);
+
 		this.jarId = bdo.getJarId();
 		this.accountId = bdo.getAccountId();
 		this.counterparty = bdo.getCounterparty();
@@ -57,7 +58,7 @@ public class PaymentTransactionDao extends TransactionDao {
 	@Override
 	public PaymentTransaction toBdo() {
 		return new PaymentTransaction(getId(), getDate(), getSequence(),
-				getAmount(), getDescription(), jarId, accountId,
-				counterparty, PaymentTransactionDirectionDao.toBdo(direction));
+				getAmount(), getDescription(), jarId, accountId, counterparty,
+				PaymentTransactionDirectionDao.toBdo(direction));
 	}
 }

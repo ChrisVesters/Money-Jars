@@ -17,7 +17,7 @@ class PaymentTransactionActionDtoTest {
 
 		@Test
 		void constructor() {
-			final var dto = new PaymentTransactionActionDto.CreatePayment(
+			final var dto = new PaymentTransactionActionDto.Create(
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
@@ -39,7 +39,7 @@ class PaymentTransactionActionDtoTest {
 
 		@Test
 		void toBdo() {
-			final var dto = new PaymentTransactionActionDto.CreatePayment(
+			final var dto = new PaymentTransactionActionDto.Create(
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
@@ -67,7 +67,7 @@ class PaymentTransactionActionDtoTest {
 
 		@Test
 		void constructor() {
-			final var dto = new PaymentTransactionActionDto.UpdatePayment(
+			final var dto = new PaymentTransactionActionDto.Update(
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
@@ -89,7 +89,7 @@ class PaymentTransactionActionDtoTest {
 
 		@Test
 		void toBdo() {
-			final var dto = new PaymentTransactionActionDto.UpdatePayment(
+			final var dto = new PaymentTransactionActionDto.Update(
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),

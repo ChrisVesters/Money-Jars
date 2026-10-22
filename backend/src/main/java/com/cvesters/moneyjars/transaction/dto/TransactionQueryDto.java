@@ -25,7 +25,15 @@ public class TransactionQueryDto {
 		return new TransactionQuery(filter.toBdo(), pagination);
 	}
 
-	public static record FilterDto(String from, String to) {
+	public static class FilterDto {
+
+		private final String from;
+		private final String to;
+
+		public FilterDto(final String from, final String to) {
+			this.from = from;
+			this.to = to;
+		}
 
 		private LocalDate toDate(final String value) {
 			return Optional.ofNullable(value)

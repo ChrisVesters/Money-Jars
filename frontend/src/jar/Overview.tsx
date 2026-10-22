@@ -20,6 +20,7 @@ import JarView from "./JarView";
 
 import Modal from "@src/common/Modal";
 import { Money } from "@src/common/money";
+import { TransactionType } from "@src/transaction/transactionTypes";
 
 import "./jar.css";
 import JarForm from "./JarForm";
@@ -165,15 +166,37 @@ const Overview = (): JSX.Element => {
 							>
 								<td>{transaction.date}</td>
 								<td>{Money.toLabel(transaction.amount)}</td>
-								<td>
-									{transaction.direction ===
-									Direction.Outgoing ? (
-										<IconOutgoing />
-									) : (
-										<IconIncoming />
-									)}
-								</td>
-								<td>{transaction.counterparty}</td>
+								{transaction.__typename ===
+								TransactionType.Payment ? (
+									<>
+										<td>
+											{transaction.direction ===
+											Direction.Outgoing ? (
+												<IconOutgoing />
+											) : (
+												<IconIncoming />
+											)}
+										</td>
+										<td>{transaction.counterparty}</td>
+									</>
+								) : (
+									<>
+										<td>
+											{transaction.sourceJar.id ===
+											selectedCardId ? (
+												<IconOutgoing />
+											) : (
+												<IconIncoming />
+											)}
+										</td>
+										<td>
+											{transaction.sourceJar.id ===
+											selectedCardId
+												? transaction.targetJar.name
+												: transaction.sourceJar.name}
+										</td>
+									</>
+								)}
 								<td>{transaction.description}</td>
 							</tr>
 						))}

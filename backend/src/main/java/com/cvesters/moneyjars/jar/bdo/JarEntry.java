@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 
 import lombok.Getter;
 
+import com.cvesters.moneyjars.transaction.bdo.JarTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
 @Getter
@@ -23,9 +24,21 @@ public class JarEntry {
 
 		final long transactionId = transaction.getId();
 		final long jarId = transaction.getJarId();
-		final BigDecimal amount = transaction.getSignedAmount();
 		final BigDecimal balanceBefore = BigDecimal.ZERO;
-		final BigDecimal balanceAfter = amount;
+		final BigDecimal balanceAfter = transaction.getSignedAmount();
+
+		return new JarEntry(null, transactionId, jarId, balanceBefore,
+				balanceAfter);
+	}
+
+	public static JarEntry first(final long jarId,
+			final JarTransferTransaction transaction) {
+		Objects.requireNonNull(transaction);
+		Validate.isTrue(transaction.involves(jarId));
+
+		final long transactionId = transaction.getId();
+		final BigDecimal balanceBefore = BigDecimal.ZERO;
+		final BigDecimal balanceAfter = transaction.getSignedAmount(jarId);
 
 		return new JarEntry(null, transactionId, jarId, balanceBefore,
 				balanceAfter);
@@ -55,6 +68,24 @@ public class JarEntry {
 
 		return new JarEntry(null, transactionId, jarId, balanceBefore,
 				balanceAfter);
+	}
+
+	public JarEntry next(final JarTransferTransaction transaction) {
+		Objects.requireNonNull(transaction);
+		Validate.isTrue(transaction.involves(this.jarId));
+
+		final long transactionId = transaction.getId();
+		final long jarId = this.jarId;
+		final BigDecimal amount = transaction.getSignedAmount(jarId);
+		final BigDecimal balanceBefore = this.getBalanceAfter();
+		final BigDecimal balanceAfter = balanceBefore.add(amount);
+
+		return new JarEntry(null, transactionId, jarId, balanceBefore,
+				balanceAfter);
+	}
+
+	public BigDecimal getAmount() {
+		return this.balanceAfter.subtract(this.balanceBefore);
 	}
 
 	public void shift(final BigDecimal amount) {

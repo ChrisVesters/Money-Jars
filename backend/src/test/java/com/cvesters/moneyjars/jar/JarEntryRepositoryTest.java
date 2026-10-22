@@ -121,7 +121,10 @@ class JarEntryRepositoryTest extends RepositoryTest {
 					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_GROCERY),
 					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_RENT),
 					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAFE),
-					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET));
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET),
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAR_SAVINGS),
+					e -> assertEquals(e,
+							TestJarEntry.HOUSEHOLD_HOLIDAY_SAVINGS));
 		}
 
 		@Test
@@ -133,7 +136,10 @@ class JarEntryRepositoryTest extends RepositoryTest {
 
 			assertThat(result).satisfiesExactly(
 					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAFE),
-					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET));
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET),
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAR_SAVINGS),
+					e -> assertEquals(e,
+							TestJarEntry.HOUSEHOLD_HOLIDAY_SAVINGS));
 		}
 
 		@Test
@@ -146,7 +152,10 @@ class JarEntryRepositoryTest extends RepositoryTest {
 			assertThat(result).satisfiesExactly(
 					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_RENT),
 					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAFE),
-					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET));
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_MARKET),
+					e -> assertEquals(e, TestJarEntry.HOUSEHOLD_CAR_SAVINGS),
+					e -> assertEquals(e,
+							TestJarEntry.HOUSEHOLD_HOLIDAY_SAVINGS));
 		}
 
 		@Test
@@ -175,7 +184,7 @@ class JarEntryRepositoryTest extends RepositoryTest {
 					.findLastByJarId(TestJar.CAR.getId());
 
 			assertThat(result).hasValueSatisfying(
-					e -> assertEquals(e, TestJarEntry.CAR_FUEL));
+					e -> assertEquals(e, TestJarEntry.CAR_ROAD_TRIP));
 		}
 
 		@Test
@@ -184,7 +193,7 @@ class JarEntryRepositoryTest extends RepositoryTest {
 					.findLastByJarId(TestJar.HOLIDAY.getId());
 
 			assertThat(result).hasValueSatisfying(
-					e -> assertEquals(e, TestJarEntry.HOLIDAY_HOTEL));
+					e -> assertEquals(e, TestJarEntry.HOLIDAY_ROAD_TRIP));
 		}
 	}
 

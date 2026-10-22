@@ -3,15 +3,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
-import type { CreatePaymentTransaction } from "@gql/graphql";
 import {
-	CreatePaymentTransactionDocument,
+	DeleteJarTransferTransactionDocument,
 	DeletePaymentTransactionDocument,
 	Direction,
 	GetAccountsDocument,
 	GetJarsDocument,
-	QueryTransactionsDocument,
-	UpdatePaymentTransactionDocument
+	QueryTransactionsDocument
 } from "@gql/graphql";
 
 import IconChevronLeft from "@assets/icons/IconChevronLeft";
@@ -19,15 +17,19 @@ import IconChevronRight from "@assets/icons/IconChevronRight";
 import IconDelete from "@assets/icons/IconDelete";
 import IconEdit from "@assets/icons/IconEdit";
 import IconIncoming from "@assets/icons/IconIncoming";
+import IconJar from "@assets/icons/IconJar";
 import IconOutgoing from "@assets/icons/IconOutgoing";
 import IconPlus from "@assets/icons/IconPlus";
 
 import Modal from "@src/common/Modal";
 import { Money } from "@src/common/money";
 
-import TransactionForm from "./TransactionForm";
+import CreateTransactionForm from "./CreateTransactionForm";
+import JarTransferTransactionForm from "./JarTransferTransactionForm";
+import PaymentTransactionForm from "./PaymentTransactionForm";
 import "./transaction.css";
-import type { TransactionItem } from "./transactionTypes";
+import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
+import { TransactionType, type TransactionItem } from "./transactionTypes";
 
 const PAGE_SIZES = [10, 25, 50, 100];
 
@@ -60,9 +62,12 @@ const TransactionsOverview = (): JSX.Element => {
 	const firstElement = totalElements === 0 ? 0 : pageNumber * pageSize + 1;
 	const lastElement = Math.min((pageNumber + 1) * pageSize, totalElements);
 
-	const [createTransaction] = useMutation(CreatePaymentTransactionDocument);
-	const [updateTransaction] = useMutation(UpdatePaymentTransactionDocument);
-	const [deleteTransaction] = useMutation(DeletePaymentTransactionDocument);
+	const [deletePaymentTransaction] = useMutation(
+		DeletePaymentTransactionDocument
+	);
+	const [deleteJarTransferTransaction] = useMutation(
+		DeleteJarTransferTransactionDocument
+	);
 
 	const [transactionFormVisible, setTransactionFormVisible] = useState(false);
 	const [selectedTransaction, setSelectedTransaction] = useState<
@@ -114,44 +119,6 @@ const TransactionsOverview = (): JSX.Element => {
 		}
 	};
 
-	const handleSubmitTransaction = async (
-		data: CreatePaymentTransaction
-	): Promise<void> => {
-		console.log("Submit transaction data:", data);
-		try {
-			if (selectedTransaction) {
-				const result = await updateTransaction({
-					variables: {
-						id: selectedTransaction.id,
-						req: data
-					},
-					refetchQueries: [
-						{ query: QueryTransactionsDocument },
-						{ query: GetJarsDocument },
-						{ query: GetAccountsDocument }
-					]
-				});
-				console.log("Update transaction result:", result);
-			} else {
-				const result = await createTransaction({
-					variables: {
-						req: data
-					},
-					refetchQueries: [
-						{ query: QueryTransactionsDocument },
-						{ query: GetJarsDocument },
-						{ query: GetAccountsDocument }
-					]
-				});
-				console.log("Create transaction result:", result);
-			}
-		} catch (error) {
-			console.error("Error creating transaction:", error);
-		}
-
-		closeTransactionForm();
-	};
-
 	const handleDeleteTransaction = async (): Promise<void> => {
 		if (!selectedTransaction) {
 			return;
@@ -162,15 +129,15 @@ const TransactionsOverview = (): JSX.Element => {
 		}
 
 		try {
+			const deleteTransaction =
+				selectedTransaction.__typename === TransactionType.Payment
+					? deletePaymentTransaction
+					: deleteJarTransferTransaction;
 			const result = await deleteTransaction({
 				variables: {
 					id: selectedTransaction.id
 				},
-				refetchQueries: [
-					{ query: QueryTransactionsDocument },
-					{ query: GetJarsDocument },
-					{ query: GetAccountsDocument }
-				]
+				refetchQueries: TRANSACTION_REFETCH_QUERIES
 			});
 			console.log("Delete transaction result:", result);
 			setSelectedTransaction(undefined);
@@ -204,9 +171,7 @@ const TransactionsOverview = (): JSX.Element => {
 					/>
 				</label>
 				{(from || to) && (
-					<button
-						className="text-button"
-						onClick={clearFilter}>
+					<button className="text-button" onClick={clearFilter}>
 						{t("clearFilter")}
 					</button>
 				)}
@@ -258,18 +223,36 @@ const TransactionsOverview = (): JSX.Element => {
 							onClick={() => selectTransaction(transaction)}>
 							<td>{transaction.date}</td>
 							<td>{Money.toLabel(transaction.amount)}</td>
-							<td>
-								{transaction.direction ===
-								Direction.Outgoing ? (
-									<IconOutgoing />
-								) : (
-									<IconIncoming />
-								)}
-							</td>
-							<td>{transaction.counterparty}</td>
-							<td>{transaction.description}</td>
-							<td>{transaction.jar.name}</td>
-							<td>{transaction.account.name}</td>
+							{transaction.__typename ===
+							TransactionType.Payment ? (
+								<>
+									<td>
+										{transaction.direction ===
+										Direction.Outgoing ? (
+											<IconOutgoing />
+										) : (
+											<IconIncoming />
+										)}
+									</td>
+									<td>{transaction.counterparty}</td>
+									<td>{transaction.description}</td>
+									<td>{transaction.jar.name}</td>
+									<td>{transaction.account.name}</td>
+								</>
+							) : (
+								<>
+									<td title={t("jarTransferTransaction")}>
+										<IconJar />
+									</td>
+									<td></td>
+									<td>{transaction.description}</td>
+									<td>
+										{transaction.sourceJar.name} →{" "}
+										{transaction.targetJar.name}
+									</td>
+									<td></td>
+								</>
+							)}
 						</tr>
 					))}
 				</tbody>
@@ -323,13 +306,29 @@ const TransactionsOverview = (): JSX.Element => {
 			<Modal
 				isOpen={transactionFormVisible}
 				onClose={closeTransactionForm}>
-				<TransactionForm
-					transaction={selectedTransaction}
-					jars={jars.data?.getJars ?? []}
-					accounts={accounts.data?.getAccounts ?? []}
-					onClose={closeTransactionForm}
-					onConfirm={handleSubmitTransaction}
-				/>
+				{!selectedTransaction ? (
+					transactionFormVisible && (
+						<CreateTransactionForm
+							jars={jars.data?.getJars ?? []}
+							accounts={accounts.data?.getAccounts ?? []}
+							onClose={closeTransactionForm}
+						/>
+					)
+				) : selectedTransaction.__typename ===
+				  TransactionType.Payment ? (
+					<PaymentTransactionForm
+						transaction={selectedTransaction}
+						jars={jars.data?.getJars ?? []}
+						accounts={accounts.data?.getAccounts ?? []}
+						onClose={closeTransactionForm}
+					/>
+				) : (
+					<JarTransferTransactionForm
+						transaction={selectedTransaction}
+						jars={jars.data?.getJars ?? []}
+						onClose={closeTransactionForm}
+					/>
+				)}
 			</Modal>
 		</div>
 	);

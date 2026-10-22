@@ -1,0 +1,25 @@
+mutation CreatePaymentTransaction($req: CreatePaymentTransaction!) {
+	createPaymentTransaction(req: $req) {
+		id
+		date
+		amount
+		description
+		counterparty
+		direction
+	}
+}
+
+mutation UpdatePaymentTransaction($id: ID!, $req: CreatePaymentTransaction!) {
+	updatePaymentTransaction(id: $id, req: $req) {
+		id
+		date
+		amount
+		description
+		counterparty
+		direction
+	}
+}
+
+mutation DeletePaymentTransaction($id: ID!) {
+	deletePaymentTransaction(id: $id)
+}

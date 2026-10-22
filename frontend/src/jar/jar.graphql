@@ -18,6 +18,17 @@ query GetJars {
 				counterparty
 				direction
 			}
+
+			... on JarTransferTransaction {
+				sourceJar {
+					id
+					name
+				}
+				targetJar {
+					id
+					name
+				}
+			}
 		}
 	}
 }
