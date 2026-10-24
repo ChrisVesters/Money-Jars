@@ -135,36 +135,6 @@
 	border-bottom: none;
 }
 
-.transactions-paging {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 1rem;
-	color: #e0e0e0;
-}
-
-.transactions-paging-controls {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
-
-.transactions-page-size {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	margin-right: 1rem;
-}
-
-.transactions-page-size select {
-	padding: 0.25rem 0.5rem;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	font-family: inherit;
-	font-size: 1rem;
-}
-
 .icon-button {
 	background: none;
 	border: none;
