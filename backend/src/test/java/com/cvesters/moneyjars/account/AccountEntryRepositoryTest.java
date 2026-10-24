@@ -117,7 +117,11 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 			final List<AccountEntryDao> result = repository
 					.findAllAfter(TestAccount.SAVINGS.getId(), date, 1);
 
-			assertThat(result).isEmpty();
+			assertThat(result).satisfiesExactly(
+					e -> assertEquals(e,
+							TestAccountEntry.SAVINGS_SAVINGS_DEPOSIT),
+					e -> assertEquals(e,
+							TestAccountEntry.SAVINGS_CREDIT_CARD_SETTLEMENT));
 		}
 
 		@Test
@@ -129,7 +133,11 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 
 			assertThat(result).satisfiesExactly(
 					e -> assertEquals(e, TestAccountEntry.CHECKING_GROCERY),
-					e -> assertEquals(e, TestAccountEntry.CHECKING_RENT));
+					e -> assertEquals(e, TestAccountEntry.CHECKING_RENT),
+					e -> assertEquals(e,
+							TestAccountEntry.CHECKING_CASH_WITHDRAWAL),
+					e -> assertEquals(e,
+							TestAccountEntry.CHECKING_SAVINGS_DEPOSIT));
 		}
 
 		@Test
@@ -143,7 +151,11 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 					e -> assertEquals(e,
 							TestAccountEntry.CHECKING_CAR_ALLOWANCE),
 					e -> assertEquals(e, TestAccountEntry.CHECKING_GROCERY),
-					e -> assertEquals(e, TestAccountEntry.CHECKING_RENT));
+					e -> assertEquals(e, TestAccountEntry.CHECKING_RENT),
+					e -> assertEquals(e,
+							TestAccountEntry.CHECKING_CASH_WITHDRAWAL),
+					e -> assertEquals(e,
+							TestAccountEntry.CHECKING_SAVINGS_DEPOSIT));
 		}
 
 		@Test
@@ -171,8 +183,8 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 			final Optional<AccountEntryDao> result = repository
 					.findLastByAccountId(TestAccount.WALLET.getId());
 
-			assertThat(result).hasValueSatisfying(
-					e -> assertEquals(e, TestAccountEntry.WALLET_MARKET));
+			assertThat(result).hasValueSatisfying(e -> assertEquals(e,
+					TestAccountEntry.WALLET_CASH_WITHDRAWAL));
 		}
 
 		@Test
@@ -180,8 +192,8 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 			final Optional<AccountEntryDao> result = repository
 					.findLastByAccountId(ACCOUNT.getId());
 
-			assertThat(result).hasValueSatisfying(
-					e -> assertEquals(e, TestAccountEntry.CHECKING_RENT));
+			assertThat(result).hasValueSatisfying(e -> assertEquals(e,
+					TestAccountEntry.CHECKING_SAVINGS_DEPOSIT));
 		}
 	}
 

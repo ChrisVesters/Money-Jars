@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.cvesters.moneyjars.transaction.TestAccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.TestJarTransferTransaction;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 
@@ -60,6 +61,29 @@ class TransactionDtoTest {
 					.isEqualTo(transaction.getSourceJar().getId());
 			assertThat(jarTransferDto.getTargetJarId())
 					.isEqualTo(transaction.getTargetJar().getId());
+		}
+
+		@Test
+		void accountTransferTransaction() {
+			final TestAccountTransferTransaction transaction = TestAccountTransferTransaction.CASH_WITHDRAWAL;
+
+			final TransactionDto dto = TransactionDto
+					.fromBdo(transaction.bdo());
+
+			assertThat(dto).isInstanceOf(AccountTransferTransactionDto.class);
+			final var accountTransferDto = (AccountTransferTransactionDto) dto;
+			assertThat(accountTransferDto.getId())
+					.isEqualTo(transaction.getId());
+			assertThat(accountTransferDto.getDate())
+					.isEqualTo(transaction.getDate().toString());
+			assertThat(accountTransferDto.getAmount())
+					.isEqualTo(transaction.getAmountString());
+			assertThat(accountTransferDto.getDescription())
+					.isEqualTo(transaction.getDescription());
+			assertThat(accountTransferDto.getSourceAccountId())
+					.isEqualTo(transaction.getSourceAccount().getId());
+			assertThat(accountTransferDto.getTargetAccountId())
+					.isEqualTo(transaction.getTargetAccount().getId());
 		}
 
 		@Test

@@ -61,6 +61,21 @@ CREATE INDEX ON jar_transfer_transactions(source_jar_id);
 CREATE INDEX ON jar_transfer_transactions(target_jar_id);
 
 
+CREATE TABLE account_transfer_transactions(
+	transaction_id BIGINT NOT NULL,
+	source_account_id BIGINT NOT NULL,
+	target_account_id BIGINT NOT NULL,
+
+	PRIMARY KEY (transaction_id),
+	FOREIGN KEY (transaction_id) REFERENCES transactions(id),
+	FOREIGN KEY (source_account_id) REFERENCES accounts(id),
+	FOREIGN KEY (target_account_id) REFERENCES accounts(id)
+);
+
+CREATE INDEX ON account_transfer_transactions(source_account_id);
+CREATE INDEX ON account_transfer_transactions(target_account_id);
+
+
 CREATE TABLE jar_entries(
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
 	transaction_id BIGINT NOT NULL,

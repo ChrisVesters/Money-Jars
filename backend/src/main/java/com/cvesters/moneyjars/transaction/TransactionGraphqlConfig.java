@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 
+import com.cvesters.moneyjars.transaction.dto.AccountTransferTransactionDto;
 import com.cvesters.moneyjars.transaction.dto.JarTransferTransactionDto;
 import com.cvesters.moneyjars.transaction.dto.PaymentTransactionDto;
 
@@ -28,6 +29,7 @@ public class TransactionGraphqlConfig {
 		return switch (source) {
 			case PaymentTransactionDto _ -> "PaymentTransaction";
 			case JarTransferTransactionDto _ -> "JarTransferTransaction";
+			case AccountTransferTransactionDto _ -> "AccountTransferTransaction";
 			default -> null;
 		};
 	}
