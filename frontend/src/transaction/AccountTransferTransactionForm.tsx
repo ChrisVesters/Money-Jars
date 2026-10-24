@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
+import type { Account } from "@gql/graphql";
 import {
 	CreateAccountTransferTransactionDocument,
-	UpdateAccountTransferTransactionDocument,
-	type Account
+	UpdateAccountTransferTransactionDocument
 } from "@gql/graphql";
 
 import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";

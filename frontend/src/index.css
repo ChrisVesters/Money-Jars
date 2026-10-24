@@ -6,6 +6,8 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+  --color-incoming: #5cc98a;
+  --color-outgoing: #e85d75;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -80,6 +82,8 @@ button.danger:hover {
   :root {
     color: #213547;
     background-color: #ffffff;
+    --color-incoming: #1e8a4c;
+    --color-outgoing: #c62839;
   }
   a:hover {
     color: #747bff;

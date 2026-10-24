@@ -15,6 +15,14 @@ query GetJars {
 			description
 
 			... on PaymentTransaction {
+				jar {
+					id
+					name
+				}
+				account {
+					id
+					name
+				}
 				counterparty
 				direction
 			}

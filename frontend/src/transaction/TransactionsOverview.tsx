@@ -7,32 +7,28 @@ import {
 	DeleteAccountTransferTransactionDocument,
 	DeleteJarTransferTransactionDocument,
 	DeletePaymentTransactionDocument,
-	Direction,
 	GetAccountsDocument,
 	GetJarsDocument,
 	QueryTransactionsDocument
 } from "@gql/graphql";
 
-import IconAccount from "@assets/icons/IconAccount";
 import IconChevronLeft from "@assets/icons/IconChevronLeft";
 import IconChevronRight from "@assets/icons/IconChevronRight";
 import IconDelete from "@assets/icons/IconDelete";
 import IconEdit from "@assets/icons/IconEdit";
-import IconIncoming from "@assets/icons/IconIncoming";
-import IconJar from "@assets/icons/IconJar";
-import IconOutgoing from "@assets/icons/IconOutgoing";
 import IconPlus from "@assets/icons/IconPlus";
 
 import Modal from "@src/common/Modal";
-import { Money } from "@src/common/money";
 
 import AccountTransferTransactionForm from "./AccountTransferTransactionForm";
 import CreateTransactionForm from "./CreateTransactionForm";
 import JarTransferTransactionForm from "./JarTransferTransactionForm";
 import PaymentTransactionForm from "./PaymentTransactionForm";
+import TransactionTable from "./TransactionTable";
 import "./transaction.css";
 import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
-import { TransactionType, type TransactionItem } from "./transactionTypes";
+import type { TransactionItem } from "./transactionTypes";
+import { TransactionType } from "./transactionTypes";
 
 const PAGE_SIZES = [10, 25, 50, 100];
 
@@ -212,74 +208,11 @@ const TransactionsOverview = (): JSX.Element => {
 				)}
 			</div>
 
-			<table className="transactions-table">
-				<thead>
-					<tr>
-						<th>{t("date")}</th>
-						<th>{t("amount")}</th>
-						<th>{t("direction")}</th>
-						<th>{t("counterparty")}</th>
-						<th>{t("description")}</th>
-						<th>{t("jar")}</th>
-						<th>{t("account")}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{pageData?.content.map(transaction => (
-						<tr
-							key={transaction.id}
-							className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
-							onClick={() => selectTransaction(transaction)}>
-							<td>{transaction.date}</td>
-							<td>{Money.toLabel(transaction.amount)}</td>
-							{transaction.__typename ===
-							TransactionType.Payment ? (
-								<>
-									<td>
-										{transaction.direction ===
-										Direction.Outgoing ? (
-											<IconOutgoing />
-										) : (
-											<IconIncoming />
-										)}
-									</td>
-									<td>{transaction.counterparty}</td>
-									<td>{transaction.description}</td>
-									<td>{transaction.jar.name}</td>
-									<td>{transaction.account.name}</td>
-								</>
-							) : transaction.__typename ===
-							  TransactionType.JarTransfer ? (
-								<>
-									<td title={t("jarTransferTransaction")}>
-										<IconJar />
-									</td>
-									<td></td>
-									<td>{transaction.description}</td>
-									<td>
-										{transaction.sourceJar.name} →{" "}
-										{transaction.targetJar.name}
-									</td>
-									<td></td>
-								</>
-							) : (
-								<>
-									<td title={t("accountTransferTransaction")}>
-										<IconAccount />
-									</td>
-									<td></td>
-									<td>{transaction.description}</td>
-									<td></td>
-									<td>
-										{transaction.sourceAccount.name} →{" "}
-										{transaction.targetAccount.name}
-									</td>
-								</>
-							)}
-						</tr>
-					))}
-				</tbody>
-			</table>
+			<TransactionTable
+				transactions={pageData?.content ?? []}
+				selectedTransaction={selectedTransaction}
+				onSelect={selectTransaction}
+			/>
 			<div className="transactions-paging">
 				<span>
 					{t("pagingRange", {

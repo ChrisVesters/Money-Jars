@@ -90,13 +90,45 @@
 
 .transactions-table tbody tr.selected {
 	background-color: rgba(74, 144, 226, 0.3);
-	border-left: 4px solid #4a90e2;
+}
+
+.transactions-table tbody tr.selected td:first-child {
+	box-shadow: inset 4px 0 0 #4a90e2;
 }
 
 .transactions-table td {
 	padding: 1rem;
 	color: #e0e0e0;
 	text-align: left;
+}
+
+.transactions-table .transaction-date {
+	width: 1%;
+	white-space: nowrap;
+}
+
+.transactions-table .transaction-type {
+	width: 1%;
+	text-align: center;
+}
+
+.transactions-table .transaction-context {
+	font-size: 0.85em;
+	opacity: 0.7;
+}
+
+.transactions-table .transaction-amount {
+	text-align: right;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.transactions-table td.amount-incoming {
+	color: var(--color-incoming);
+}
+
+.transactions-table td.amount-outgoing {
+	color: var(--color-outgoing);
 }
 
 .transactions-table tbody tr:last-child {

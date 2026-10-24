@@ -26,6 +26,7 @@
 	"errorDeleteAccount": "Erreur lors de la suppression du compte",
 	"errorDeleteTransaction": "Erreur lors de la suppression de la transaction",
 	"from": "Du",
+	"fromTo": "De → À",
 	"jar": "Bocal",
 	"jars": "Bocaux",
 	"jarTransferTransaction": "Transfert entre bocaux",

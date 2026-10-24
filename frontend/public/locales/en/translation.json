@@ -27,6 +27,7 @@
 	"errorDeleteAccount": "Error deleting account",
 	"errorDeleteTransaction": "Error deleting transaction",
 	"from": "From",
+	"fromTo": "From → To",
 	"goal": "Goal",
 	"INCOMING": "incoming",
 	"jar": "Jar",

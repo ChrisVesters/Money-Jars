@@ -1,4 +1,5 @@
-import { useEffect, useRef, type JSX } from "react";
+import type { JSX } from "react";
+import { useEffect, useRef } from "react";
 
 export type ModalProps = {
 	isOpen: boolean;

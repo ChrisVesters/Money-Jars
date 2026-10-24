@@ -1,34 +1,27 @@
 import type { JSX } from "react";
 import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 
-import IconIncoming from "@assets/icons/IconIncoming";
-import IconOutgoing from "@assets/icons/IconOutgoing";
 import IconPlus from "@assets/icons/IconPlus";
 
+import type { UpdateJar } from "@gql/graphql";
 import {
 	CreateJarDocument,
 	DeleteJarDocument,
-	Direction,
 	GetJarsDocument,
-	UpdateJarDocument,
-	type UpdateJar
+	UpdateJarDocument
 } from "@gql/graphql";
 import JarView from "./JarView";
 
 import Modal from "@src/common/Modal";
-import { Money } from "@src/common/money";
-import { TransactionType } from "@src/transaction/transactionTypes";
 
 import "./jar.css";
 import JarForm from "./JarForm";
+import JarTransactionTable from "./JarTransactionTable";
 import type { JarItem } from "./jarTypes";
 
 const Overview = (): JSX.Element => {
-	const { t } = useTranslation();
-
 	const { data } = useQuery(GetJarsDocument);
 
 	const [createJar] = useMutation(CreateJarDocument);
@@ -145,70 +138,9 @@ const Overview = (): JSX.Element => {
 				</div>
 			</div>
 
-			<table className="transactions-table">
-				<thead>
-					<tr>
-						<th>{t("date")}</th>
-						<th>{t("amount")}</th>
-						<th>{t("direction")}</th>
-						<th>{t("counterparty")}</th>
-						<th>{t("description")}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{jars
-						.find(jar => jar.id === selectedCardId)
-						// TODO: this should actually not be possible
-						// But I don't think we can enforce this?
-						?.transactions.filter(
-							transaction =>
-								transaction.__typename !==
-								TransactionType.AccountTransfer
-						)
-						.map(transaction => (
-							<tr
-								key={transaction.id}
-								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
-								// onClick={() => selectTransaction(transaction)}
-							>
-								<td>{transaction.date}</td>
-								<td>{Money.toLabel(transaction.amount)}</td>
-								{transaction.__typename ===
-								TransactionType.Payment ? (
-									<>
-										<td>
-											{transaction.direction ===
-											Direction.Outgoing ? (
-												<IconOutgoing />
-											) : (
-												<IconIncoming />
-											)}
-										</td>
-										<td>{transaction.counterparty}</td>
-									</>
-								) : (
-									<>
-										<td>
-											{transaction.sourceJar.id ===
-											selectedCardId ? (
-												<IconOutgoing />
-											) : (
-												<IconIncoming />
-											)}
-										</td>
-										<td>
-											{transaction.sourceJar.id ===
-											selectedCardId
-												? transaction.targetJar.name
-												: transaction.sourceJar.name}
-										</td>
-									</>
-								)}
-								<td>{transaction.description}</td>
-							</tr>
-						))}
-				</tbody>
-			</table>
+			<JarTransactionTable
+				jar={jars.find(jar => jar.id === selectedCardId)}
+			/>
 
 			<Modal isOpen={JarFormVisible} onClose={closeJarForm}>
 				<JarForm

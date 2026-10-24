@@ -4,25 +4,21 @@ import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 
-import IconIncoming from "@assets/icons/IconIncoming";
-import IconOutgoing from "@assets/icons/IconOutgoing";
 import IconPlus from "@assets/icons/IconPlus";
 
+import type { UpdateAccount } from "@gql/graphql";
 import {
 	CreateAccountDocument,
 	DeleteAccountDocument,
-	Direction,
 	GetAccountsDocument,
-	UpdateAccountDocument,
-	type UpdateAccount
+	UpdateAccountDocument
 } from "@gql/graphql";
 
 import Modal from "@src/common/Modal";
-import { Money } from "@src/common/money";
-import { TransactionType } from "@src/transaction/transactionTypes";
 
 import "../jar/jar.css";
 import AccountForm from "./AccountForm";
+import AccountTransactionTable from "./AccountTransactionTable";
 import AccountView from "./AccountView";
 import type { AccountItem } from "./accountTypes";
 
@@ -143,71 +139,11 @@ const Overview = (): JSX.Element => {
 				</button>
 			</div>
 
-			<table className="transactions-table">
-				<thead>
-					<tr>
-						<th>{t("date")}</th>
-						<th>{t("amount")}</th>
-						<th>{t("direction")}</th>
-						<th>{t("counterparty")}</th>
-						<th>{t("description")}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{accounts
-						.find(account => account.id === selectedCardId)
-						// TODO: this should actually not be possible
-						// But I don't think we can enforce this?
-						?.transactions.filter(
-							transaction =>
-								transaction.__typename !==
-								TransactionType.JarTransfer
-						)
-						.map(transaction => (
-							<tr
-								key={transaction.id}
-								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}
-								// onClick={() => selectTransaction(transaction)}
-							>
-								<td>{transaction.date}</td>
-								<td>{Money.toLabel(transaction.amount)}</td>
-								{transaction.__typename ===
-								TransactionType.Payment ? (
-									<>
-										<td>
-											{transaction.direction ===
-											Direction.Outgoing ? (
-												<IconOutgoing />
-											) : (
-												<IconIncoming />
-											)}
-										</td>
-										<td>{transaction.counterparty}</td>
-									</>
-								) : (
-									<>
-										<td>
-											{transaction.sourceAccount.id ===
-											selectedCardId ? (
-												<IconOutgoing />
-											) : (
-												<IconIncoming />
-											)}
-										</td>
-										<td>
-											{transaction.sourceAccount.id ===
-											selectedCardId
-												? transaction.targetAccount.name
-												: transaction.sourceAccount
-														.name}
-										</td>
-									</>
-								)}
-								<td>{transaction.description}</td>
-							</tr>
-						))}
-				</tbody>
-			</table>
+			<AccountTransactionTable
+				account={accounts.find(
+					account => account.id === selectedCardId
+				)}
+			/>
 
 			<Modal isOpen={accountFormVisible} onClose={closeAccountForm}>
 				<AccountForm

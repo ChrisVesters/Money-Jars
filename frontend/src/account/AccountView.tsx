@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import IconDelete from "@assets/icons/IconDelete";
 import IconEdit from "@assets/icons/IconEdit";
 
+import { Money } from "@src/common/money";
+
 import type { AccountItem } from "./accountTypes";
 
 export type AccountViewProps = {
@@ -43,7 +45,7 @@ const AccountView = (props: Readonly<AccountViewProps>): JSX.Element => {
 					{props.account.description}
 				</div>
 				<div className="card-footer">
-					{t("balance")}: {props.account.balance}
+					{t("balance")}: {Money.toLabel(props.account.balance)}
 				</div>
 			</div>
 

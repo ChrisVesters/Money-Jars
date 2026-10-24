@@ -3,12 +3,11 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
+import type { Account, Jar } from "@gql/graphql";
 import {
 	CreatePaymentTransactionDocument,
 	Direction,
-	UpdatePaymentTransactionDocument,
-	type Account,
-	type Jar
+	UpdatePaymentTransactionDocument
 } from "@gql/graphql";
 import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
 import type { PaymentTransactionItem } from "./transactionTypes";
