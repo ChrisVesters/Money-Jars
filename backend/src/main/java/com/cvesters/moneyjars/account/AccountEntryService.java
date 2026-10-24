@@ -11,7 +11,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
+import com.cvesters.moneyjars.transaction.bdo.AccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
 @Service
 public class AccountEntryService {
@@ -34,6 +36,33 @@ public class AccountEntryService {
 	public void create(final PaymentTransaction transaction) {
 		Objects.requireNonNull(transaction);
 
+		book(transaction);
+	}
+
+	@Transactional
+	public void create(final AccountTransferTransaction transaction) {
+		Objects.requireNonNull(transaction);
+
+		book(transaction, transaction.getSourceAccountId());
+		book(transaction, transaction.getTargetAccountId());
+	}
+
+	@Transactional
+	public void delete(final PaymentTransaction transaction) {
+		Objects.requireNonNull(transaction);
+
+		unbook(transaction, transaction.getAccountId());
+	}
+
+	@Transactional
+	public void delete(final AccountTransferTransaction transaction) {
+		Objects.requireNonNull(transaction);
+
+		unbook(transaction, transaction.getSourceAccountId());
+		unbook(transaction, transaction.getTargetAccountId());
+	}
+
+	private void book(final PaymentTransaction transaction) {
 		final long accountId = transaction.getAccountId();
 		final LocalDate date = transaction.getDate();
 		final int sequence = transaction.getSequence();
@@ -51,17 +80,33 @@ public class AccountEntryService {
 		gateway.updateAll(nextEntries);
 	}
 
-	@Transactional
-	public void delete(final PaymentTransaction transaction) {
-		Objects.requireNonNull(transaction);
-
-		final long accountId = transaction.getAccountId();
+	private void book(final AccountTransferTransaction transaction,
+			final long accountId) {
 		final LocalDate date = transaction.getDate();
 		final int sequence = transaction.getSequence();
-		final BigDecimal amount = transaction.getSignedAmount().negate();
+		final BigDecimal amount = transaction.getSignedAmount(accountId);
+
+		final AccountEntry entry = gateway.findBefore(accountId, date, sequence)
+				.map(previous -> previous.next(transaction))
+				.orElseGet(() -> AccountEntry.first(accountId, transaction));
+
+		final List<AccountEntry> nextEntries = gateway.getAllAfter(accountId,
+				date, sequence);
+		nextEntries.forEach(e -> e.shift(amount));
+
+		gateway.create(entry);
+		gateway.updateAll(nextEntries);
+	}
+
+	private void unbook(final Transaction transaction, final long accountId) {
+		final long transactionId = transaction.getId();
+		final LocalDate date = transaction.getDate();
+		final int sequence = transaction.getSequence();
 
 		final AccountEntry entry = gateway
-				.getByAccountIdAndTransactionId(accountId, transaction.getId());
+				.getByAccountIdAndTransactionId(accountId, transactionId);
+
+		final BigDecimal amount = entry.getAmount().negate();
 
 		final List<AccountEntry> nextEntries = gateway.getAllAfter(accountId,
 				date, sequence);

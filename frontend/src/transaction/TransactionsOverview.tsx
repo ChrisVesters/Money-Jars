@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 import {
+	DeleteAccountTransferTransactionDocument,
 	DeleteJarTransferTransactionDocument,
 	DeletePaymentTransactionDocument,
 	Direction,
@@ -12,6 +13,7 @@ import {
 	QueryTransactionsDocument
 } from "@gql/graphql";
 
+import IconAccount from "@assets/icons/IconAccount";
 import IconChevronLeft from "@assets/icons/IconChevronLeft";
 import IconChevronRight from "@assets/icons/IconChevronRight";
 import IconDelete from "@assets/icons/IconDelete";
@@ -24,6 +26,7 @@ import IconPlus from "@assets/icons/IconPlus";
 import Modal from "@src/common/Modal";
 import { Money } from "@src/common/money";
 
+import AccountTransferTransactionForm from "./AccountTransferTransactionForm";
 import CreateTransactionForm from "./CreateTransactionForm";
 import JarTransferTransactionForm from "./JarTransferTransactionForm";
 import PaymentTransactionForm from "./PaymentTransactionForm";
@@ -67,6 +70,9 @@ const TransactionsOverview = (): JSX.Element => {
 	);
 	const [deleteJarTransferTransaction] = useMutation(
 		DeleteJarTransferTransactionDocument
+	);
+	const [deleteAccountTransferTransaction] = useMutation(
+		DeleteAccountTransferTransactionDocument
 	);
 
 	const [transactionFormVisible, setTransactionFormVisible] = useState(false);
@@ -132,7 +138,10 @@ const TransactionsOverview = (): JSX.Element => {
 			const deleteTransaction =
 				selectedTransaction.__typename === TransactionType.Payment
 					? deletePaymentTransaction
-					: deleteJarTransferTransaction;
+					: selectedTransaction.__typename ===
+						  TransactionType.JarTransfer
+						? deleteJarTransferTransaction
+						: deleteAccountTransferTransaction;
 			const result = await deleteTransaction({
 				variables: {
 					id: selectedTransaction.id
@@ -239,7 +248,8 @@ const TransactionsOverview = (): JSX.Element => {
 									<td>{transaction.jar.name}</td>
 									<td>{transaction.account.name}</td>
 								</>
-							) : (
+							) : transaction.__typename ===
+							  TransactionType.JarTransfer ? (
 								<>
 									<td title={t("jarTransferTransaction")}>
 										<IconJar />
@@ -251,6 +261,19 @@ const TransactionsOverview = (): JSX.Element => {
 										{transaction.targetJar.name}
 									</td>
 									<td></td>
+								</>
+							) : (
+								<>
+									<td title={t("accountTransferTransaction")}>
+										<IconAccount />
+									</td>
+									<td></td>
+									<td>{transaction.description}</td>
+									<td></td>
+									<td>
+										{transaction.sourceAccount.name} →{" "}
+										{transaction.targetAccount.name}
+									</td>
 								</>
 							)}
 						</tr>
@@ -322,10 +345,17 @@ const TransactionsOverview = (): JSX.Element => {
 						accounts={accounts.data?.getAccounts ?? []}
 						onClose={closeTransactionForm}
 					/>
-				) : (
+				) : selectedTransaction.__typename ===
+				  TransactionType.JarTransfer ? (
 					<JarTransferTransactionForm
 						transaction={selectedTransaction}
 						jars={jars.data?.getJars ?? []}
+						onClose={closeTransactionForm}
+					/>
+				) : (
+					<AccountTransferTransactionForm
+						transaction={selectedTransaction}
+						accounts={accounts.data?.getAccounts ?? []}
 						onClose={closeTransactionForm}
 					/>
 				)}

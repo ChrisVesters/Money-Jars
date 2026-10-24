@@ -22,7 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
+import com.cvesters.moneyjars.transaction.TestAccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.AccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
 class AccountEntryServiceTest {
@@ -67,8 +69,7 @@ class AccountEntryServiceTest {
 			final AccountEntry entry1 = mock();
 			final AccountEntry entry2 = mock();
 
-			when(gateway.getAll(accountId))
-					.thenReturn(List.of(entry1, entry2));
+			when(gateway.getAll(accountId)).thenReturn(List.of(entry1, entry2));
 
 			final List<AccountEntry> result = service.getAll(accountId);
 
@@ -79,8 +80,7 @@ class AccountEntryServiceTest {
 		void empty() {
 			final long accountId = 1L;
 
-			when(gateway.getAll(accountId))
-					.thenReturn(Collections.emptyList());
+			when(gateway.getAll(accountId)).thenReturn(Collections.emptyList());
 
 			final List<AccountEntry> result = service.getAll(accountId);
 
@@ -89,7 +89,7 @@ class AccountEntryServiceTest {
 	}
 
 	@Nested
-	class Create {
+	class CreatePaymentTransaction {
 
 		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.SALARY;
 
@@ -246,7 +246,8 @@ class AccountEntryServiceTest {
 
 		@Test
 		void transactionNull() {
-			assertThatThrownBy(() -> service.create(null))
+			final PaymentTransaction transaction = null;
+			assertThatThrownBy(() -> service.create(transaction))
 					.isInstanceOf(NullPointerException.class);
 
 			verifyNoInteractions(gateway);
@@ -254,7 +255,266 @@ class AccountEntryServiceTest {
 	}
 
 	@Nested
-	class Delete {
+	class CreateAccountTransferTransaction {
+
+		private static final TestAccountTransferTransaction TRANSACTION = TestAccountTransferTransaction.CASH_WITHDRAWAL;
+
+		@Test
+		void firstWithoutNext() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+
+			when(gateway.findBefore(sourceAccountId, date, sequence))
+					.thenReturn(Optional.empty());
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+			when(gateway.findBefore(targetAccountId, date, sequence))
+					.thenReturn(Optional.empty());
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+
+			service.create(transaction);
+
+			final InOrder inOrder = inOrder(gateway);
+			inOrder.verify(gateway).create(argThat(entry -> {
+				if (entry.getAccountId() != sourceAccountId) {
+					return false;
+				}
+				assertThat(entry.getId()).isNull();
+				assertThat(entry.getTransactionId())
+						.isEqualTo(TRANSACTION.getId());
+				assertThat(entry.getBalanceBefore())
+						.isEqualByComparingTo(BigDecimal.ZERO);
+				assertThat(entry.getBalanceAfter())
+						.isEqualByComparingTo(amount.negate());
+				return true;
+			}));
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+			inOrder.verify(gateway).create(argThat(entry -> {
+				if (entry.getAccountId() != targetAccountId) {
+					return false;
+				}
+				assertThat(entry.getId()).isNull();
+				assertThat(entry.getTransactionId())
+						.isEqualTo(TRANSACTION.getId());
+				assertThat(entry.getBalanceBefore())
+						.isEqualByComparingTo(BigDecimal.ZERO);
+				assertThat(entry.getBalanceAfter())
+						.isEqualByComparingTo(amount);
+				return true;
+			}));
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+		}
+
+		@Test
+		void firstWithNext() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+
+			final AccountEntry sourceNext1 = mock();
+			final AccountEntry sourceNext2 = mock();
+			final List<AccountEntry> sourceNextEntries = List.of(sourceNext1,
+					sourceNext2);
+			final AccountEntry targetNext1 = mock();
+			final AccountEntry targetNext2 = mock();
+			final List<AccountEntry> targetNextEntries = List.of(targetNext1,
+					targetNext2);
+
+			when(gateway.findBefore(sourceAccountId, date, sequence))
+					.thenReturn(Optional.empty());
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(sourceNextEntries);
+			when(gateway.findBefore(targetAccountId, date, sequence))
+					.thenReturn(Optional.empty());
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(targetNextEntries);
+
+			service.create(transaction);
+
+			final InOrder inOrder = inOrder(gateway, sourceNext1, sourceNext2,
+					targetNext1, targetNext2);
+			inOrder.verify(sourceNext1).shift(amount.negate());
+			inOrder.verify(sourceNext2).shift(amount.negate());
+			inOrder.verify(gateway).create(argThat(entry -> {
+				if (entry.getAccountId() != sourceAccountId) {
+					return false;
+				}
+				assertThat(entry.getId()).isNull();
+				assertThat(entry.getTransactionId())
+						.isEqualTo(TRANSACTION.getId());
+				assertThat(entry.getBalanceBefore())
+						.isEqualByComparingTo(BigDecimal.ZERO);
+				assertThat(entry.getBalanceAfter())
+						.isEqualByComparingTo(amount.negate());
+				return true;
+			}));
+			inOrder.verify(gateway).updateAll(sourceNextEntries);
+			inOrder.verify(targetNext1).shift(amount);
+			inOrder.verify(targetNext2).shift(amount);
+			inOrder.verify(gateway).create(argThat(entry -> {
+				if (entry.getAccountId() != targetAccountId) {
+					return false;
+				}
+				assertThat(entry.getId()).isNull();
+				assertThat(entry.getTransactionId())
+						.isEqualTo(TRANSACTION.getId());
+				assertThat(entry.getBalanceBefore())
+						.isEqualByComparingTo(BigDecimal.ZERO);
+				assertThat(entry.getBalanceAfter())
+						.isEqualByComparingTo(amount);
+				return true;
+			}));
+			inOrder.verify(gateway).updateAll(targetNextEntries);
+		}
+
+		@Test
+		void withPreviousWithoutNext() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+
+			final AccountEntry sourcePrevious = mock();
+			final AccountEntry sourceEntry = mock();
+			when(sourcePrevious.next(transaction)).thenReturn(sourceEntry);
+			final AccountEntry targetPrevious = mock();
+			final AccountEntry targetEntry = mock();
+			when(targetPrevious.next(transaction)).thenReturn(targetEntry);
+
+			when(gateway.findBefore(sourceAccountId, date, sequence))
+					.thenReturn(Optional.of(sourcePrevious));
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+			when(gateway.findBefore(targetAccountId, date, sequence))
+					.thenReturn(Optional.of(targetPrevious));
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+
+			service.create(transaction);
+
+			final InOrder inOrder = inOrder(gateway);
+			inOrder.verify(gateway).create(sourceEntry);
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+			inOrder.verify(gateway).create(targetEntry);
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+		}
+
+		@Test
+		void withPreviousWithNext() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+
+			final AccountEntry sourcePrevious = mock();
+			final AccountEntry sourceEntry = mock();
+			when(sourcePrevious.next(transaction)).thenReturn(sourceEntry);
+			final AccountEntry targetPrevious = mock();
+			final AccountEntry targetEntry = mock();
+			when(targetPrevious.next(transaction)).thenReturn(targetEntry);
+
+			final AccountEntry sourceNext1 = mock();
+			final AccountEntry sourceNext2 = mock();
+			final List<AccountEntry> sourceNextEntries = List.of(sourceNext1,
+					sourceNext2);
+			final AccountEntry targetNext1 = mock();
+			final AccountEntry targetNext2 = mock();
+			final List<AccountEntry> targetNextEntries = List.of(targetNext1,
+					targetNext2);
+
+			when(gateway.findBefore(sourceAccountId, date, sequence))
+					.thenReturn(Optional.of(sourcePrevious));
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(sourceNextEntries);
+			when(gateway.findBefore(targetAccountId, date, sequence))
+					.thenReturn(Optional.of(targetPrevious));
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(targetNextEntries);
+
+			service.create(transaction);
+
+			final InOrder inOrder = inOrder(gateway, sourceNext1, sourceNext2,
+					targetNext1, targetNext2);
+			inOrder.verify(sourceNext1).shift(amount.negate());
+			inOrder.verify(sourceNext2).shift(amount.negate());
+			inOrder.verify(gateway).create(sourceEntry);
+			inOrder.verify(gateway).updateAll(sourceNextEntries);
+			inOrder.verify(targetNext1).shift(amount);
+			inOrder.verify(targetNext2).shift(amount);
+			inOrder.verify(gateway).create(targetEntry);
+			inOrder.verify(gateway).updateAll(targetNextEntries);
+
+			verify(sourceEntry, never()).shift(any());
+			verify(targetEntry, never()).shift(any());
+		}
+
+		@Test
+		void sourceWithPreviousTargetFirst() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+
+			final AccountEntry sourcePrevious = mock();
+			final AccountEntry sourceEntry = mock();
+			when(sourcePrevious.next(transaction)).thenReturn(sourceEntry);
+
+			when(gateway.findBefore(sourceAccountId, date, sequence))
+					.thenReturn(Optional.of(sourcePrevious));
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+			when(gateway.findBefore(targetAccountId, date, sequence))
+					.thenReturn(Optional.empty());
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+
+			service.create(transaction);
+
+			final InOrder inOrder = inOrder(gateway);
+			inOrder.verify(gateway).create(sourceEntry);
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+			inOrder.verify(gateway).create(argThat(entry -> {
+				if (entry.getAccountId() != targetAccountId) {
+					return false;
+				}
+				assertThat(entry.getId()).isNull();
+				assertThat(entry.getTransactionId())
+						.isEqualTo(TRANSACTION.getId());
+				assertThat(entry.getBalanceBefore())
+						.isEqualByComparingTo(BigDecimal.ZERO);
+				assertThat(entry.getBalanceAfter())
+						.isEqualByComparingTo(amount);
+				return true;
+			}));
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+		}
+
+		@Test
+		void transactionNull() {
+			final AccountTransferTransaction transaction = null;
+
+			assertThatThrownBy(() -> service.create(transaction))
+					.isInstanceOf(NullPointerException.class);
+
+			verifyNoInteractions(gateway);
+		}
+	}
+
+	@Nested
+	class DeletePaymentTransaction {
 
 		private static final TestPaymentTransaction TRANSACTION = TestPaymentTransaction.SALARY;
 
@@ -266,6 +526,7 @@ class AccountEntryServiceTest {
 			final int sequence = TRANSACTION.getSequence();
 
 			final AccountEntry entry = mock();
+			when(entry.getAmount()).thenReturn(TRANSACTION.getAmount());
 
 			when(gateway.getByAccountIdAndTransactionId(accountId,
 					TRANSACTION.getId())).thenReturn(entry);
@@ -288,6 +549,7 @@ class AccountEntryServiceTest {
 			final BigDecimal amount = TRANSACTION.getAmount().negate();
 
 			final AccountEntry entry = mock();
+			when(entry.getAmount()).thenReturn(TRANSACTION.getAmount());
 
 			final AccountEntry next1 = mock();
 			final AccountEntry next2 = mock();
@@ -310,7 +572,7 @@ class AccountEntryServiceTest {
 		}
 
 		@Test
-		void negativeAmount() {
+		void outgoing() {
 			final var testTransaction = TestPaymentTransaction.GROCERY;
 			final PaymentTransaction transaction = testTransaction.bdo();
 			final long accountId = testTransaction.getAccount().getId();
@@ -319,6 +581,8 @@ class AccountEntryServiceTest {
 			final BigDecimal amount = testTransaction.getAmount();
 
 			final AccountEntry entry = mock();
+			when(entry.getAmount())
+					.thenReturn(testTransaction.getAmount().negate());
 
 			final AccountEntry next1 = mock();
 			final AccountEntry next2 = mock();
@@ -342,7 +606,105 @@ class AccountEntryServiceTest {
 
 		@Test
 		void transactionNull() {
-			assertThatThrownBy(() -> service.delete(null))
+			final PaymentTransaction transaction = null;
+			assertThatThrownBy(() -> service.delete(transaction))
+					.isInstanceOf(NullPointerException.class);
+
+			verifyNoInteractions(gateway);
+		}
+	}
+
+	@Nested
+	class DeleteAccountTransferTransaction {
+
+		private static final TestAccountTransferTransaction TRANSACTION = TestAccountTransferTransaction.CASH_WITHDRAWAL;
+
+		@Test
+		void withoutNext() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+
+			final AccountEntry sourceEntry = mock();
+			when(sourceEntry.getAmount())
+					.thenReturn(TRANSACTION.getAmount().negate());
+			final AccountEntry targetEntry = mock();
+			when(targetEntry.getAmount()).thenReturn(TRANSACTION.getAmount());
+
+			when(gateway.getByAccountIdAndTransactionId(sourceAccountId,
+					TRANSACTION.getId())).thenReturn(sourceEntry);
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+			when(gateway.getByAccountIdAndTransactionId(targetAccountId,
+					TRANSACTION.getId())).thenReturn(targetEntry);
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(Collections.emptyList());
+
+			service.delete(transaction);
+
+			final InOrder inOrder = inOrder(gateway);
+			inOrder.verify(gateway).delete(sourceEntry);
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+			inOrder.verify(gateway).delete(targetEntry);
+			inOrder.verify(gateway).updateAll(Collections.emptyList());
+		}
+
+		@Test
+		void withNext() {
+			final AccountTransferTransaction transaction = TRANSACTION.bdo();
+			final long sourceAccountId = TRANSACTION.getSourceAccount().getId();
+			final long targetAccountId = TRANSACTION.getTargetAccount().getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+
+			final AccountEntry sourceEntry = mock();
+			when(sourceEntry.getAmount())
+					.thenReturn(TRANSACTION.getAmount().negate());
+			final AccountEntry targetEntry = mock();
+			when(targetEntry.getAmount()).thenReturn(TRANSACTION.getAmount());
+
+			final AccountEntry sourceNext1 = mock();
+			final AccountEntry sourceNext2 = mock();
+			final List<AccountEntry> sourceNextEntries = List.of(sourceNext1,
+					sourceNext2);
+			final AccountEntry targetNext1 = mock();
+			final AccountEntry targetNext2 = mock();
+			final List<AccountEntry> targetNextEntries = List.of(targetNext1,
+					targetNext2);
+
+			when(gateway.getByAccountIdAndTransactionId(sourceAccountId,
+					TRANSACTION.getId())).thenReturn(sourceEntry);
+			when(gateway.getAllAfter(sourceAccountId, date, sequence))
+					.thenReturn(sourceNextEntries);
+			when(gateway.getByAccountIdAndTransactionId(targetAccountId,
+					TRANSACTION.getId())).thenReturn(targetEntry);
+			when(gateway.getAllAfter(targetAccountId, date, sequence))
+					.thenReturn(targetNextEntries);
+
+			service.delete(transaction);
+
+			final InOrder inOrder = inOrder(gateway, sourceNext1, sourceNext2,
+					targetNext1, targetNext2);
+			inOrder.verify(sourceNext1).shift(amount);
+			inOrder.verify(sourceNext2).shift(amount);
+			inOrder.verify(gateway).delete(sourceEntry);
+			inOrder.verify(gateway).updateAll(sourceNextEntries);
+			inOrder.verify(targetNext1).shift(amount.negate());
+			inOrder.verify(targetNext2).shift(amount.negate());
+			inOrder.verify(gateway).delete(targetEntry);
+			inOrder.verify(gateway).updateAll(targetNextEntries);
+
+			verify(sourceEntry, never()).shift(any());
+			verify(targetEntry, never()).shift(any());
+		}
+
+		@Test
+		void transactionNull() {
+			final AccountTransferTransaction transaction = null;
+			assertThatThrownBy(() -> service.delete(transaction))
 					.isInstanceOf(NullPointerException.class);
 
 			verifyNoInteractions(gateway);

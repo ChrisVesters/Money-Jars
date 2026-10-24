@@ -13,7 +13,10 @@ VALUES
   (10, '2026-01-20', 1, 350.00, 'Hotel stay'),
   (11, '2026-02-03', 2, 100.00, 'Car maintenance savings'),
   (12, '2026-02-10', 0, 250.00, 'Holiday savings'),
-  (13, '2026-02-10', 1, 50.00, 'Road trip fuel');
+  (13, '2026-02-10', 1, 50.00, 'Road trip fuel'),
+  (14, '2026-02-03', 3, 100.00, 'Cash withdrawal'),
+  (15, '2026-02-10', 2, 500.00, 'Monthly savings'),
+  (16, '2026-02-10', 3, 615.40, 'Credit card settlement');
 
 SELECT setval('transactions_id_seq', (SELECT MAX(id) from "transactions"));
 
@@ -37,3 +40,10 @@ VALUES
   (11, 1, 3),
   (12, 1, 2),
   (13, 2, 3);
+
+
+INSERT INTO account_transfer_transactions(transaction_id, source_account_id, target_account_id)
+VALUES
+  (14, 1, 2),
+  (15, 1, 3),
+  (16, 3, 4);

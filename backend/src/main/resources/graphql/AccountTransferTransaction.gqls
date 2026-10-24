@@ -1,0 +1,23 @@
+type AccountTransferTransaction implements Transaction {
+	id: ID!
+	date: String!
+	amount: String!
+	description: String!
+	sourceAccount: Account!
+	targetAccount: Account!
+}
+
+input CreateAccountTransferTransaction {
+	date: String!
+	amount: String!
+	description: String!
+	sourceAccountId: ID!
+	targetAccountId: ID!
+}
+
+
+extend type Mutation {
+	createAccountTransferTransaction(req: CreateAccountTransferTransaction!): AccountTransferTransaction!
+	updateAccountTransferTransaction(id: ID!, req: CreateAccountTransferTransaction!): AccountTransferTransaction!
+	deleteAccountTransferTransaction(id: ID!): Boolean!
+}

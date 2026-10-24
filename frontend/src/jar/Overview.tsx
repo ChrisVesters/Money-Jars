@@ -158,7 +158,14 @@ const Overview = (): JSX.Element => {
 				<tbody>
 					{jars
 						.find(jar => jar.id === selectedCardId)
-						?.transactions.map(transaction => (
+						// TODO: this should actually not be possible
+						// But I don't think we can enforce this?
+						?.transactions.filter(
+							transaction =>
+								transaction.__typename !==
+								TransactionType.AccountTransfer
+						)
+						.map(transaction => (
 							<tr
 								key={transaction.id}
 								// className={`${selectedTransaction?.id === transaction.id ? "selected" : ""}`}

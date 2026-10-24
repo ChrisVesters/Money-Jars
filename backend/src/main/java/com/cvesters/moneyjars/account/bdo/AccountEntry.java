@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 
 import lombok.Getter;
 
+import com.cvesters.moneyjars.transaction.bdo.AccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 
 @Getter
@@ -23,9 +24,21 @@ public class AccountEntry {
 
 		final long transactionId = transaction.getId();
 		final long accountId = transaction.getAccountId();
-		final BigDecimal amount = transaction.getSignedAmount();
 		final BigDecimal balanceBefore = BigDecimal.ZERO;
-		final BigDecimal balanceAfter = amount;
+		final BigDecimal balanceAfter = transaction.getSignedAmount();
+
+		return new AccountEntry(null, transactionId, accountId, balanceBefore,
+				balanceAfter);
+	}
+
+	public static AccountEntry first(final long accountId,
+			final AccountTransferTransaction transaction) {
+		Objects.requireNonNull(transaction);
+		Validate.isTrue(transaction.involves(accountId));
+
+		final long transactionId = transaction.getId();
+		final BigDecimal balanceBefore = BigDecimal.ZERO;
+		final BigDecimal balanceAfter = transaction.getSignedAmount(accountId);
 
 		return new AccountEntry(null, transactionId, accountId, balanceBefore,
 				balanceAfter);
@@ -56,6 +69,24 @@ public class AccountEntry {
 
 		return new AccountEntry(null, transactionId, accountId, balanceBefore,
 				balanceAfter);
+	}
+
+	public AccountEntry next(final AccountTransferTransaction transaction) {
+		Objects.requireNonNull(transaction);
+		Validate.isTrue(transaction.involves(this.accountId));
+
+		final long transactionId = transaction.getId();
+		final long accountId = this.accountId;
+		final BigDecimal amount = transaction.getSignedAmount(accountId);
+		final BigDecimal balanceBefore = this.getBalanceAfter();
+		final BigDecimal balanceAfter = balanceBefore.add(amount);
+
+		return new AccountEntry(null, transactionId, accountId, balanceBefore,
+				balanceAfter);
+	}
+
+	public BigDecimal getAmount() {
+		return this.balanceAfter.subtract(this.balanceBefore);
 	}
 
 	public void shift(final BigDecimal amount) {

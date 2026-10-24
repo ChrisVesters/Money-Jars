@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.cvesters.moneyjars.test.RepositoryTest;
+import com.cvesters.moneyjars.transaction.dao.AccountTransferTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.JarTransferTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
@@ -22,7 +23,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 	@Autowired
 	private TransactionRepository repository;
 
-	@Nested 
+	@Nested
 	class FindAll {
 
 		@Test
@@ -40,10 +41,17 @@ class TransactionRepositoryTest extends RepositoryTest {
 					t -> assertEquals(t, TestPaymentTransaction.HOTEL),
 					t -> assertEquals(t, TestPaymentTransaction.FUEL),
 					t -> assertEquals(t, TestPaymentTransaction.MARKET),
-					t -> assertEquals(t, TestJarTransferTransaction.CAR_SAVINGS),
+					t -> assertEquals(t,
+							TestJarTransferTransaction.CAR_SAVINGS),
+					t -> assertEquals(t,
+							TestAccountTransferTransaction.CASH_WITHDRAWAL),
 					t -> assertEquals(t,
 							TestJarTransferTransaction.HOLIDAY_SAVINGS),
-					t -> assertEquals(t, TestJarTransferTransaction.ROAD_TRIP));
+					t -> assertEquals(t, TestJarTransferTransaction.ROAD_TRIP),
+					t -> assertEquals(t,
+							TestAccountTransferTransaction.SAVINGS_DEPOSIT),
+					t -> assertEquals(t,
+							TestAccountTransferTransaction.CREDIT_CARD_SETTLEMENT));
 		}
 	}
 
@@ -55,8 +63,8 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2026, 1, 15);
 			final LocalDate end = LocalDate.of(2026, 1, 15);
 
-			final List<TransactionDao> result = repository.findAllInPeriod(start,
-					end);
+			final List<TransactionDao> result = repository
+					.findAllInPeriod(start, end);
 
 			assertThat(result).satisfiesExactly(
 					t -> assertEquals(t, TestPaymentTransaction.CAFE));
@@ -67,8 +75,8 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2026, 1, 1);
 			final LocalDate end = LocalDate.of(2026, 1, 31);
 
-			final List<TransactionDao> result = repository.findAllInPeriod(start,
-					end);
+			final List<TransactionDao> result = repository
+					.findAllInPeriod(start, end);
 
 			assertThat(result).satisfiesExactly(
 					t -> assertEquals(t, TestPaymentTransaction.SALARY),
@@ -86,8 +94,8 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2025, 1, 1);
 			final LocalDate end = LocalDate.of(2025, 12, 31);
 
-			final List<TransactionDao> result = repository.findAllInPeriod(start,
-					end);
+			final List<TransactionDao> result = repository
+					.findAllInPeriod(start, end);
 
 			assertThat(result).isEmpty();
 		}
@@ -97,8 +105,8 @@ class TransactionRepositoryTest extends RepositoryTest {
 			final LocalDate start = LocalDate.of(2026, 1, 31);
 			final LocalDate end = LocalDate.of(2026, 1, 1);
 
-			final List<TransactionDao> result = repository.findAllInPeriod(start,
-					end);
+			final List<TransactionDao> result = repository
+					.findAllInPeriod(start, end);
 
 			assertThat(result).isEmpty();
 		}
@@ -117,8 +125,8 @@ class TransactionRepositoryTest extends RepositoryTest {
 		void endNull() {
 			final LocalDate start = LocalDate.of(2026, 1, 1);
 
-			final List<TransactionDao> result = repository.findAllInPeriod(start,
-					null);
+			final List<TransactionDao> result = repository
+					.findAllInPeriod(start, null);
 
 			assertThat(result).isEmpty();
 		}
@@ -243,5 +251,22 @@ class TransactionRepositoryTest extends RepositoryTest {
 				.isEqualTo(expected.getSourceJar().getId());
 		assertThat(jt.getTargetJarId())
 				.isEqualTo(expected.getTargetJar().getId());
+	}
+
+	private static void assertEquals(final TransactionDao t,
+			final TestAccountTransferTransaction expected) {
+		assertThat(t).isInstanceOf(AccountTransferTransactionDao.class);
+		final AccountTransferTransactionDao at = (AccountTransferTransactionDao) t;
+
+		assertThat(at.getId()).isEqualTo(expected.getId());
+		assertThat(at.getDate()).isEqualTo(expected.getDate());
+		assertThat(at.getSequence()).isEqualTo(expected.getSequence());
+		assertThat(at.getAmount()).isEqualByComparingTo(expected.getAmount());
+		assertThat(at.getDescription()).isEqualTo(expected.getDescription());
+
+		assertThat(at.getSourceAccountId())
+				.isEqualTo(expected.getSourceAccount().getId());
+		assertThat(at.getTargetAccountId())
+				.isEqualTo(expected.getTargetAccount().getId());
 	}
 }

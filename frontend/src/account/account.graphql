@@ -17,6 +17,17 @@ query GetAccounts {
 				counterparty
 				direction
 			}
+
+			... on AccountTransferTransaction {
+				sourceAccount {
+					id
+					name
+				}
+				targetAccount {
+					id
+					name
+				}
+			}
 		}
 	}
 }
