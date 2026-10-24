@@ -160,7 +160,8 @@ const Overview = (): JSX.Element => {
 						// But I don't think we can enforce this?
 						?.transactions.filter(
 							transaction =>
-								transaction.__typename === TransactionType.Payment
+								transaction.__typename !==
+								TransactionType.JarTransfer
 						)
 						.map(transaction => (
 							<tr
@@ -170,15 +171,38 @@ const Overview = (): JSX.Element => {
 							>
 								<td>{transaction.date}</td>
 								<td>{Money.toLabel(transaction.amount)}</td>
-								<td>
-									{transaction.direction ===
-									Direction.Outgoing ? (
-										<IconOutgoing />
-									) : (
-										<IconIncoming />
-									)}
-								</td>
-								<td>{transaction.counterparty}</td>
+								{transaction.__typename ===
+								TransactionType.Payment ? (
+									<>
+										<td>
+											{transaction.direction ===
+											Direction.Outgoing ? (
+												<IconOutgoing />
+											) : (
+												<IconIncoming />
+											)}
+										</td>
+										<td>{transaction.counterparty}</td>
+									</>
+								) : (
+									<>
+										<td>
+											{transaction.sourceAccount.id ===
+											selectedCardId ? (
+												<IconOutgoing />
+											) : (
+												<IconIncoming />
+											)}
+										</td>
+										<td>
+											{transaction.sourceAccount.id ===
+											selectedCardId
+												? transaction.targetAccount.name
+												: transaction.sourceAccount
+														.name}
+										</td>
+									</>
+								)}
 								<td>{transaction.description}</td>
 							</tr>
 						))}

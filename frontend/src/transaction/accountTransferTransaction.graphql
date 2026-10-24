@@ -1,0 +1,21 @@
+mutation CreateAccountTransferTransaction($req: CreateAccountTransferTransaction!) {
+	createAccountTransferTransaction(req: $req) {
+		id
+		date
+		amount
+		description
+	}
+}
+
+mutation UpdateAccountTransferTransaction($id: ID!, $req: CreateAccountTransferTransaction!) {
+	updateAccountTransferTransaction(id: $id, req: $req) {
+		id
+		date
+		amount
+		description
+	}
+}
+
+mutation DeleteAccountTransferTransaction($id: ID!) {
+	deleteAccountTransferTransaction(id: $id)
+}

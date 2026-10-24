@@ -30,6 +30,17 @@ query GetTransactions {
 				name
 			}
 		}
+
+		... on AccountTransferTransaction {
+			sourceAccount {
+				id
+				name
+			}
+			targetAccount {
+				id
+				name
+			}
+		}
 	}
 }
 
@@ -62,6 +73,17 @@ query QueryTransactions($req: TransactionQuery!) {
 					name
 				}
 				targetJar {
+					id
+					name
+				}
+			}
+
+			... on AccountTransferTransaction {
+				sourceAccount {
+					id
+					name
+				}
+				targetAccount {
 					id
 					name
 				}

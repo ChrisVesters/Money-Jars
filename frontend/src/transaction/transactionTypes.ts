@@ -7,7 +7,8 @@ export type TransactionType = TransactionItem["__typename"];
 
 export const TransactionType = {
 	Payment: "PaymentTransaction",
-	JarTransfer: "JarTransferTransaction"
+	JarTransfer: "JarTransferTransaction",
+	AccountTransfer: "AccountTransferTransaction"
 } as const satisfies Record<string, TransactionType>;
 
 export type PaymentTransactionItem = Extract<
@@ -18,4 +19,9 @@ export type PaymentTransactionItem = Extract<
 export type JarTransferTransactionItem = Extract<
 	TransactionItem,
 	{ __typename: typeof TransactionType.JarTransfer }
+>;
+
+export type AccountTransferTransactionItem = Extract<
+	TransactionItem,
+	{ __typename: typeof TransactionType.AccountTransfer }
 >;
