@@ -24,7 +24,7 @@
 	flex-direction: column;
 	gap: 0.25rem;
 	font-weight: 600;
-	color: #e0e0e0;
+	color: var(--color-text);
 }
 
 .transactions-filter input {
@@ -74,7 +74,7 @@
 	padding: 1rem;
 	text-align: left;
 	font-weight: 600;
-	color: #e0e0e0;
+	color: var(--color-text);
 	text-transform: capitalize;
 }
 
@@ -98,7 +98,7 @@
 
 .transactions-table td {
 	padding: 1rem;
-	color: #e0e0e0;
+	color: var(--color-text);
 	text-align: left;
 }
 
@@ -161,6 +161,7 @@
 
 .icon-button:disabled,
 .icon-button:disabled:hover {
-	color: rgba(224, 224, 224, 0.3);
+	color: var(--color-text);
+	opacity: 0.3;
 	cursor: not-allowed;
 }

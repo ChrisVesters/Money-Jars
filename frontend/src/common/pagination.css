@@ -4,7 +4,7 @@
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 1rem;
-	color: #e0e0e0;
+	color: var(--color-text);
 }
 
 .pagination-controls {

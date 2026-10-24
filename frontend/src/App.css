@@ -98,7 +98,13 @@ form {
 
 .form-group label {
 	font-weight: 600;
-	color: #333;
+	color: inherit;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+	color: var(--color-text);
 }
 
 .form-group input,
@@ -119,6 +125,6 @@ form {
 
 .form-group input:disabled,
 .form-group textarea:disabled {
-	background-color: #f0f0f0;
+	opacity: 0.6;
 	cursor: not-allowed;
 }
