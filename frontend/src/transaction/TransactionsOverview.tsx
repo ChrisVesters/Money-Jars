@@ -5,12 +5,13 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@apollo/client/react";
 import { QueryTransactionsDocument } from "@gql/graphql";
 
+import Modal from "@src/common/Modal";
 import Pagination from "@src/common/Pagination";
 
 import TransactionActions from "./TransactionActions";
 import type { TransactionFilterValue } from "./TransactionFilter";
 import TransactionFilter from "./TransactionFilter";
-import TransactionFormModal from "./TransactionFormModal";
+import TransactionForm from "./TransactionForm";
 import TransactionTable from "./TransactionTable";
 import "./transaction.css";
 import type { TransactionItem } from "./transactionTypes";
@@ -125,11 +126,16 @@ const TransactionsOverview = (): JSX.Element => {
 				onPageSizeChange={changePageSize}
 			/>
 
-			<TransactionFormModal
+			<Modal
 				isOpen={transactionFormVisible}
-				transaction={selectedTransaction}
-				onClose={closeTransactionForm}
-			/>
+				onClose={closeTransactionForm}>
+				{transactionFormVisible && (
+					<TransactionForm
+						transaction={selectedTransaction}
+						onClose={closeTransactionForm}
+					/>
+				)}
+			</Modal>
 		</div>
 	);
 };

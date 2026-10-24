@@ -6,8 +6,8 @@ import { Direction } from "@gql/graphql";
 import IconIncoming from "@assets/icons/IconIncoming";
 import IconOutgoing from "@assets/icons/IconOutgoing";
 
-import BaseTransactionRow from "./BaseTransactionRow";
-import type { PaymentTransactionItem } from "./transactionTypes";
+import BaseTransactionRow from "../BaseTransactionRow";
+import type { PaymentTransactionItem } from "../transactionTypes";
 
 export type PaymentTransactionRowProps = {
 	transaction: PaymentTransactionItem;

@@ -3,39 +3,39 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Jar } from "@gql/graphql";
+import type { Account } from "@gql/graphql";
 import {
-	CreateJarTransferTransactionDocument,
-	UpdateJarTransferTransactionDocument
+	CreateAccountTransferTransactionDocument,
+	UpdateAccountTransferTransactionDocument
 } from "@gql/graphql";
 
-import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
-import type { JarTransferTransactionItem } from "./transactionTypes";
+import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
+import type { AccountTransferTransactionItem } from "../transactionTypes";
 
-export type JarTransferTransactionFormProps = {
-	transaction?: JarTransferTransactionItem;
-	jars: Array<Jar>;
+export type AccountTransferTransactionFormProps = {
+	transaction?: AccountTransferTransactionItem;
+	accounts: Array<Account>;
 
 	onClose: () => void;
 };
 
-const JarTransferTransactionForm = (
-	props: JarTransferTransactionFormProps
+const AccountTransferTransactionForm = (
+	props: AccountTransferTransactionFormProps
 ): JSX.Element => {
 	const { t } = useTranslation();
 
-	const [createJarTransferTransaction] = useMutation(
-		CreateJarTransferTransactionDocument
+	const [createAccountTransferTransaction] = useMutation(
+		CreateAccountTransferTransactionDocument
 	);
-	const [updateJarTransferTransaction] = useMutation(
-		UpdateJarTransferTransactionDocument
+	const [updateAccountTransferTransaction] = useMutation(
+		UpdateAccountTransferTransactionDocument
 	);
 
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const [description, setDescription] = useState("");
-	const [sourceJarId, setSourceJarId] = useState("");
-	const [targetJarId, setTargetJarId] = useState("");
+	const [sourceAccountId, setSourceAccountId] = useState("");
+	const [targetAccountId, setTargetAccountId] = useState("");
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	useEffect(() => {
@@ -43,16 +43,20 @@ const JarTransferTransactionForm = (
 			setDate(props.transaction.date);
 			setAmount(props.transaction.amount ?? "");
 			setDescription(props.transaction.description ?? "");
-			setSourceJarId(props.transaction.sourceJar.id);
-			setTargetJarId(props.transaction.targetJar.id);
+			setSourceAccountId(props.transaction.sourceAccount.id);
+			setTargetAccountId(props.transaction.targetAccount.id);
 		} else {
 			setDate(new Date().toISOString().split("T")[0]);
 			setAmount("");
 			setDescription("");
-			setSourceJarId(props.jars.length > 0 ? props.jars[0].id : "");
-			setTargetJarId(props.jars.length > 1 ? props.jars[1].id : "");
+			setSourceAccountId(
+				props.accounts.length > 0 ? props.accounts[0].id : ""
+			);
+			setTargetAccountId(
+				props.accounts.length > 1 ? props.accounts[1].id : ""
+			);
 		}
-	}, [props.transaction, props.jars]);
+	}, [props.transaction, props.accounts]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};
@@ -70,14 +74,14 @@ const JarTransferTransactionForm = (
 			newErrors.amount = t("validationAmountInvalid");
 		}
 
-		if (!sourceJarId) {
-			newErrors.sourceJarId = t("validationJarRequired");
+		if (!sourceAccountId) {
+			newErrors.sourceAccountId = t("validationAccountRequired");
 		}
 
-		if (!targetJarId) {
-			newErrors.targetJarId = t("validationJarRequired");
-		} else if (targetJarId === sourceJarId) {
-			newErrors.targetJarId = t("validationJarsMustDiffer");
+		if (!targetAccountId) {
+			newErrors.targetAccountId = t("validationAccountRequired");
+		} else if (targetAccountId === sourceAccountId) {
+			newErrors.targetAccountId = t("validationAccountsMustDiffer");
 		}
 
 		setErrors(newErrors);
@@ -95,13 +99,13 @@ const JarTransferTransactionForm = (
 			date,
 			amount,
 			description: description || "",
-			sourceJarId,
-			targetJarId
+			sourceAccountId,
+			targetAccountId
 		};
 
 		try {
 			if (props.transaction) {
-				const result = await updateJarTransferTransaction({
+				const result = await updateAccountTransferTransaction({
 					variables: {
 						id: props.transaction.id,
 						req: data
@@ -110,7 +114,7 @@ const JarTransferTransactionForm = (
 				});
 				console.log("Update transaction result:", result);
 			} else {
-				const result = await createJarTransferTransaction({
+				const result = await createAccountTransferTransaction({
 					variables: {
 						req: data
 					},
@@ -137,8 +141,12 @@ const JarTransferTransactionForm = (
 		setDate(new Date().toISOString().split("T")[0]);
 		setAmount("");
 		setDescription("");
-		setSourceJarId(props.jars.length > 0 ? props.jars[0].id : "");
-		setTargetJarId(props.jars.length > 1 ? props.jars[1].id : "");
+		setSourceAccountId(
+			props.accounts.length > 0 ? props.accounts[0].id : ""
+		);
+		setTargetAccountId(
+			props.accounts.length > 1 ? props.accounts[1].id : ""
+		);
 	};
 
 	return (
@@ -187,42 +195,46 @@ const JarTransferTransactionForm = (
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="sourceJarId">
-					{t("sourceJar")} <span className="required">*</span>
+				<label htmlFor="sourceAccountId">
+					{t("sourceAccount")} <span className="required">*</span>
 				</label>
 				<select
-					id="sourceJarId"
-					value={sourceJarId}
-					onChange={e => setSourceJarId(e.target.value)}
-					className={errors.sourceJarId ? "input-error" : ""}>
-					{props.jars.map(jar => (
-						<option key={jar.id} value={jar.id}>
-							{jar.name}
+					id="sourceAccountId"
+					value={sourceAccountId}
+					onChange={e => setSourceAccountId(e.target.value)}
+					className={errors.sourceAccountId ? "input-error" : ""}>
+					{props.accounts.map(account => (
+						<option key={account.id} value={account.id}>
+							{account.name}
 						</option>
 					))}
 				</select>
-				{errors.sourceJarId && (
-					<span className="error-message">{errors.sourceJarId}</span>
+				{errors.sourceAccountId && (
+					<span className="error-message">
+						{errors.sourceAccountId}
+					</span>
 				)}
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="targetJarId">
-					{t("targetJar")} <span className="required">*</span>
+				<label htmlFor="targetAccountId">
+					{t("targetAccount")} <span className="required">*</span>
 				</label>
 				<select
-					id="targetJarId"
-					value={targetJarId}
-					onChange={e => setTargetJarId(e.target.value)}
-					className={errors.targetJarId ? "input-error" : ""}>
-					{props.jars.map(jar => (
-						<option key={jar.id} value={jar.id}>
-							{jar.name}
+					id="targetAccountId"
+					value={targetAccountId}
+					onChange={e => setTargetAccountId(e.target.value)}
+					className={errors.targetAccountId ? "input-error" : ""}>
+					{props.accounts.map(account => (
+						<option key={account.id} value={account.id}>
+							{account.name}
 						</option>
 					))}
 				</select>
-				{errors.targetJarId && (
-					<span className="error-message">{errors.targetJarId}</span>
+				{errors.targetAccountId && (
+					<span className="error-message">
+						{errors.targetAccountId}
+					</span>
 				)}
 			</div>
 
@@ -238,4 +250,4 @@ const JarTransferTransactionForm = (
 	);
 };
 
-export default JarTransferTransactionForm;
+export default AccountTransferTransactionForm;

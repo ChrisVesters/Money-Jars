@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import type { Account, Jar } from "@gql/graphql";
 
-import AccountTransferTransactionForm from "./AccountTransferTransactionForm";
-import JarTransferTransactionForm from "./JarTransferTransactionForm";
-import PaymentTransactionForm from "./PaymentTransactionForm";
+import AccountTransferTransactionForm from "./accounttransfer/AccountTransferTransactionForm";
+import JarTransferTransactionForm from "./jartransfer/JarTransferTransactionForm";
+import PaymentTransactionForm from "./payment/PaymentTransactionForm";
 import { TransactionType } from "./transactionTypes";
 
 export type CreateTransactionFormProps = {

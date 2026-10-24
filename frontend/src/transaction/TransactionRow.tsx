@@ -1,8 +1,8 @@
 import type { JSX } from "react";
 
-import AccountTransferTransactionRow from "./AccountTransferTransactionRow";
-import JarTransferTransactionRow from "./JarTransferTransactionRow";
-import PaymentTransactionRow from "./PaymentTransactionRow";
+import AccountTransferTransactionRow from "./accounttransfer/AccountTransferTransactionRow";
+import JarTransferTransactionRow from "./jartransfer/JarTransferTransactionRow";
+import PaymentTransactionRow from "./payment/PaymentTransactionRow";
 import type { TransactionItem } from "./transactionTypes";
 import { TransactionType } from "./transactionTypes";
 

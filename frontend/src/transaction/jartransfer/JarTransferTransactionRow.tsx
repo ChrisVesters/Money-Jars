@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import IconJar from "@assets/icons/IconJar";
 
-import BaseTransactionRow from "./BaseTransactionRow";
-import type { JarTransferTransactionItem } from "./transactionTypes";
-import { getTransferDirection } from "./transactionTypes";
+import BaseTransactionRow from "../BaseTransactionRow";
+import type { JarTransferTransactionItem } from "../transactionTypes";
+import { getTransferDirection } from "../transactionTypes";
 
 export type JarTransferTransactionRowProps = {
 	transaction: JarTransferTransactionItem;

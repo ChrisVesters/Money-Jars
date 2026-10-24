@@ -3,42 +3,39 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Account, Jar } from "@gql/graphql";
+import type { Jar } from "@gql/graphql";
 import {
-	CreatePaymentTransactionDocument,
-	Direction,
-	UpdatePaymentTransactionDocument
+	CreateJarTransferTransactionDocument,
+	UpdateJarTransferTransactionDocument
 } from "@gql/graphql";
-import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
-import type { PaymentTransactionItem } from "./transactionTypes";
-import IconOutgoing from "@assets/icons/IconOutgoing";
-import IconIncoming from "@assets/icons/IconIncoming";
 
-export type PaytmentTransactionFormProps = {
-	transaction?: PaymentTransactionItem;
+import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
+import type { JarTransferTransactionItem } from "../transactionTypes";
+
+export type JarTransferTransactionFormProps = {
+	transaction?: JarTransferTransactionItem;
 	jars: Array<Jar>;
-	accounts: Array<Account>;
 
 	onClose: () => void;
 };
 
-const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Element => {
+const JarTransferTransactionForm = (
+	props: JarTransferTransactionFormProps
+): JSX.Element => {
 	const { t } = useTranslation();
 
-	const [createPaymentTransaction] = useMutation(
-		CreatePaymentTransactionDocument
+	const [createJarTransferTransaction] = useMutation(
+		CreateJarTransferTransactionDocument
 	);
-	const [updatePaymentTransaction] = useMutation(
-		UpdatePaymentTransactionDocument
+	const [updateJarTransferTransaction] = useMutation(
+		UpdateJarTransferTransactionDocument
 	);
 
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const [description, setDescription] = useState("");
-	const [jarId, setJarId] = useState("");
-	const [accountId, setAccountId] = useState("");
-	const [counterparty, setCounterparty] = useState("");
-	const [direction, setDirection] = useState(Direction.Outgoing);
+	const [sourceJarId, setSourceJarId] = useState("");
+	const [targetJarId, setTargetJarId] = useState("");
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	useEffect(() => {
@@ -46,20 +43,16 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 			setDate(props.transaction.date);
 			setAmount(props.transaction.amount ?? "");
 			setDescription(props.transaction.description ?? "");
-			setJarId(props.transaction.jar.id);
-			setAccountId(props.transaction.account.id);
-			setCounterparty(props.transaction.counterparty ?? "");
-			setDirection(props.transaction.direction);
+			setSourceJarId(props.transaction.sourceJar.id);
+			setTargetJarId(props.transaction.targetJar.id);
 		} else {
 			setDate(new Date().toISOString().split("T")[0]);
 			setAmount("");
-			setCounterparty("");
 			setDescription("");
-			setJarId(props.jars.length > 0 ? props.jars[0].id : "");
-			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
-			setDirection(Direction.Outgoing);
+			setSourceJarId(props.jars.length > 0 ? props.jars[0].id : "");
+			setTargetJarId(props.jars.length > 1 ? props.jars[1].id : "");
 		}
-	}, [props.transaction, props.jars, props.accounts]);
+	}, [props.transaction, props.jars]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};
@@ -77,20 +70,14 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 			newErrors.amount = t("validationAmountInvalid");
 		}
 
-		if (!counterparty.trim()) {
-			newErrors.counterparty = t("validationCounterpartyRequired");
+		if (!sourceJarId) {
+			newErrors.sourceJarId = t("validationJarRequired");
 		}
 
-		if (!jarId) {
-			newErrors.jarId = t("validationJarRequired");
-		}
-
-		if (!accountId) {
-			newErrors.accountId = t("validationAccountRequired");
-		}
-
-		if (!direction) {
-			newErrors.direction = t("validationDirectionRequired");
+		if (!targetJarId) {
+			newErrors.targetJarId = t("validationJarRequired");
+		} else if (targetJarId === sourceJarId) {
+			newErrors.targetJarId = t("validationJarsMustDiffer");
 		}
 
 		setErrors(newErrors);
@@ -106,17 +93,15 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 
 		const data = {
 			date,
-			amount: amount,
+			amount,
 			description: description || "",
-			jarId,
-			accountId,
-			counterparty: counterparty,
-			direction
+			sourceJarId,
+			targetJarId
 		};
 
 		try {
 			if (props.transaction) {
-				const result = await updatePaymentTransaction({
+				const result = await updateJarTransferTransaction({
 					variables: {
 						id: props.transaction.id,
 						req: data
@@ -125,7 +110,7 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 				});
 				console.log("Update transaction result:", result);
 			} else {
-				const result = await createPaymentTransaction({
+				const result = await createJarTransferTransaction({
 					variables: {
 						req: data
 					},
@@ -151,11 +136,9 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 	const clear = (): void => {
 		setDate(new Date().toISOString().split("T")[0]);
 		setAmount("");
-		setCounterparty("");
 		setDescription("");
-		setJarId(props.jars.length > 0 ? props.jars[0].id : "");
-		setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
-		setDirection(Direction.Outgoing);
+		setSourceJarId(props.jars.length > 0 ? props.jars[0].id : "");
+		setTargetJarId(props.jars.length > 1 ? props.jars[1].id : "");
 	};
 
 	return (
@@ -188,40 +171,8 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 					onChange={e => setAmount(e.target.value)}
 					className={errors.amount ? "input-error" : ""}
 				/>
-				{/*  TODO: Generic component */}
-				<button
-					type="button"
-					onClick={() =>
-						setDirection(
-							direction === Direction.Outgoing
-								? Direction.Incoming
-								: Direction.Outgoing
-						)
-					}>
-					{direction === Direction.Outgoing ? (
-						<IconOutgoing />
-					) : (
-						<IconIncoming />
-					)}
-				</button>
 				{errors.amount && (
 					<span className="error-message">{errors.amount}</span>
-				)}
-			</div>
-
-			<div className="form-group">
-				<label htmlFor="counterparty">
-					{t("counterparty")} <span className="required">*</span>
-				</label>
-				<input
-					id="counterparty"
-					type="text"
-					value={counterparty}
-					onChange={e => setCounterparty(e.target.value)}
-					className={errors.counterparty ? "input-error" : ""}
-				/>
-				{errors.counterparty && (
-					<span className="error-message">{errors.counterparty}</span>
 				)}
 			</div>
 
@@ -236,42 +187,42 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="jarId">
-					{t("jar")} <span className="required">*</span>
+				<label htmlFor="sourceJarId">
+					{t("sourceJar")} <span className="required">*</span>
 				</label>
 				<select
-					id="jarId"
-					value={jarId}
-					onChange={e => setJarId(e.target.value)}
-					className={errors.jarId ? "input-error" : ""}>
+					id="sourceJarId"
+					value={sourceJarId}
+					onChange={e => setSourceJarId(e.target.value)}
+					className={errors.sourceJarId ? "input-error" : ""}>
 					{props.jars.map(jar => (
 						<option key={jar.id} value={jar.id}>
 							{jar.name}
 						</option>
 					))}
 				</select>
-				{errors.jarId && (
-					<span className="error-message">{errors.jarId}</span>
+				{errors.sourceJarId && (
+					<span className="error-message">{errors.sourceJarId}</span>
 				)}
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="accountId">
-					{t("account")} <span className="required">*</span>
+				<label htmlFor="targetJarId">
+					{t("targetJar")} <span className="required">*</span>
 				</label>
 				<select
-					id="accountId"
-					value={accountId}
-					onChange={e => setAccountId(e.target.value)}
-					className={errors.accountId ? "input-error" : ""}>
-					{props.accounts.map(account => (
-						<option key={account.id} value={account.id}>
-							{account.name}
+					id="targetJarId"
+					value={targetJarId}
+					onChange={e => setTargetJarId(e.target.value)}
+					className={errors.targetJarId ? "input-error" : ""}>
+					{props.jars.map(jar => (
+						<option key={jar.id} value={jar.id}>
+							{jar.name}
 						</option>
 					))}
 				</select>
-				{errors.accountId && (
-					<span className="error-message">{errors.accountId}</span>
+				{errors.targetJarId && (
+					<span className="error-message">{errors.targetJarId}</span>
 				)}
 			</div>
 
@@ -287,4 +238,4 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 	);
 };
 
-export default PaymentTransactionForm;
+export default JarTransferTransactionForm;

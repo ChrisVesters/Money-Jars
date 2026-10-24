@@ -59,8 +59,9 @@
 	"validationAccountsMustDiffer": "Choose two different accounts",
 	"validationAmountInvalid": "Please enter a valid amount",
 	"validationAmountRequired": "Amount is required",
-	"validationCounterypartyRequired": "Counterparty is required",
+	"validationCounterpartyRequired": "Counterparty is required",
 	"validationDateRequired": "Date is required",
+	"validationDirectionRequired": "Direction is required",
 	"validationJarRequired": "Jar is required",
 	"validationJarsMustDiffer": "Choose two different jars",
 	"welcomeDashboard": "Welcome to your Money Jars dashboard."

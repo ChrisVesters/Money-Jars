@@ -3,39 +3,42 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Account } from "@gql/graphql";
+import type { Account, Jar } from "@gql/graphql";
 import {
-	CreateAccountTransferTransactionDocument,
-	UpdateAccountTransferTransactionDocument
+	CreatePaymentTransactionDocument,
+	Direction,
+	UpdatePaymentTransactionDocument
 } from "@gql/graphql";
+import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
+import type { PaymentTransactionItem } from "../transactionTypes";
+import IconOutgoing from "@assets/icons/IconOutgoing";
+import IconIncoming from "@assets/icons/IconIncoming";
 
-import { TRANSACTION_REFETCH_QUERIES } from "./transactionQueries";
-import type { AccountTransferTransactionItem } from "./transactionTypes";
-
-export type AccountTransferTransactionFormProps = {
-	transaction?: AccountTransferTransactionItem;
+export type PaytmentTransactionFormProps = {
+	transaction?: PaymentTransactionItem;
+	jars: Array<Jar>;
 	accounts: Array<Account>;
 
 	onClose: () => void;
 };
 
-const AccountTransferTransactionForm = (
-	props: AccountTransferTransactionFormProps
-): JSX.Element => {
+const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Element => {
 	const { t } = useTranslation();
 
-	const [createAccountTransferTransaction] = useMutation(
-		CreateAccountTransferTransactionDocument
+	const [createPaymentTransaction] = useMutation(
+		CreatePaymentTransactionDocument
 	);
-	const [updateAccountTransferTransaction] = useMutation(
-		UpdateAccountTransferTransactionDocument
+	const [updatePaymentTransaction] = useMutation(
+		UpdatePaymentTransactionDocument
 	);
 
 	const [date, setDate] = useState("");
 	const [amount, setAmount] = useState("");
 	const [description, setDescription] = useState("");
-	const [sourceAccountId, setSourceAccountId] = useState("");
-	const [targetAccountId, setTargetAccountId] = useState("");
+	const [jarId, setJarId] = useState("");
+	const [accountId, setAccountId] = useState("");
+	const [counterparty, setCounterparty] = useState("");
+	const [direction, setDirection] = useState(Direction.Outgoing);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	useEffect(() => {
@@ -43,20 +46,20 @@ const AccountTransferTransactionForm = (
 			setDate(props.transaction.date);
 			setAmount(props.transaction.amount ?? "");
 			setDescription(props.transaction.description ?? "");
-			setSourceAccountId(props.transaction.sourceAccount.id);
-			setTargetAccountId(props.transaction.targetAccount.id);
+			setJarId(props.transaction.jar.id);
+			setAccountId(props.transaction.account.id);
+			setCounterparty(props.transaction.counterparty ?? "");
+			setDirection(props.transaction.direction);
 		} else {
 			setDate(new Date().toISOString().split("T")[0]);
 			setAmount("");
+			setCounterparty("");
 			setDescription("");
-			setSourceAccountId(
-				props.accounts.length > 0 ? props.accounts[0].id : ""
-			);
-			setTargetAccountId(
-				props.accounts.length > 1 ? props.accounts[1].id : ""
-			);
+			setJarId(props.jars.length > 0 ? props.jars[0].id : "");
+			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
+			setDirection(Direction.Outgoing);
 		}
-	}, [props.transaction, props.accounts]);
+	}, [props.transaction, props.jars, props.accounts]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};
@@ -74,14 +77,20 @@ const AccountTransferTransactionForm = (
 			newErrors.amount = t("validationAmountInvalid");
 		}
 
-		if (!sourceAccountId) {
-			newErrors.sourceAccountId = t("validationAccountRequired");
+		if (!counterparty.trim()) {
+			newErrors.counterparty = t("validationCounterpartyRequired");
 		}
 
-		if (!targetAccountId) {
-			newErrors.targetAccountId = t("validationAccountRequired");
-		} else if (targetAccountId === sourceAccountId) {
-			newErrors.targetAccountId = t("validationAccountsMustDiffer");
+		if (!jarId) {
+			newErrors.jarId = t("validationJarRequired");
+		}
+
+		if (!accountId) {
+			newErrors.accountId = t("validationAccountRequired");
+		}
+
+		if (!direction) {
+			newErrors.direction = t("validationDirectionRequired");
 		}
 
 		setErrors(newErrors);
@@ -97,15 +106,17 @@ const AccountTransferTransactionForm = (
 
 		const data = {
 			date,
-			amount,
+			amount: amount,
 			description: description || "",
-			sourceAccountId,
-			targetAccountId
+			jarId,
+			accountId,
+			counterparty: counterparty,
+			direction
 		};
 
 		try {
 			if (props.transaction) {
-				const result = await updateAccountTransferTransaction({
+				const result = await updatePaymentTransaction({
 					variables: {
 						id: props.transaction.id,
 						req: data
@@ -114,7 +125,7 @@ const AccountTransferTransactionForm = (
 				});
 				console.log("Update transaction result:", result);
 			} else {
-				const result = await createAccountTransferTransaction({
+				const result = await createPaymentTransaction({
 					variables: {
 						req: data
 					},
@@ -140,13 +151,11 @@ const AccountTransferTransactionForm = (
 	const clear = (): void => {
 		setDate(new Date().toISOString().split("T")[0]);
 		setAmount("");
+		setCounterparty("");
 		setDescription("");
-		setSourceAccountId(
-			props.accounts.length > 0 ? props.accounts[0].id : ""
-		);
-		setTargetAccountId(
-			props.accounts.length > 1 ? props.accounts[1].id : ""
-		);
+		setJarId(props.jars.length > 0 ? props.jars[0].id : "");
+		setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
+		setDirection(Direction.Outgoing);
 	};
 
 	return (
@@ -179,8 +188,40 @@ const AccountTransferTransactionForm = (
 					onChange={e => setAmount(e.target.value)}
 					className={errors.amount ? "input-error" : ""}
 				/>
+				{/*  TODO: Generic component */}
+				<button
+					type="button"
+					onClick={() =>
+						setDirection(
+							direction === Direction.Outgoing
+								? Direction.Incoming
+								: Direction.Outgoing
+						)
+					}>
+					{direction === Direction.Outgoing ? (
+						<IconOutgoing />
+					) : (
+						<IconIncoming />
+					)}
+				</button>
 				{errors.amount && (
 					<span className="error-message">{errors.amount}</span>
+				)}
+			</div>
+
+			<div className="form-group">
+				<label htmlFor="counterparty">
+					{t("counterparty")} <span className="required">*</span>
+				</label>
+				<input
+					id="counterparty"
+					type="text"
+					value={counterparty}
+					onChange={e => setCounterparty(e.target.value)}
+					className={errors.counterparty ? "input-error" : ""}
+				/>
+				{errors.counterparty && (
+					<span className="error-message">{errors.counterparty}</span>
 				)}
 			</div>
 
@@ -195,46 +236,42 @@ const AccountTransferTransactionForm = (
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="sourceAccountId">
-					{t("sourceAccount")} <span className="required">*</span>
+				<label htmlFor="jarId">
+					{t("jar")} <span className="required">*</span>
 				</label>
 				<select
-					id="sourceAccountId"
-					value={sourceAccountId}
-					onChange={e => setSourceAccountId(e.target.value)}
-					className={errors.sourceAccountId ? "input-error" : ""}>
-					{props.accounts.map(account => (
-						<option key={account.id} value={account.id}>
-							{account.name}
+					id="jarId"
+					value={jarId}
+					onChange={e => setJarId(e.target.value)}
+					className={errors.jarId ? "input-error" : ""}>
+					{props.jars.map(jar => (
+						<option key={jar.id} value={jar.id}>
+							{jar.name}
 						</option>
 					))}
 				</select>
-				{errors.sourceAccountId && (
-					<span className="error-message">
-						{errors.sourceAccountId}
-					</span>
+				{errors.jarId && (
+					<span className="error-message">{errors.jarId}</span>
 				)}
 			</div>
 
 			<div className="form-group">
-				<label htmlFor="targetAccountId">
-					{t("targetAccount")} <span className="required">*</span>
+				<label htmlFor="accountId">
+					{t("account")} <span className="required">*</span>
 				</label>
 				<select
-					id="targetAccountId"
-					value={targetAccountId}
-					onChange={e => setTargetAccountId(e.target.value)}
-					className={errors.targetAccountId ? "input-error" : ""}>
+					id="accountId"
+					value={accountId}
+					onChange={e => setAccountId(e.target.value)}
+					className={errors.accountId ? "input-error" : ""}>
 					{props.accounts.map(account => (
 						<option key={account.id} value={account.id}>
 							{account.name}
 						</option>
 					))}
 				</select>
-				{errors.targetAccountId && (
-					<span className="error-message">
-						{errors.targetAccountId}
-					</span>
+				{errors.accountId && (
+					<span className="error-message">{errors.accountId}</span>
 				)}
 			</div>
 
@@ -250,4 +287,4 @@ const AccountTransferTransactionForm = (
 	);
 };
 
-export default AccountTransferTransactionForm;
+export default PaymentTransactionForm;

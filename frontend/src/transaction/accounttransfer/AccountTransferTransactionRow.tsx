@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 
 import IconAccount from "@assets/icons/IconAccount";
 
-import BaseTransactionRow from "./BaseTransactionRow";
-import type { AccountTransferTransactionItem } from "./transactionTypes";
-import { getTransferDirection } from "./transactionTypes";
+import BaseTransactionRow from "../BaseTransactionRow";
+import type { AccountTransferTransactionItem } from "../transactionTypes";
+import { getTransferDirection } from "../transactionTypes";
 
 export type AccountTransferTransactionRowProps = {
 	transaction: AccountTransferTransactionItem;
