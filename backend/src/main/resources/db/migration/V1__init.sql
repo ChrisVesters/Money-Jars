@@ -108,3 +108,12 @@ CREATE TABLE account_entries(
 
 CREATE INDEX ON account_entries(account_id);
 CREATE INDEX ON account_entries(transaction_id);
+
+
+CREATE TABLE categories(
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+
+	PRIMARY KEY (id)
+);
