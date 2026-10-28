@@ -1,0 +1,27 @@
+query GetCategories {
+	getCategorys {
+		id
+		name
+		description
+	}
+}
+
+mutation CreateCategory($req: UpdateCategory!) {
+	createCategory(req: $req) {
+		id
+		name
+		description
+	}
+}
+
+mutation UpdateCategory($id: ID!, $req: UpdateCategory!) {
+	updateCategory(id: $id, req: $req) {
+		id
+		name
+		description
+	}
+}
+
+mutation DeleteCategory($id: ID!) {
+	deleteCategory(id: $id)
+}

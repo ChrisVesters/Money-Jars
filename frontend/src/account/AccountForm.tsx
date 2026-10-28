@@ -57,11 +57,11 @@ const AccountForm = (props: Readonly<AccountFormProps>): JSX.Element => {
 			</div>
 			<div className="form-group">
 				<label htmlFor="account-description">{t("description")}</label>
-				<input
+				<textarea
 					id="account-description"
-					type="text"
 					value={description}
 					onChange={event => setDescription(event.target.value)}
+					rows={3}
 				/>
 			</div>
 

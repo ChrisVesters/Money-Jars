@@ -9,6 +9,7 @@ import IconJar from "@assets/icons/IconJar";
 import IconPanelLeftClose from "@assets/icons/IconPanelLeftClose";
 import IconPanelLeftOpen from "@assets/icons/IconPanelLeftOpen";
 import IconSettings from "@assets/icons/IconSettings";
+import IconCategory from "@assets/icons/IconCategory";
 import IconTransaction from "@assets/icons/IconTransaction";
 
 import "./Sidebar.css";
@@ -77,6 +78,15 @@ const Sidebar = (): JSX.Element => {
 								title={t("transactions")}>
 								<IconTransaction className="nav-icon" />
 								<span>{t("transactions")}</span>
+							</Link>
+						</li>
+						<li className="nav-item">
+							<Link
+								to="/categories"
+								className={`nav-link ${isActive("/categories") ? "active" : ""}`}
+								title={t("categories")}>
+								<IconCategory className="nav-icon" />
+								<span>{t("categories")}</span>
 							</Link>
 						</li>
 						<li className="nav-item">
