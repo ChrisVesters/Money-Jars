@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
 import AccountsPage from "./pages/AccountsPage";
+import CategoriesPage from "./pages/CategoriesPage";
 import DashboardPage from "./pages/DashboardPage";
 import JarsPage from "./pages/JarsPage";
 import ReportsPage from "./pages/ReportsPage";
@@ -24,6 +25,7 @@ const App = (): JSX.Element => {
 							path="/transactions"
 							element={<TransactionsPage />}
 						/>
+						<Route path="/categories" element={<CategoriesPage />} />
 						<Route path="/reports" element={<ReportsPage />} />
 						<Route path="/settings" element={<SettingsPage />} />
 					</Routes>
