@@ -15,21 +15,23 @@ public final class PaymentTransaction extends Transaction {
 
 	private long jarId;
 	private long accountId;
+	private Long categoryId;
 	private String counterparty;
 	private PaymentTransactionDirection direction;
 
 	public PaymentTransaction(final LocalDate date, final int sequence,
 			final BigDecimal amount, final String description, final long jarId,
-			final long accountId, final String counterparty,
+			final long accountId, final Long categoryId,
+			final String counterparty,
 			final PaymentTransactionDirection direction) {
 		this(null, date, sequence, amount, description, jarId, accountId,
-				counterparty, direction);
+				categoryId, counterparty, direction);
 	}
 
 	public PaymentTransaction(final Long id, final LocalDate date,
 			final int sequence, final BigDecimal amount,
 			final String description, final long jarId, final long accountId,
-			final String counterparty,
+			final Long categoryId, final String counterparty,
 			final PaymentTransactionDirection direction) {
 		Validate.notBlank(counterparty);
 		Objects.requireNonNull(direction);
@@ -38,6 +40,7 @@ public final class PaymentTransaction extends Transaction {
 
 		this.jarId = jarId;
 		this.accountId = accountId;
+		this.categoryId = categoryId;
 		this.counterparty = counterparty;
 		this.direction = direction;
 	}

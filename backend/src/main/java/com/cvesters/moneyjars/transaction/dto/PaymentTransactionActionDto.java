@@ -12,25 +12,25 @@ public final class PaymentTransactionActionDto {
 	}
 
 	public static record Create(LocalDate date, String amount,
-			String description, long jarId, long accountId, String counterparty,
-			String direction) {
+			String description, long jarId, long accountId, Long categoryId,
+			String counterparty, String direction) {
 
 		public PaymentTransactionAction.Create toBdo() {
 			return new PaymentTransactionAction.Create(date,
 					new BigDecimal(amount), description, jarId, accountId,
-					counterparty,
+					categoryId, counterparty,
 					PaymentTransactionDirection.valueOf(direction));
 		}
 	}
 
 	public static record Update(LocalDate date, String amount,
-			String description, long jarId, long accountId, String counterparty,
-			String direction) {
+			String description, long jarId, long accountId, Long categoryId,
+			String counterparty, String direction) {
 
 		public PaymentTransactionAction.Update toBdo() {
 			return new PaymentTransactionAction.Update(date,
 					new BigDecimal(amount), description, jarId, accountId,
-					counterparty,
+					categoryId, counterparty,
 					PaymentTransactionDirection.valueOf(direction));
 		}
 	}

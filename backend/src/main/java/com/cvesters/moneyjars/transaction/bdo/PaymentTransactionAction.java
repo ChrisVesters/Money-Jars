@@ -12,8 +12,8 @@ public final class PaymentTransactionAction {
 	}
 
 	public static record Create(LocalDate date, BigDecimal amount,
-			String description, long jarId, long accountId, String counterparty,
-			PaymentTransactionDirection direction) {
+			String description, long jarId, long accountId, Long categoryId,
+			String counterparty, PaymentTransactionDirection direction) {
 
 		public Create {
 			Objects.requireNonNull(date);
@@ -26,8 +26,8 @@ public final class PaymentTransactionAction {
 	}
 
 	public static record Update(LocalDate date, BigDecimal amount,
-			String description, long jarId, long accountId, String counterparty,
-			PaymentTransactionDirection direction) {
+			String description, long jarId, long accountId, Long categoryId,
+			String counterparty, PaymentTransactionDirection direction) {
 
 		public Update {
 			Objects.requireNonNull(date);

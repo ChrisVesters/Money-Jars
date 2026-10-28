@@ -21,7 +21,7 @@ class PaymentTransactionActionDtoTest {
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
-					TRANSACTION.getCounterparty(),
+					TRANSACTION.getCategoryId(), TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
 			assertThat(dto.date()).isEqualTo(TRANSACTION.getDate().toString());
@@ -31,6 +31,7 @@ class PaymentTransactionActionDtoTest {
 			assertThat(dto.jarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(dto.accountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(dto.categoryId()).isEqualTo(TRANSACTION.getCategoryId());
 			assertThat(dto.counterparty())
 					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(dto.direction())
@@ -43,7 +44,7 @@ class PaymentTransactionActionDtoTest {
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
-					TRANSACTION.getCounterparty(),
+					TRANSACTION.getCategoryId(), TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
 			final PaymentTransactionAction.Create bdo = dto.toBdo();
@@ -56,6 +57,7 @@ class PaymentTransactionActionDtoTest {
 			assertThat(bdo.jarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(bdo.accountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(bdo.categoryId()).isEqualTo(TRANSACTION.getCategoryId());
 			assertThat(bdo.counterparty())
 					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(bdo.direction()).isEqualTo(TRANSACTION.getDirection());
@@ -71,7 +73,7 @@ class PaymentTransactionActionDtoTest {
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
-					TRANSACTION.getCounterparty(),
+					TRANSACTION.getCategoryId(), TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
 			assertThat(dto.date()).isEqualTo(TRANSACTION.getDate().toString());
@@ -81,6 +83,7 @@ class PaymentTransactionActionDtoTest {
 			assertThat(dto.jarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(dto.accountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(dto.categoryId()).isEqualTo(TRANSACTION.getCategoryId());
 			assertThat(dto.counterparty())
 					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(dto.direction())
@@ -93,7 +96,7 @@ class PaymentTransactionActionDtoTest {
 					TRANSACTION.getDate(), TRANSACTION.getAmountString(),
 					TRANSACTION.getDescription(), TRANSACTION.getJar().getId(),
 					TRANSACTION.getAccount().getId(),
-					TRANSACTION.getCounterparty(),
+					TRANSACTION.getCategoryId(), TRANSACTION.getCounterparty(),
 					TRANSACTION.getDirectionString());
 
 			final PaymentTransactionAction.Update bdo = dto.toBdo();
@@ -106,6 +109,7 @@ class PaymentTransactionActionDtoTest {
 			assertThat(bdo.jarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(bdo.accountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(bdo.categoryId()).isEqualTo(TRANSACTION.getCategoryId());
 			assertThat(bdo.counterparty())
 					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(bdo.direction()).isEqualTo(TRANSACTION.getDirection());

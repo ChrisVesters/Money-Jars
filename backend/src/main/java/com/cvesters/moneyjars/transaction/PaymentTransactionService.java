@@ -46,11 +46,13 @@ public class PaymentTransactionService {
 		final String description = action.description();
 		final long jarId = action.jarId();
 		final long accountId = action.accountId();
+		final Long categoryId = action.categoryId();
 		final String counterparty = action.counterparty();
 		final PaymentTransactionDirection direction = action.direction();
 
 		final var transaction = new PaymentTransaction(date, sequence, amount,
-				description, jarId, accountId, counterparty, direction);
+				description, jarId, accountId, categoryId, counterparty,
+				direction);
 
 		final PaymentTransaction created = storage.create(transaction);
 		jarEntryService.create(created);
@@ -80,6 +82,7 @@ public class PaymentTransactionService {
 		transaction.setDescription(action.description());
 		transaction.setJarId(action.jarId());
 		transaction.setAccountId(action.accountId());
+		transaction.setCategoryId(action.categoryId());
 		transaction.setCounterparty(action.counterparty());
 		transaction.setDirection(action.direction());
 
