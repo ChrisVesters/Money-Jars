@@ -2,12 +2,15 @@ package com.cvesters.moneyjars.transaction;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.Repository;
 
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 
 public interface PaymentTransactionRepository
 		extends Repository<PaymentTransactionDao, Long> {
+
+	long count(final Specification<PaymentTransactionDao> spec);
 
 	Optional<PaymentTransactionDao> findById(final long id);
 

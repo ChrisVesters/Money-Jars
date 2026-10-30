@@ -17,7 +17,8 @@ import com.cvesters.moneyjars.transaction.dao.JarTransferTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
-@Sql({ "/db/accounts.sql", "/db/jars.sql", "/db/transactions.sql" })
+@Sql({ "/db/accounts.sql", "/db/jars.sql", "/db/categories.sql",
+		"/db/transactions.sql" })
 class TransactionRepositoryTest extends RepositoryTest {
 
 	@Autowired
@@ -232,6 +233,7 @@ class TransactionRepositoryTest extends RepositoryTest {
 
 		assertThat(pt.getJarId()).isEqualTo(expected.getJar().getId());
 		assertThat(pt.getAccountId()).isEqualTo(expected.getAccount().getId());
+		assertThat(pt.getCategoryId()).isEqualTo(expected.getCategoryId());
 		assertThat(pt.getCounterparty()).isEqualTo(expected.getCounterparty());
 		assertThat(pt.getDirection()).isEqualTo(expected.getDirectionId());
 	}

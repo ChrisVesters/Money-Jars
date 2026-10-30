@@ -17,6 +17,15 @@ CREATE TABLE accounts(
 );
 
 
+CREATE TABLE categories(
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+
+	PRIMARY KEY (id)
+);
+
+
 CREATE TABLE transactions(
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
 	date DATE NOT NULL,
@@ -33,12 +42,14 @@ CREATE TABLE payment_transactions(
 	transaction_id BIGINT NOT NULL,
 	jar_id BIGINT NOT NULL,
 	account_id BIGINT NOT NULL,
+	category_id BIGINT,
 	counterparty TEXT NOT NULL,
 	direction SMALLINT NOT NULL,
 
 	PRIMARY KEY (transaction_id),
 	FOREIGN KEY (transaction_id) REFERENCES transactions(id),
 	FOREIGN KEY (jar_id) REFERENCES jars(id),
+	FOREIGN KEY (category_id) REFERENCES categories(id),
 	FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
 
@@ -108,12 +119,3 @@ CREATE TABLE account_entries(
 
 CREATE INDEX ON account_entries(account_id);
 CREATE INDEX ON account_entries(transaction_id);
-
-
-CREATE TABLE categories(
-	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
-	name TEXT NOT NULL,
-	description TEXT NOT NULL,
-
-	PRIMARY KEY (id)
-);

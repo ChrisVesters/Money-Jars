@@ -22,7 +22,7 @@ public class CategoryController {
 	}
 
 	@QueryMapping
-	public List<CategoryDto> getCategorys() {
+	public List<CategoryDto> getCategories() {
 		return categoryService.getAll().stream().map(CategoryDto::new).toList();
 	}
 

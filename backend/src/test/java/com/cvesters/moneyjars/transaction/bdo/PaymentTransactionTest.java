@@ -28,13 +28,14 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			final var transaction = new PaymentTransaction(date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction);
 
 			assertThat(transaction.getId()).isNull();
 			assertThat(transaction.getDate()).isEqualTo(date);
@@ -43,6 +44,7 @@ class PaymentTransactionTest extends TransactionTest {
 			assertThat(transaction.getDescription()).isEqualTo(description);
 			assertThat(transaction.getJarId()).isEqualTo(jarId);
 			assertThat(transaction.getAccountId()).isEqualTo(accountId);
+			assertThat(transaction.getCategoryId()).isEqualTo(categoryId);
 			assertThat(transaction.getCounterparty()).isEqualTo(counterparty);
 			assertThat(transaction.getDirection())
 					.isEqualTo(TRANSACTION.getDirection());
@@ -57,13 +59,14 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			final var transaction = new PaymentTransaction(id, date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction);
 
 			assertThat(transaction.getId()).isEqualTo(id);
 			assertThat(transaction.getDate()).isEqualTo(date);
@@ -72,6 +75,38 @@ class PaymentTransactionTest extends TransactionTest {
 			assertThat(transaction.getDescription()).isEqualTo(description);
 			assertThat(transaction.getJarId()).isEqualTo(jarId);
 			assertThat(transaction.getAccountId()).isEqualTo(accountId);
+			assertThat(transaction.getCategoryId()).isEqualTo(categoryId);
+			assertThat(transaction.getCounterparty()).isEqualTo(counterparty);
+			assertThat(transaction.getDirection())
+					.isEqualTo(TRANSACTION.getDirection());
+		}
+
+		@Test
+		void categoryNull() {
+			final long id = TRANSACTION.getId();
+			final LocalDate date = TRANSACTION.getDate();
+			final int sequence = TRANSACTION.getSequence();
+			final BigDecimal amount = TRANSACTION.getAmount();
+			final String description = TRANSACTION.getDescription();
+			final long jarId = TRANSACTION.getJar().getId();
+			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = null;
+			final String counterparty = TRANSACTION.getCounterparty();
+			final PaymentTransactionDirection direction = TRANSACTION
+					.getDirection();
+
+			final var transaction = new PaymentTransaction(id, date, sequence,
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction);
+
+			assertThat(transaction.getId()).isEqualTo(id);
+			assertThat(transaction.getDate()).isEqualTo(date);
+			assertThat(transaction.getSequence()).isEqualTo(sequence);
+			assertThat(transaction.getAmount()).isEqualByComparingTo(amount);
+			assertThat(transaction.getDescription()).isEqualTo(description);
+			assertThat(transaction.getJarId()).isEqualTo(jarId);
+			assertThat(transaction.getAccountId()).isEqualTo(accountId);
+			assertThat(transaction.getCategoryId()).isNull();
 			assertThat(transaction.getCounterparty()).isEqualTo(counterparty);
 			assertThat(transaction.getDirection())
 					.isEqualTo(TRANSACTION.getDirection());
@@ -85,13 +120,15 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction)).isInstanceOf(NullPointerException.class);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction))
+							.isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
@@ -102,13 +139,15 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction)).isInstanceOf(NullPointerException.class);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction))
+							.isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
@@ -119,13 +158,15 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction)).isInstanceOf(IllegalArgumentException.class);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction))
+							.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Test
@@ -136,13 +177,15 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = null;
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction)).isInstanceOf(NullPointerException.class);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction))
+							.isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
@@ -153,12 +196,14 @@ class PaymentTransactionTest extends TransactionTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = null;
 
 			assertThatThrownBy(() -> new PaymentTransaction(date, sequence,
-					amount, description, jarId, accountId, counterparty,
-					direction)).isInstanceOf(NullPointerException.class);
+					amount, description, jarId, accountId, categoryId,
+					counterparty, direction))
+							.isInstanceOf(NullPointerException.class);
 		}
 	}
 

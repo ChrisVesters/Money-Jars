@@ -1,5 +1,6 @@
 import {
 	GetAccountsDocument,
+	GetCategoriesDocument,
 	GetJarsDocument,
 	QueryTransactionsDocument
 } from "@gql/graphql";
@@ -7,5 +8,6 @@ import {
 export const TRANSACTION_REFETCH_QUERIES = [
 	QueryTransactionsDocument,
 	GetJarsDocument,
-	GetAccountsDocument
+	GetAccountsDocument,
+	GetCategoriesDocument
 ];

@@ -21,18 +21,18 @@ VALUES
 SELECT setval('transactions_id_seq', (SELECT MAX(id) from "transactions"));
 
 
-INSERT INTO payment_transactions(transaction_id, jar_id, account_id, counterparty, direction)
+INSERT INTO payment_transactions(transaction_id, jar_id, account_id, category_id, counterparty, direction)
 VALUES
-  (1, 1, 1, 'Landlord', 1),
-  (2, 1, 1, 'Supermarket', 1),
-  (3, 1, 2, 'Cafe', 1),
-  (4, 1, 1, 'Employer', 0),
-  (5, 2, 3, 'Employer', 0),
-  (6, 3, 1, 'Employer', 0),
-  (7, 2, 4, 'Airline', 1),
-  (8, 3, 4, 'Gas station', 1),
-  (9, 1, 2, 'Farmers market', 1),
-  (10, 2, 4, 'Hotel', 1);
+  (1, 1, 1, 2, 'Landlord', 1),
+  (2, 1, 1, 1, 'Supermarket', 1),
+  (3, 1, 2, NULL, 'Cafe', 1),
+  (4, 1, 1, NULL, 'Employer', 0),
+  (5, 2, 3, NULL, 'Employer', 0),
+  (6, 3, 1, NULL, 'Employer', 0),
+  (7, 2, 4, NULL, 'Airline', 1),
+  (8, 3, 4, 3, 'Gas station', 1),
+  (9, 1, 2, 1, 'Farmers market', 1),
+  (10, 2, 4, NULL, 'Hotel', 1);
 
 
 INSERT INTO jar_transfer_transactions(transaction_id, source_jar_id, target_jar_id)

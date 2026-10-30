@@ -2,6 +2,7 @@ type Category {
   id: ID!
   name: String!
   description: String!
+  inUse: Boolean!
 }
 
 input UpdateCategory {
@@ -10,7 +11,7 @@ input UpdateCategory {
 }
 
 extend type Query {
-  getCategorys: [Category!]!
+  getCategories: [Category!]!
   getCategory(id: ID!): Category!
 }
 

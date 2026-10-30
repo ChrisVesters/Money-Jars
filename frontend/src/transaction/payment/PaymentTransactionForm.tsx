@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Account, Jar } from "@gql/graphql";
+import type {
+	Account,
+	Category,
+	CreatePaymentTransaction,
+	Jar
+} from "@gql/graphql";
 import {
 	CreatePaymentTransactionDocument,
 	Direction,
@@ -18,11 +23,14 @@ export type PaytmentTransactionFormProps = {
 	transaction?: PaymentTransactionItem;
 	jars: Array<Jar>;
 	accounts: Array<Account>;
+	categories: Array<Category>;
 
 	onClose: () => void;
 };
 
-const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Element => {
+const PaymentTransactionForm = (
+	props: PaytmentTransactionFormProps
+): JSX.Element => {
 	const { t } = useTranslation();
 
 	const [createPaymentTransaction] = useMutation(
@@ -37,6 +45,7 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 	const [description, setDescription] = useState("");
 	const [jarId, setJarId] = useState("");
 	const [accountId, setAccountId] = useState("");
+	const [categoryId, setCategoryId] = useState("");
 	const [counterparty, setCounterparty] = useState("");
 	const [direction, setDirection] = useState(Direction.Outgoing);
 	const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,15 +57,17 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 			setDescription(props.transaction.description ?? "");
 			setJarId(props.transaction.jar.id);
 			setAccountId(props.transaction.account.id);
+			setCategoryId(props.transaction.category?.id ?? "");
 			setCounterparty(props.transaction.counterparty ?? "");
 			setDirection(props.transaction.direction);
 		} else {
 			setDate(new Date().toISOString().split("T")[0]);
 			setAmount("");
-			setCounterparty("");
 			setDescription("");
 			setJarId(props.jars.length > 0 ? props.jars[0].id : "");
 			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
+			setCategoryId("");
+			setCounterparty("");
 			setDirection(Direction.Outgoing);
 		}
 	}, [props.transaction, props.jars, props.accounts]);
@@ -104,12 +115,13 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 			return;
 		}
 
-		const data = {
+		const data: CreatePaymentTransaction = {
 			date,
 			amount: amount,
 			description: description || "",
 			jarId,
 			accountId,
+			categoryId,
 			counterparty: counterparty,
 			direction
 		};
@@ -155,6 +167,7 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 		setDescription("");
 		setJarId(props.jars.length > 0 ? props.jars[0].id : "");
 		setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
+		setCategoryId("");
 		setDirection(Direction.Outgoing);
 	};
 
@@ -272,6 +285,25 @@ const PaymentTransactionForm = (props: PaytmentTransactionFormProps): JSX.Elemen
 				</select>
 				{errors.accountId && (
 					<span className="error-message">{errors.accountId}</span>
+				)}
+			</div>
+
+			<div className="form-group">
+				<label htmlFor="categoryId">{t("category")}</label>
+				<select
+					id="categoryId"
+					value={categoryId}
+					onChange={e => setCategoryId(e.target.value)}
+					className={errors.categoryId ? "input-error" : ""}>
+					<option value="" />
+					{props.categories.map(category => (
+						<option key={category.id} value={category.id}>
+							{category.name}
+						</option>
+					))}
+				</select>
+				{errors.categoryId && (
+					<span className="error-message">{errors.categoryId}</span>
 				)}
 			</div>
 

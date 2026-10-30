@@ -19,10 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.AccountEntryService;
+import com.cvesters.moneyjars.category.TestCategory;
 import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 
 class PaymentTransactionServiceTest {
 
@@ -33,6 +35,28 @@ class PaymentTransactionServiceTest {
 
 	private final PaymentTransactionService service = new PaymentTransactionService(
 			sequenceService, jarEntryService, accountEntryService, storage);
+
+	@Nested
+	class Count {
+
+		private static final PaymentTransactionFilter FILTER = new PaymentTransactionFilter(
+				TestCategory.GROCERIES.getId());
+
+		@Test
+		void success() {
+			when(storage.count(FILTER)).thenReturn(2L);
+
+			final long result = service.count(FILTER);
+
+			assertThat(result).isEqualTo(2L);
+		}
+
+		@Test
+		void filterNull() {
+			assertThatThrownBy(() -> service.count(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
 
 	@Nested
 	class Create {
@@ -46,12 +70,14 @@ class PaymentTransactionServiceTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			final var action = new PaymentTransactionAction.Create(date, amount,
-					description, jarId, accountId, counterparty, direction);
+					description, jarId, accountId, categoryId, counterparty,
+					direction);
 
 			when(sequenceService.getNextSequence(date)).thenReturn(4);
 
@@ -64,6 +90,7 @@ class PaymentTransactionServiceTest {
 				assertThat(transaction.getDescription()).isEqualTo(description);
 				assertThat(transaction.getJarId()).isEqualTo(jarId);
 				assertThat(transaction.getAccountId()).isEqualTo(accountId);
+				assertThat(transaction.getCategoryId()).isEqualTo(categoryId);
 				assertThat(transaction.getCounterparty())
 						.isEqualTo(counterparty);
 				assertThat(transaction.getDirection()).isEqualTo(direction);
@@ -97,12 +124,14 @@ class PaymentTransactionServiceTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			final var action = new PaymentTransactionAction.Update(date, amount,
-					description, jarId, accountId, counterparty, direction);
+					description, jarId, accountId, categoryId, counterparty,
+					direction);
 
 			final PaymentTransaction existing = mock();
 			when(existing.getDate()).thenReturn(date);
@@ -124,6 +153,7 @@ class PaymentTransactionServiceTest {
 			inOrder.verify(existing).setDescription(description);
 			inOrder.verify(existing).setJarId(jarId);
 			inOrder.verify(existing).setAccountId(accountId);
+			inOrder.verify(existing).setCategoryId(categoryId);
 			inOrder.verify(existing).setCounterparty(counterparty);
 			inOrder.verify(existing).setDirection(direction);
 			inOrder.verify(storage).update(existing);
@@ -143,12 +173,14 @@ class PaymentTransactionServiceTest {
 			final String description = TRANSACTION.getDescription();
 			final long jarId = TRANSACTION.getJar().getId();
 			final long accountId = TRANSACTION.getAccount().getId();
+			final Long categoryId = TRANSACTION.getCategoryId();
 			final String counterparty = TRANSACTION.getCounterparty();
 			final PaymentTransactionDirection direction = TRANSACTION
 					.getDirection();
 
 			final var action = new PaymentTransactionAction.Update(date, amount,
-					description, jarId, accountId, counterparty, direction);
+					description, jarId, accountId, categoryId, counterparty,
+					direction);
 
 			final PaymentTransaction existing = mock();
 			final LocalDate oldDate = LocalDate.of(2025, 12, 7);
@@ -175,6 +207,7 @@ class PaymentTransactionServiceTest {
 			inOrder.verify(existing).setDescription(description);
 			inOrder.verify(existing).setJarId(jarId);
 			inOrder.verify(existing).setAccountId(accountId);
+			inOrder.verify(existing).setCategoryId(categoryId);
 			inOrder.verify(existing).setCounterparty(counterparty);
 			inOrder.verify(existing).setDirection(direction);
 			inOrder.verify(storage).update(existing);

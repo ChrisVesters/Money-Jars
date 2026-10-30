@@ -14,8 +14,8 @@ import org.springframework.test.context.jdbc.Sql;
 import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 import com.cvesters.moneyjars.test.RepositoryTest;
 
-@Sql({ "/db/accounts.sql", "/db/jars.sql", "/db/transactions.sql",
-		"/db/jar_entries.sql" })
+@Sql({ "/db/accounts.sql", "/db/jars.sql", "/db/categories.sql",
+		"/db/transactions.sql", "/db/jar_entries.sql" })
 class JarEntryRepositoryTest extends RepositoryTest {
 
 	@Autowired

@@ -23,13 +23,15 @@ const PaymentTransactionRow = (
 	const { t } = useTranslation();
 
 	const isOutgoing = props.transaction.direction === Direction.Outgoing;
+	// TODO: better/clearer format. Maybe with icons?
 	const context = [
 		props.transaction.account.id === props.accountId
 			? undefined
 			: props.transaction.account.name,
 		props.transaction.jar.id === props.jarId
 			? undefined
-			: props.transaction.jar.name
+			: props.transaction.jar.name,
+		props.transaction.category?.name
 	]
 		.filter(name => name !== undefined)
 		.join(" · ");

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.cvesters.moneyjars.account.TestAccount;
+import com.cvesters.moneyjars.category.TestCategory;
 import com.cvesters.moneyjars.jar.TestJar;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
@@ -33,10 +34,33 @@ class PaymentTransactionDaoTest {
 			assertThat(dao.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(dao.getAccountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(dao.getCategoryId())
+					.isEqualTo(TRANSACTION.getCategoryId());
 			assertThat(dao.getCounterparty())
 					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(dao.getDirection())
 					.isEqualTo(TRANSACTION.getDirectionId());
+		}
+
+		@Test
+		void categoryNull() {
+			final var testTransaction = TestPaymentTransaction.CAFE;
+			final var dao = new PaymentTransactionDao(testTransaction.bdo());
+
+			assertThat(dao.getId()).isNull();
+			assertThat(dao.getDate()).isEqualTo(testTransaction.getDate());
+			assertThat(dao.getAmount()).isEqualTo(testTransaction.getAmount());
+			assertThat(dao.getDescription())
+					.isEqualTo(testTransaction.getDescription());
+			assertThat(dao.getJarId())
+					.isEqualTo(testTransaction.getJar().getId());
+			assertThat(dao.getAccountId())
+					.isEqualTo(testTransaction.getAccount().getId());
+			assertThat(dao.getCategoryId()).isNull();
+			assertThat(dao.getCounterparty())
+					.isEqualTo(testTransaction.getCounterparty());
+			assertThat(dao.getDirection())
+					.isEqualTo(testTransaction.getDirectionId());
 		}
 
 		@Test
@@ -58,13 +82,14 @@ class PaymentTransactionDaoTest {
 			final var updatedDescription = "Updated description";
 			final var updatedJar = TestJar.HOLIDAY.getId();
 			final var updatedAccount = TestAccount.SAVINGS.getId();
+			final var updatedCategory = TestCategory.GROCERIES.getId();
 			final var updatedCounterparty = "Vendor";
 			final var updatedDirection = PaymentTransactionDirection.INCOMING;
 
 			final var updatedTransaction = new PaymentTransaction(updatedDate,
 					updatedSequence, updatedAmount, updatedDescription,
-					updatedJar, updatedAccount, updatedCounterparty,
-					updatedDirection);
+					updatedJar, updatedAccount, updatedCategory,
+					updatedCounterparty, updatedDirection);
 
 			final var dao = new PaymentTransactionDao(TRANSACTION.bdo());
 			dao.updateWith(updatedTransaction);
@@ -76,9 +101,38 @@ class PaymentTransactionDaoTest {
 			assertThat(dao.getDescription()).isEqualTo(updatedDescription);
 			assertThat(dao.getJarId()).isEqualTo(updatedJar);
 			assertThat(dao.getAccountId()).isEqualTo(updatedAccount);
+			assertThat(dao.getCategoryId()).isEqualTo(updatedCategory);
 			assertThat(dao.getCounterparty()).isEqualTo(updatedCounterparty);
 			assertThat(dao.getDirection()).isEqualTo(
 					PaymentTransactionDirectionDao.toDao(updatedDirection));
+		}
+
+		@Test
+		void categoryNull() {
+			final var updatedTransaction = new PaymentTransaction(
+					TRANSACTION.getDate(), TRANSACTION.getSequence(),
+					TRANSACTION.getAmount(), TRANSACTION.getDescription(),
+					TRANSACTION.getJar().getId(),
+					TRANSACTION.getAccount().getId(), null,
+					TRANSACTION.getCounterparty(), TRANSACTION.getDirection());
+
+			final var dao = new PaymentTransactionDao(TRANSACTION.bdo());
+			dao.updateWith(updatedTransaction);
+
+			assertThat(dao.getId()).isNull();
+			assertThat(dao.getDate()).isEqualTo(TRANSACTION.getDate());
+			assertThat(dao.getSequence()).isEqualTo(TRANSACTION.getSequence());
+			assertThat(dao.getAmount()).isEqualTo(TRANSACTION.getAmount());
+			assertThat(dao.getDescription())
+					.isEqualTo(TRANSACTION.getDescription());
+			assertThat(dao.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
+			assertThat(dao.getAccountId())
+					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(dao.getCategoryId()).isNull();
+			assertThat(dao.getCounterparty())
+					.isEqualTo(TRANSACTION.getCounterparty());
+			assertThat(dao.getDirection())
+					.isEqualTo(TRANSACTION.getDirectionId());
 		}
 
 		@Test
@@ -106,10 +160,34 @@ class PaymentTransactionDaoTest {
 			assertThat(bdo.getJarId()).isEqualTo(TRANSACTION.getJar().getId());
 			assertThat(bdo.getAccountId())
 					.isEqualTo(TRANSACTION.getAccount().getId());
+			assertThat(bdo.getCategoryId())
+					.isEqualTo(TRANSACTION.getCategoryId());
 			assertThat(bdo.getCounterparty())
 					.isEqualTo(TRANSACTION.getCounterparty());
 			assertThat(bdo.getDirection())
 					.isEqualTo(TRANSACTION.getDirection());
+		}
+
+		@Test
+		void categoryNull() {
+			final var testTransaction = TestPaymentTransaction.CAFE;
+			final var dao = new PaymentTransactionDao(testTransaction.bdo());
+			final var bdo = dao.toBdo();
+
+			assertThat(bdo.getId()).isNull();
+			assertThat(bdo.getDate()).isEqualTo(testTransaction.getDate());
+			assertThat(bdo.getAmount()).isEqualTo(testTransaction.getAmount());
+			assertThat(bdo.getDescription())
+					.isEqualTo(testTransaction.getDescription());
+			assertThat(bdo.getJarId())
+					.isEqualTo(testTransaction.getJar().getId());
+			assertThat(bdo.getAccountId())
+					.isEqualTo(testTransaction.getAccount().getId());
+			assertThat(bdo.getCategoryId()).isNull();
+			assertThat(bdo.getCounterparty())
+					.isEqualTo(testTransaction.getCounterparty());
+			assertThat(bdo.getDirection())
+					.isEqualTo(testTransaction.getDirection());
 		}
 	}
 }

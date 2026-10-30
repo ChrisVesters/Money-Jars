@@ -2,7 +2,7 @@ import type { JSX } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Account, Jar } from "@gql/graphql";
+import type { Account, Category, Jar } from "@gql/graphql";
 
 import AccountTransferTransactionForm from "./accounttransfer/AccountTransferTransactionForm";
 import JarTransferTransactionForm from "./jartransfer/JarTransferTransactionForm";
@@ -12,6 +12,7 @@ import { TransactionType } from "./transactionTypes";
 export type CreateTransactionFormProps = {
 	jars: Array<Jar>;
 	accounts: Array<Account>;
+	categories: Array<Category>;
 
 	onClose: () => void;
 };
@@ -46,6 +47,7 @@ const CreateTransactionForm = (
 				<PaymentTransactionForm
 					jars={props.jars}
 					accounts={props.accounts}
+					categories={props.categories}
 					onClose={props.onClose}
 				/>
 			) : type === TransactionType.JarTransfer ? (

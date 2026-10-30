@@ -27,6 +27,9 @@ public class PaymentTransactionDao extends TransactionDao {
 	@Column(name = "account_id", nullable = false)
 	private long accountId;
 
+	@Column(name = "category_id")
+	private Long categoryId;
+
 	@Column(name = "counterparty", nullable = false)
 	private String counterparty;
 
@@ -38,6 +41,7 @@ public class PaymentTransactionDao extends TransactionDao {
 
 		this.jarId = bdo.getJarId();
 		this.accountId = bdo.getAccountId();
+		this.categoryId = bdo.getCategoryId();
 		this.counterparty = bdo.getCounterparty();
 		this.direction = PaymentTransactionDirectionDao
 				.toDao(bdo.getDirection());
@@ -50,6 +54,7 @@ public class PaymentTransactionDao extends TransactionDao {
 
 		this.jarId = bdo.getJarId();
 		this.accountId = bdo.getAccountId();
+		this.categoryId = bdo.getCategoryId();
 		this.counterparty = bdo.getCounterparty();
 		this.direction = PaymentTransactionDirectionDao
 				.toDao(bdo.getDirection());
@@ -58,7 +63,7 @@ public class PaymentTransactionDao extends TransactionDao {
 	@Override
 	public PaymentTransaction toBdo() {
 		return new PaymentTransaction(getId(), getDate(), getSequence(),
-				getAmount(), getDescription(), jarId, accountId, counterparty,
-				PaymentTransactionDirectionDao.toBdo(direction));
+				getAmount(), getDescription(), jarId, accountId, categoryId,
+				counterparty, PaymentTransactionDirectionDao.toBdo(direction));
 	}
 }
