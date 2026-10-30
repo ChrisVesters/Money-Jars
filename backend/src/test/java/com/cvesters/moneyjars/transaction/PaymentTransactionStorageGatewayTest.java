@@ -6,19 +6,27 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.mockito.MockedStatic;
+import org.springframework.data.jpa.domain.Specification;
 
+import com.cvesters.moneyjars.category.TestCategory;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
+import com.cvesters.moneyjars.transaction.dao.PaymentTransactionQueryDao;
 
 class PaymentTransactionStorageGatewayTest {
 
@@ -27,6 +35,45 @@ class PaymentTransactionStorageGatewayTest {
 	private final PaymentTransactionRepository repository = mock();
 	private final PaymentTransactionStorageGateway gateway = new PaymentTransactionStorageGateway(
 			repository);
+
+	@Nested
+	class Count {
+
+		private static final PaymentTransactionFilter FILTER = new PaymentTransactionFilter(
+				TestCategory.GROCERIES.getId());
+
+		private final Specification<PaymentTransactionDao> spec = mock();
+
+		private MockedStatic<PaymentTransactionQueryDao> queryDao;
+
+		@BeforeEach
+		void setUp() {
+			queryDao = mockStatic(PaymentTransactionQueryDao.class);
+			queryDao.when(
+					() -> PaymentTransactionQueryDao.toSpecification(FILTER))
+					.thenReturn(spec);
+		}
+
+		@AfterEach
+		void tearDown() {
+			queryDao.close();
+		}
+
+		@Test
+		void success() {
+			when(repository.count(spec)).thenReturn(2L);
+
+			final long result = gateway.count(FILTER);
+
+			assertThat(result).isEqualTo(2L);
+		}
+
+		@Test
+		void filterNull() {
+			assertThatThrownBy(() -> gateway.count(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
 
 	@Nested
 	class Get {

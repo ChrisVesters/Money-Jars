@@ -13,6 +13,7 @@ import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 
 @Service
 public class PaymentTransactionService {
@@ -32,6 +33,12 @@ public class PaymentTransactionService {
 		this.jarEntryService = jarEntryService;
 		this.accountEntryService = accountEntryService;
 		this.storage = storage;
+	}
+
+	public long count(final PaymentTransactionFilter filter) {
+		Objects.requireNonNull(filter);
+
+		return storage.count(filter);
 	}
 
 	@Transactional

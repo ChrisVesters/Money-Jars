@@ -49,7 +49,7 @@ class CategoryControllerTest {
 
 			final String document = """
 					query {
-						getCategorys {
+						getCategories {
 							id
 							name
 							description
@@ -60,8 +60,8 @@ class CategoryControllerTest {
 			final Response response = graphQlTester.document(document)
 					.execute();
 
-			assertEquals(response, GROCERIES, "getCategorys[0]");
-			assertEquals(response, RENT, "getCategorys[1]");
+			assertEquals(response, GROCERIES, "getCategories[0]");
+			assertEquals(response, RENT, "getCategories[1]");
 		}
 
 	}

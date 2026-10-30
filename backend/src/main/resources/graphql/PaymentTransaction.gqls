@@ -6,6 +6,7 @@ type PaymentTransaction implements Transaction {
 	description: String!
 	jar: Jar!
 	account: Account!
+	category: Category
 	direction: Direction!
 }
 
@@ -16,6 +17,7 @@ input CreatePaymentTransaction {
 	description: String!
 	jarId: ID!
 	accountId: ID!
+	categoryId: ID
 	direction: Direction!
 }
 

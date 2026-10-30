@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
+import com.cvesters.moneyjars.transaction.dao.PaymentTransactionQueryDao;
 
 @Service
 public class PaymentTransactionStorageGateway {
@@ -16,6 +18,13 @@ public class PaymentTransactionStorageGateway {
 	public PaymentTransactionStorageGateway(
 			final PaymentTransactionRepository repository) {
 		this.repository = repository;
+	}
+
+	public long count(final PaymentTransactionFilter filter) {
+		Objects.requireNonNull(filter);
+
+		return repository
+				.count(PaymentTransactionQueryDao.toSpecification(filter));
 	}
 
 	public PaymentTransaction get(final long id) {

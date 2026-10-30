@@ -53,6 +53,6 @@ public interface TransactionRepository
 			""")
 	Optional<TransactionDao> findLastForDate(final LocalDate date);
 
-	Page<TransactionDao> findAll(Specification<TransactionDao> spec,
-			Pageable pageable);
+	Page<TransactionDao> findAll(final Specification<TransactionDao> spec,
+			final Pageable pageable);
 }

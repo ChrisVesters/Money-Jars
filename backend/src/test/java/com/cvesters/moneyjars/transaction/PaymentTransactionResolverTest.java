@@ -1,6 +1,7 @@
 package com.cvesters.moneyjars.transaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Nested;
@@ -16,6 +17,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.cvesters.moneyjars.account.AccountService;
 import com.cvesters.moneyjars.account.TestAccount;
 import com.cvesters.moneyjars.account.bdo.Account;
+import com.cvesters.moneyjars.category.CategoryService;
+import com.cvesters.moneyjars.category.TestCategory;
+import com.cvesters.moneyjars.category.bdo.Category;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.config.GraphqlExceptionResolver;
 import com.cvesters.moneyjars.jar.JarService;
@@ -35,6 +39,9 @@ class PaymentTransactionResolverTest {
 
 	@MockitoBean
 	private AccountService accountService;
+
+	@MockitoBean
+	private CategoryService categoryService;
 
 	@MockitoBean
 	private TransactionService transactionService;
@@ -194,6 +201,96 @@ class PaymentTransactionResolverTest {
 								.isEqualTo(ErrorType.NOT_FOUND);
 						assertThat(error.getPath())
 								.isEqualTo("getTransaction.account");
+						return true;
+					});
+		}
+	}
+
+	@Nested
+	class ResolveCategory {
+
+		private static final String DOCUMENT = """
+				query {
+					getTransaction(id: %d) {
+						... on PaymentTransaction {
+							category {
+								id
+								name
+								description
+							}
+						}
+					}
+				}
+				""";
+
+		@Test
+		void success() {
+			final TestPaymentTransaction expectedTransaction = TestPaymentTransaction.RENT;
+			final TestCategory expectedCategory = expectedTransaction
+					.getCategory();
+
+			final Transaction transaction = expectedTransaction.bdo();
+			when(transactionService.get(expectedTransaction.getId()))
+					.thenReturn(transaction);
+
+			final Category category = expectedCategory.bdo();
+			when(categoryService.get(expectedCategory.getId()))
+					.thenReturn(category);
+
+			final Response response = graphQlTester
+					.document(DOCUMENT.formatted(expectedTransaction.getId()))
+					.execute();
+
+			final String prefix = "getTransaction.category";
+			response.path(prefix + ".id")
+					.entity(Long.class)
+					.isEqualTo(expectedCategory.getId())
+					.path(prefix + ".name")
+					.entity(String.class)
+					.isEqualTo(expectedCategory.getName())
+					.path(prefix + ".description")
+					.entity(String.class)
+					.isEqualTo(expectedCategory.getDescription());
+		}
+
+		@Test
+		void noCategory() {
+			final TestPaymentTransaction expectedTransaction = TestPaymentTransaction.CAFE;
+
+			final Transaction transaction = expectedTransaction.bdo();
+			when(transactionService.get(expectedTransaction.getId()))
+					.thenReturn(transaction);
+
+			graphQlTester
+					.document(DOCUMENT.formatted(expectedTransaction.getId()))
+					.execute()
+					.path("getTransaction.category")
+					.valueIsNull();
+			verifyNoInteractions(categoryService);
+		}
+
+		@Test
+		void notFound() {
+			final TestPaymentTransaction expectedTransaction = TestPaymentTransaction.RENT;
+			final TestCategory expectedCategory = expectedTransaction
+					.getCategory();
+
+			final Transaction transaction = expectedTransaction.bdo();
+			when(transactionService.get(expectedTransaction.getId()))
+					.thenReturn(transaction);
+
+			when(categoryService.get(expectedCategory.getId()))
+					.thenThrow(MissingEntityException.class);
+
+			graphQlTester
+					.document(DOCUMENT.formatted(expectedTransaction.getId()))
+					.execute()
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.NOT_FOUND);
+						assertThat(error.getPath())
+								.isEqualTo("getTransaction.category");
 						return true;
 					});
 		}

@@ -19,10 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.AccountEntryService;
+import com.cvesters.moneyjars.category.TestCategory;
 import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 
 class PaymentTransactionServiceTest {
 
@@ -33,6 +35,28 @@ class PaymentTransactionServiceTest {
 
 	private final PaymentTransactionService service = new PaymentTransactionService(
 			sequenceService, jarEntryService, accountEntryService, storage);
+
+	@Nested
+	class Count {
+
+		private static final PaymentTransactionFilter FILTER = new PaymentTransactionFilter(
+				TestCategory.GROCERIES.getId());
+
+		@Test
+		void success() {
+			when(storage.count(FILTER)).thenReturn(2L);
+
+			final long result = service.count(FILTER);
+
+			assertThat(result).isEqualTo(2L);
+		}
+
+		@Test
+		void filterNull() {
+			assertThatThrownBy(() -> service.count(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
 
 	@Nested
 	class Create {
