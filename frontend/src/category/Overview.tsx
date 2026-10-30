@@ -37,10 +37,10 @@ const Overview = (): JSX.Element => {
 
 	const categories = useMemo(
 		() =>
-			[...(data?.getCategorys ?? [])].sort((a, b) =>
+			[...(data?.getCategories ?? [])].sort((a, b) =>
 				a.name.localeCompare(b.name)
 			),
-		[data?.getCategorys]
+		[data?.getCategories]
 	);
 
 	const handleSelectCategory = (category: CategoryItem): void => {
@@ -125,12 +125,14 @@ const Overview = (): JSX.Element => {
 							title={t("editCategory")}>
 							<IconEdit />
 						</button>
-						<button
-							className="icon-button"
-							onClick={handleDeleteCategory}
-							title={t("deleteCategory")}>
-							<IconDelete />
-						</button>
+						{!selectedCategory.inUse && (
+							<button
+								className="icon-button"
+								onClick={handleDeleteCategory}
+								title={t("deleteCategory")}>
+								<IconDelete />
+							</button>
+						)}
 					</>
 				) : (
 					<button

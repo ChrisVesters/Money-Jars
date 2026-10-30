@@ -1,8 +1,9 @@
 query GetCategories {
-	getCategorys {
+	getCategories {
 		id
 		name
 		description
+		inUse
 	}
 }
 

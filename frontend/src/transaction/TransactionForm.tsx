@@ -1,7 +1,11 @@
 import type { JSX } from "react";
 
 import { useQuery } from "@apollo/client/react";
-import { GetAccountsDocument, GetJarsDocument } from "@gql/graphql";
+import {
+	GetAccountsDocument,
+	GetCategoriesDocument,
+	GetJarsDocument
+} from "@gql/graphql";
 
 import AccountTransferTransactionForm from "./accounttransfer/AccountTransferTransactionForm";
 import CreateTransactionForm from "./CreateTransactionForm";
@@ -20,15 +24,18 @@ const TransactionForm = (
 ): JSX.Element => {
 	const jarsQuery = useQuery(GetJarsDocument);
 	const accountsQuery = useQuery(GetAccountsDocument);
+	const categoryQuery = useQuery(GetCategoriesDocument);
 
 	const jars = jarsQuery.data?.getJars ?? [];
 	const accounts = accountsQuery.data?.getAccounts ?? [];
+	const categories = categoryQuery.data?.getCategories ?? [];
 
 	if (!props.transaction) {
 		return (
 			<CreateTransactionForm
 				jars={jars}
 				accounts={accounts}
+				categories={categories}
 				onClose={props.onClose}
 			/>
 		);
@@ -41,6 +48,7 @@ const TransactionForm = (
 					transaction={props.transaction}
 					jars={jars}
 					accounts={accounts}
+					categories={categories}
 					onClose={props.onClose}
 				/>
 			);

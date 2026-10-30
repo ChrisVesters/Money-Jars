@@ -16,6 +16,10 @@ query GetTransactions {
 				id
 				name
 			}
+			category {
+				id
+				name
+			}
 			counterparty
 			direction
 		}
@@ -60,6 +64,10 @@ query QueryTransactions($req: TransactionQuery!) {
 					name
 				}
 				account {
+					id
+					name
+				}
+				category {
 					id
 					name
 				}
