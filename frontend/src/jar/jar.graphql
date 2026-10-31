@@ -5,6 +5,7 @@ query GetJars {
 		description
 		balance
 		goal
+		inUse
 
 		transactions {
 			__typename

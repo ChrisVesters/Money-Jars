@@ -59,7 +59,7 @@ const JarView = (props: Readonly<JarViewProps>): JSX.Element => {
 					<button className="icon-button" onClick={handleEdit}>
 						<IconEdit size="1rem" />
 					</button>
-					{props.jar.transactions.length === 0 && (
+					{!props.jar.inUse && (
 						<button
 							className="icon-button danger"
 							onClick={handleDelete}>

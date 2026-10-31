@@ -4,6 +4,7 @@ query GetAccounts {
 		name
 		description
 		balance
+		inUse
 
 		transactions {
 			__typename

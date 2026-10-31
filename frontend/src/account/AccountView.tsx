@@ -54,7 +54,7 @@ const AccountView = (props: Readonly<AccountViewProps>): JSX.Element => {
 					<button className="icon-button" onClick={handleEditClick}>
 						<IconEdit size="1rem" />
 					</button>
-					{props.account.transactions.length === 0 && (
+					{!props.account.inUse && (
 						<button
 							className="icon-button danger"
 							onClick={handleDeleteClick}>
