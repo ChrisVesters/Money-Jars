@@ -31,6 +31,11 @@ public class JarResolver {
 				.toPlainString();
 	}
 
+	@SchemaMapping(typeName = "Jar", field = "inUse")
+	public boolean inUse(final JarDto jar) {
+		return entryService.exists(jar.getId());
+	}
+
 	@SchemaMapping(typeName = "Jar", field = "transactions")
 	public List<TransactionDto> getTransactions(final JarDto jar) {
 		return entryService.getAll(jar.getId())

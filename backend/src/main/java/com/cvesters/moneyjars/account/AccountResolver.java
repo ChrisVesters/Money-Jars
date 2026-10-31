@@ -31,6 +31,11 @@ public class AccountResolver {
 				.toPlainString();
 	}
 
+	@SchemaMapping(typeName = "Account", field = "inUse")
+	public boolean inUse(final AccountDto account) {
+		return entryService.exists(account.getId());
+	}
+
 	@SchemaMapping(typeName = "Account", field = "transactions")
 	public List<TransactionDto> getTransactions(final AccountDto account) {
 		return entryService.getAll(account.getId())

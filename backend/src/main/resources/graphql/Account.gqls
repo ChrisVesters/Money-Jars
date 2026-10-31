@@ -1,23 +1,24 @@
 type Account {
-  id: ID!
-  name: String!
-  description: String!
-  balance: String!
-  transactions: [Transaction!]!
+	id: ID!
+	name: String!
+	description: String!
+	balance: String!
+	inUse: Boolean!
+	transactions: [Transaction!]!
 }
 
 input UpdateAccount {
-  name: String!
-  description: String!
+	name: String!
+	description: String!
 }
 
 extend type Query {
-  getAccounts: [Account!]!
-  getAccount(id: ID!): Account!
+	getAccounts: [Account!]!
+	getAccount(id: ID!): Account!
 }
 
 extend type Mutation {
-  createAccount(req: UpdateAccount!): Account!
-  updateAccount(id: ID!, req: UpdateAccount!): Account!
-  deleteAccount(id: ID!): Boolean!
+	createAccount(req: UpdateAccount!): Account!
+	updateAccount(id: ID!, req: UpdateAccount!): Account!
+	deleteAccount(id: ID!): Boolean!
 }

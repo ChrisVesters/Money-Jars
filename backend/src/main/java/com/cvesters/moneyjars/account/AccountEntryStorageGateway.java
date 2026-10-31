@@ -21,6 +21,10 @@ public class AccountEntryStorageGateway {
 		this.repository = repository;
 	}
 
+	public boolean exists(final long accountId) {
+		return repository.existsByAccountId(accountId);
+	}
+
 	public AccountEntry getByAccountIdAndTransactionId(final long accountId,
 			final long transactionId) {
 		return repository

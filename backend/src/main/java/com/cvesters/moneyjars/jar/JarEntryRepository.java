@@ -11,6 +11,8 @@ import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 
 public interface JarEntryRepository extends Repository<JarEntryDao, Long> {
 
+	boolean existsByJarId(long jarId);
+
 	Optional<JarEntryDao> findById(Long id);
 
 	Optional<JarEntryDao> findByJarIdAndTransactionId(long jarId,

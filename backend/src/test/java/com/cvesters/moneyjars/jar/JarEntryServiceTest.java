@@ -33,6 +33,32 @@ class JarEntryServiceTest {
 	private final JarEntryService service = new JarEntryService(gateway);
 
 	@Nested
+	class Exists {
+
+		@Test
+		void exists() {
+			final long jarId = 1L;
+
+			when(gateway.exists(jarId)).thenReturn(true);
+
+			final boolean result = service.exists(jarId);
+
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		void notExists() {
+			final long jarId = 1L;
+
+			when(gateway.exists(jarId)).thenReturn(false);
+
+			final boolean result = service.exists(jarId);
+
+			assertThat(result).isFalse();
+		}
+	}
+
+	@Nested
 	class FindLast {
 
 		@Test

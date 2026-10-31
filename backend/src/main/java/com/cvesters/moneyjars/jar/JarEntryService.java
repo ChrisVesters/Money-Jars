@@ -24,6 +24,10 @@ public class JarEntryService {
 		this.gateway = gateway;
 	}
 
+	public boolean exists(final long jarId) {
+		return gateway.exists(jarId);
+	}
+
 	public Optional<JarEntry> findLast(final long jarId) {
 		return gateway.findLast(jarId);
 	}

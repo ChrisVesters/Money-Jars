@@ -24,6 +24,10 @@ public class AccountEntryService {
 		this.gateway = gateway;
 	}
 
+	public boolean exists(final long accountId) {
+		return gateway.exists(accountId);
+	}
+
 	public Optional<AccountEntry> findLast(final long accountId) {
 		return gateway.findLast(accountId);
 	}

@@ -34,6 +34,32 @@ class AccountEntryServiceTest {
 			gateway);
 
 	@Nested
+	class Exists {
+
+		@Test
+		void exists() {
+			final long accountId = 1L;
+
+			when(gateway.exists(accountId)).thenReturn(true);
+
+			final boolean result = service.exists(accountId);
+
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		void notExists() {
+			final long accountId = 1L;
+
+			when(gateway.exists(accountId)).thenReturn(false);
+
+			final boolean result = service.exists(accountId);
+
+			assertThat(result).isFalse();
+		}
+	}
+
+	@Nested
 	class FindLast {
 
 		@Test

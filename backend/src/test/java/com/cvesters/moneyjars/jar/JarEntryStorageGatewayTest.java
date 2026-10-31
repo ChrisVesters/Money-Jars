@@ -30,6 +30,32 @@ class JarEntryStorageGatewayTest {
 			repository);
 
 	@Nested
+	class ExistsByJarId {
+
+		@Test
+		public void exists() {
+			final long jarId = 1L;
+
+			when(repository.existsByJarId(jarId)).thenReturn(true);
+
+			final boolean result = gateway.exists(jarId);
+
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		public void notExists() {
+			final long jarId = 1L;
+
+			when(repository.existsByJarId(jarId)).thenReturn(false);
+
+			final boolean result = gateway.exists(jarId);
+
+			assertThat(result).isFalse();
+		}
+	}
+
+	@Nested
 	class GetByJarIdAndTransactionId {
 
 		@Test
@@ -58,9 +84,8 @@ class JarEntryStorageGatewayTest {
 			when(repository.findByJarIdAndTransactionId(jarId, transactionId))
 					.thenReturn(Optional.empty());
 
-			assertThatThrownBy(() -> gateway
-					.getByJarIdAndTransactionId(jarId, transactionId))
-					.isInstanceOf(MissingEntityException.class);
+			assertThatThrownBy(() -> gateway.getByJarIdAndTransactionId(jarId,
+					transactionId)).isInstanceOf(MissingEntityException.class);
 		}
 	}
 
@@ -113,7 +138,8 @@ class JarEntryStorageGatewayTest {
 			final JarEntry bdo = mock();
 			when(dao.toBdo()).thenReturn(bdo);
 
-			when(repository.findLastByJarId(jarId)).thenReturn(Optional.of(dao));
+			when(repository.findLastByJarId(jarId))
+					.thenReturn(Optional.of(dao));
 
 			final Optional<JarEntry> result = gateway.findLast(jarId);
 
@@ -124,7 +150,8 @@ class JarEntryStorageGatewayTest {
 		public void notFound() {
 			final long jarId = 1L;
 
-			when(repository.findLastByJarId(jarId)).thenReturn(Optional.empty());
+			when(repository.findLastByJarId(jarId))
+					.thenReturn(Optional.empty());
 
 			final Optional<JarEntry> result = gateway.findLast(jarId);
 
@@ -420,7 +447,7 @@ class JarEntryStorageGatewayTest {
 
 			assertThatThrownBy(
 					() -> gateway.updateAll(List.of(update1, update2)))
-					.isInstanceOf(IllegalArgumentException.class);
+							.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Test

@@ -21,6 +21,10 @@ public class JarEntryStorageGateway {
 		this.repository = repository;
 	}
 
+	public boolean exists(final long jarId) {
+		return repository.existsByJarId(jarId);
+	}
+
 	public JarEntry getByJarIdAndTransactionId(final long jarId,
 			final long transactionId) {
 		return repository.findByJarIdAndTransactionId(jarId, transactionId)

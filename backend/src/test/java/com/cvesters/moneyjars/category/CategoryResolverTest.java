@@ -43,7 +43,7 @@ class CategoryResolverTest {
 		void used() {
 			when(categoryService.get(GROCERIES.getId()))
 					.thenReturn(GROCERIES.bdo());
-			when(paymentTransactionService.count(FILTER)).thenReturn(2L);
+			when(paymentTransactionService.exists(FILTER)).thenReturn(true);
 
 			graphQlTester.document(DOCUMENT)
 					.execute()
@@ -56,7 +56,7 @@ class CategoryResolverTest {
 		void unused() {
 			when(categoryService.get(GROCERIES.getId()))
 					.thenReturn(GROCERIES.bdo());
-			when(paymentTransactionService.count(FILTER)).thenReturn(0L);
+			when(paymentTransactionService.exists(FILTER)).thenReturn(false);
 
 			graphQlTester.document(DOCUMENT)
 					.execute()

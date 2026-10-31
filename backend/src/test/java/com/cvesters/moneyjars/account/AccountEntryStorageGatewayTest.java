@@ -30,6 +30,32 @@ class AccountEntryStorageGatewayTest {
 			repository);
 
 	@Nested
+	class ExistsByAccountId {
+
+		@Test
+		public void exists() {
+			final long accountId = 1L;
+
+			when(repository.existsByAccountId(accountId)).thenReturn(true);
+
+			final boolean result = gateway.exists(accountId);
+
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		public void notExists() {
+			final long accountId = 1L;
+
+			when(repository.existsByAccountId(accountId)).thenReturn(false);
+
+			final boolean result = gateway.exists(accountId);
+
+			assertThat(result).isFalse();
+		}
+	}
+
+	@Nested
 	class GetByAccountIdAndTransactionId {
 
 		@Test
@@ -60,7 +86,7 @@ class AccountEntryStorageGatewayTest {
 
 			assertThatThrownBy(() -> gateway
 					.getByAccountIdAndTransactionId(accountId, transactionId))
-					.isInstanceOf(MissingEntityException.class);
+							.isInstanceOf(MissingEntityException.class);
 		}
 	}
 

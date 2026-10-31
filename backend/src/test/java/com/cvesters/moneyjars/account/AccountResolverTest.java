@@ -85,6 +85,46 @@ class AccountResolverTest {
 	}
 
 	@Nested
+	class ResolveInUse {
+
+		private static final TestAccount CHECKING = TestAccount.CHECKING;
+
+		private static final String DOCUMENT = """
+				query {
+					getAccount(id: %d) {
+						inUse
+					}
+				}
+				""".formatted(CHECKING.getId());
+
+		@Test
+		void used() {
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
+			when(entryService.exists(CHECKING.getId())).thenReturn(true);
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.path("getAccount.inUse")
+					.entity(Boolean.class)
+					.isEqualTo(true);
+		}
+
+		@Test
+		void unused() {
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
+			when(entryService.exists(CHECKING.getId())).thenReturn(false);
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.path("getAccount.inUse")
+					.entity(Boolean.class)
+					.isEqualTo(false);
+		}
+	}
+
+	@Nested
 	class ResolveTransactions {
 
 		private static final TestAccount CHECKING = TestAccount.CHECKING;

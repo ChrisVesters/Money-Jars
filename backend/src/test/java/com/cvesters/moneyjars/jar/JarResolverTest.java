@@ -83,6 +83,44 @@ class JarResolverTest {
 	}
 
 	@Nested
+	class ResolveInUse {
+
+		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;
+
+		private static final String DOCUMENT = """
+				query {
+					getJar(id: %d) {
+						inUse
+					}
+				}
+				""".formatted(HOUSEHOLD.getId());
+
+		@Test
+		void used() {
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
+			when(entryService.exists(HOUSEHOLD.getId())).thenReturn(true);
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.path("getJar.inUse")
+					.entity(Boolean.class)
+					.isEqualTo(true);
+		}
+
+		@Test
+		void unused() {
+			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
+			when(entryService.exists(HOUSEHOLD.getId())).thenReturn(false);
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.path("getJar.inUse")
+					.entity(Boolean.class)
+					.isEqualTo(false);
+		}
+	}
+
+	@Nested
 	class ResolveTransactions {
 
 		private static final TestJar HOUSEHOLD = TestJar.HOUSEHOLD;

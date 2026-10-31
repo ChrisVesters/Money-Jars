@@ -37,7 +37,7 @@ class PaymentTransactionStorageGatewayTest {
 			repository);
 
 	@Nested
-	class Count {
+	class Exists {
 
 		private static final PaymentTransactionFilter FILTER = new PaymentTransactionFilter(
 				TestCategory.GROCERIES.getId());
@@ -61,16 +61,16 @@ class PaymentTransactionStorageGatewayTest {
 
 		@Test
 		void success() {
-			when(repository.count(spec)).thenReturn(2L);
+			when(repository.exists(spec)).thenReturn(true);
 
-			final long result = gateway.count(FILTER);
+			final boolean result = gateway.exists(FILTER);
 
-			assertThat(result).isEqualTo(2L);
+			assertThat(result).isTrue();
 		}
 
 		@Test
 		void filterNull() {
-			assertThatThrownBy(() -> gateway.count(null))
+			assertThatThrownBy(() -> gateway.exists(null))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}
