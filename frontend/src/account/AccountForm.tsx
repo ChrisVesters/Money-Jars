@@ -2,10 +2,12 @@ import type { JSX } from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Account, UpdateAccount } from "@gql/graphql";
+import type { UpdateAccount } from "@gql/graphql";
+
+import type { AccountItem } from "./accountTypes";
 
 export type AccountFormProps = {
-	account?: Account;
+	account?: AccountItem;
 	onClose: () => void;
 	onConfirm: (account: UpdateAccount) => void;
 };

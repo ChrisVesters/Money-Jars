@@ -1,4 +1,5 @@
 import {
+	GetAccountDocument,
 	GetAccountsDocument,
 	GetCategoriesDocument,
 	GetJarsDocument,
@@ -8,6 +9,7 @@ import {
 export const TRANSACTION_REFETCH_QUERIES = [
 	QueryTransactionsDocument,
 	GetJarsDocument,
+	GetAccountDocument,
 	GetAccountsDocument,
 	GetCategoriesDocument
 ];

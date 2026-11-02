@@ -3,18 +3,19 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Account } from "@gql/graphql";
 import {
 	CreateAccountTransferTransactionDocument,
 	UpdateAccountTransferTransactionDocument
 } from "@gql/graphql";
+
+import type { AccountItem } from "@src/account/accountTypes";
 
 import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
 import type { AccountTransferTransactionItem } from "../transactionTypes";
 
 export type AccountTransferTransactionFormProps = {
 	transaction?: AccountTransferTransactionItem;
-	accounts: Array<Account>;
+	accounts: Array<AccountItem>;
 
 	onClose: () => void;
 };
