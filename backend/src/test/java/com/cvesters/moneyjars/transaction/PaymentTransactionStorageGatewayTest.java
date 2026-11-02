@@ -60,12 +60,21 @@ class PaymentTransactionStorageGatewayTest {
 		}
 
 		@Test
-		void success() {
+		void exists() {
 			when(repository.exists(spec)).thenReturn(true);
 
 			final boolean result = gateway.exists(FILTER);
 
 			assertThat(result).isTrue();
+		}
+
+		@Test
+		void notExists() {
+			when(repository.exists(spec)).thenReturn(false);
+
+			final boolean result = gateway.exists(FILTER);
+
+			assertThat(result).isFalse();
 		}
 
 		@Test

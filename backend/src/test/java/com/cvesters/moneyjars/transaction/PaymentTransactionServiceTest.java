@@ -43,12 +43,21 @@ class PaymentTransactionServiceTest {
 				TestCategory.GROCERIES.getId());
 
 		@Test
-		void success() {
+		void exists() {
 			when(storage.exists(FILTER)).thenReturn(true);
 
 			final boolean result = service.exists(FILTER);
 
 			assertThat(result).isTrue();
+		}
+
+		@Test
+		void notExists() {
+			when(storage.exists(FILTER)).thenReturn(false);
+
+			final boolean result = service.exists(FILTER);
+
+			assertThat(result).isFalse();
 		}
 
 		@Test
