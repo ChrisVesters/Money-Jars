@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,11 +18,14 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.cvesters.moneyjars.common.bdo.PagedResult;
+import com.cvesters.moneyjars.common.bdo.Pagination;
 import com.cvesters.moneyjars.transaction.TestAccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.TestTransaction;
 import com.cvesters.moneyjars.transaction.TransactionGraphqlConfig;
-import com.cvesters.moneyjars.transaction.TransactionService;
+import com.cvesters.moneyjars.transaction.bdo.TransactionFilter;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 
 @GraphQlTest({ AccountController.class, AccountResolver.class })
 @Import(TransactionGraphqlConfig.class)
@@ -35,9 +39,6 @@ class AccountResolverTest {
 
 	@MockitoBean
 	private AccountEntryService entryService;
-
-	@MockitoBean
-	private TransactionService transactionService;
 
 	@Nested
 	class ResolveBalance {
@@ -135,22 +136,27 @@ class AccountResolverTest {
 		private static final String DOCUMENT = """
 				query {
 					getAccount(id: %d) {
-						transactions {
-							__typename
-							id
-							date
-							amount
-							description
-							... on PaymentTransaction {
-								counterparty
+						transactions%s {
+							content {
+								__typename
+								id
+								date
+								amount
+								description
+								... on PaymentTransaction {
+									counterparty
+								}
 							}
+							page
+							size
+							totalElements
 						}
 					}
 				}
-				""".formatted(CHECKING.getId());
+				""";
 
 		@Test
-		void multiple() {
+		void defaultPagination() {
 			final TestPaymentTransaction transaction1 = ENTRY_1
 					.getPaymentTransaction();
 			final TestPaymentTransaction transaction2 = ENTRY_2
@@ -160,38 +166,104 @@ class AccountResolverTest {
 
 			when(accountService.get(CHECKING.getId()))
 					.thenReturn(CHECKING.bdo());
-			when(entryService.getAll(CHECKING.getId())).thenReturn(
-					List.of(ENTRY_1.bdo(), ENTRY_2.bdo(), ENTRY_3.bdo()));
-			when(transactionService.get(transaction1.getId()))
-					.thenReturn(transaction1.bdo());
-			when(transactionService.get(transaction2.getId()))
-					.thenReturn(transaction2.bdo());
-			when(transactionService.get(transaction3.getId()))
-					.thenReturn(transaction3.bdo());
+			when(entryService.queryTransactions(CHECKING.getId(),
+					new TransactionQuery(new TransactionFilter(null, null),
+							new Pagination(0, 100))))
+					.thenReturn(new PagedResult<>(
+							List.of(transaction1.bdo(), transaction2.bdo(),
+									transaction3.bdo()),
+							0, 100, 3));
 
-			final Response response = graphQlTester.document(DOCUMENT)
+			final Response response = graphQlTester
+					.document(DOCUMENT.formatted(CHECKING.getId(), ""))
 					.execute();
 
 			assertPaymentTransaction(response, transaction1,
-					"getAccount.transactions[0]");
+					"getAccount.transactions.content[0]");
 			assertPaymentTransaction(response, transaction2,
-					"getAccount.transactions[1]");
+					"getAccount.transactions.content[1]");
 			assertAccountTransferTransaction(response, transaction3,
-					"getAccount.transactions[2]");
+					"getAccount.transactions.content[2]");
+			assertPage(response, 0, 100, 3);
+		}
+
+		@Test
+		void customQuery() {
+			final TestPaymentTransaction transaction = ENTRY_2
+					.getPaymentTransaction();
+
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
+			when(entryService.queryTransactions(CHECKING.getId(),
+					new TransactionQuery(
+							new TransactionFilter(LocalDate.of(2026, 1, 1),
+									LocalDate.of(2026, 1, 31)),
+							new Pagination(1, 1))))
+					.thenReturn(new PagedResult<>(List.of(transaction.bdo()),
+							1, 1, 3));
+
+			final Response response = graphQlTester
+					.document(DOCUMENT.formatted(CHECKING.getId(),
+							"""
+							(query: {
+								filter: { from: "2026-01-01", to: "2026-01-31" }
+								page: 1
+								size: 1
+							})"""))
+					.execute();
+
+			assertPaymentTransaction(response, transaction,
+					"getAccount.transactions.content[0]");
+			response.path("getAccount.transactions.content")
+					.entityList(Object.class)
+					.hasSize(1);
+			assertPage(response, 1, 1, 3);
 		}
 
 		@Test
 		void noEntries() {
 			when(accountService.get(CHECKING.getId()))
 					.thenReturn(CHECKING.bdo());
-			when(entryService.getAll(CHECKING.getId()))
-					.thenReturn(Collections.emptyList());
+			when(entryService.queryTransactions(CHECKING.getId(),
+					new TransactionQuery(new TransactionFilter(null, null),
+							new Pagination(0, 100))))
+					.thenReturn(new PagedResult<>(Collections.emptyList(), 0,
+							100, 0));
 
-			graphQlTester.document(DOCUMENT)
-					.execute()
-					.path("getAccount.transactions")
+			final Response response = graphQlTester
+					.document(DOCUMENT.formatted(CHECKING.getId(), ""))
+					.execute();
+
+			response.path("getAccount.transactions.content")
 					.entityList(Object.class)
 					.hasSize(0);
+			assertPage(response, 0, 100, 0);
+		}
+
+		@Test
+		void invalidSize() {
+			when(accountService.get(CHECKING.getId()))
+					.thenReturn(CHECKING.bdo());
+
+			graphQlTester
+					.document(DOCUMENT.formatted(CHECKING.getId(),
+							"(query: { filter: {}, size: 0 })"))
+					.execute()
+					.errors()
+					.satisfy(errors -> assertThat(errors).hasSize(1));
+		}
+
+		private void assertPage(final Response response, final int page,
+				final int size, final long totalElements) {
+			response.path("getAccount.transactions.page")
+					.entity(Integer.class)
+					.isEqualTo(page)
+					.path("getAccount.transactions.size")
+					.entity(Integer.class)
+					.isEqualTo(size)
+					.path("getAccount.transactions.totalElements")
+					.entity(Long.class)
+					.isEqualTo(totalElements);
 		}
 
 		private void assertPaymentTransaction(final Response response,

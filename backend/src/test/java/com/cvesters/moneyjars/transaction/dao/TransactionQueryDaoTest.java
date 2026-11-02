@@ -1,7 +1,9 @@
 package com.cvesters.moneyjars.transaction.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -12,12 +14,16 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.core.TypedPropertyPath;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.PredicateSpecification;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.cvesters.moneyjars.common.bdo.Pagination;
@@ -103,6 +109,97 @@ class TransactionQueryDaoTest {
 			final Predicate predicate = result.toPredicate(root, query,
 					builder);
 			assertThat(predicate).isSameAs(combined);
+		}
+	}
+
+	@Nested
+	class ReferencedBy {
+
+		private final Root<TransactionDao> root = mock();
+		private final CriteriaQuery<?> query = mock();
+		private final CriteriaBuilder builder = mock();
+		private final Subquery<Long> subquery = mock();
+		private final Root<ReferencingDao> reference = mock();
+		private final TypedPropertyPath<ReferencingDao, Long> transactionId = mock();
+		private final PredicateSpecification<ReferencingDao> filter = mock();
+		private final Path<Long> idPath = mock();
+		private final Path<Long> referenceTransactionIdPath = mock();
+		private final Predicate referencesTransaction = mock();
+		private final Predicate exists = mock();
+
+		@BeforeEach
+		void setUp() {
+			when(query.subquery(Long.class)).thenReturn(subquery);
+			when(subquery.from(ReferencingDao.class)).thenReturn(reference);
+			when(transactionId.toDotPath()).thenReturn("transactionId");
+			when(root.<Long>get("id")).thenReturn(idPath);
+			when(reference.<Long>get("transactionId"))
+					.thenReturn(referenceTransactionIdPath);
+			when(builder.equal(referenceTransactionIdPath, idPath))
+					.thenReturn(referencesTransaction);
+			when(builder.exists(subquery)).thenReturn(exists);
+		}
+
+		@Test
+		void filtered() {
+			final Predicate filterPredicate = mock();
+			when(filter.toPredicate(reference, builder))
+					.thenReturn(filterPredicate);
+			final Predicate combined = mock();
+			when(builder.and(referencesTransaction, filterPredicate))
+					.thenReturn(combined);
+
+			final Specification<TransactionDao> result = TransactionQueryDao
+					.referencedBy(ReferencingDao.class, transactionId, filter);
+
+			final Predicate predicate = result.toPredicate(root, query,
+					builder);
+			assertThat(predicate).isSameAs(exists);
+			verify(subquery).select(referenceTransactionIdPath);
+			verify(subquery).where(combined);
+		}
+
+		@Test
+		void unrestricted() {
+			when(filter.toPredicate(reference, builder)).thenReturn(null);
+
+			final Specification<TransactionDao> result = TransactionQueryDao
+					.referencedBy(ReferencingDao.class, transactionId, filter);
+
+			final Predicate predicate = result.toPredicate(root, query,
+					builder);
+			assertThat(predicate).isSameAs(exists);
+			verify(subquery).select(referenceTransactionIdPath);
+			verify(subquery).where(referencesTransaction);
+		}
+
+		@Test
+		void filterNull() {
+			final Specification<TransactionDao> result = TransactionQueryDao
+					.referencedBy(ReferencingDao.class, transactionId, null);
+
+			final Predicate predicate = result.toPredicate(root, query,
+					builder);
+			assertThat(predicate).isSameAs(exists);
+			verify(subquery).select(referenceTransactionIdPath);
+			verify(subquery).where(referencesTransaction);
+		}
+
+		@Test
+		void typeNull() {
+			assertThatThrownBy(() -> TransactionQueryDao
+					.referencedBy(null, transactionId, filter))
+					.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void transactionIdNull() {
+			assertThatThrownBy(() -> TransactionQueryDao
+					.referencedBy(ReferencingDao.class, null, filter))
+					.isInstanceOf(NullPointerException.class);
+		}
+
+		private static final class ReferencingDao {
 		}
 	}
 

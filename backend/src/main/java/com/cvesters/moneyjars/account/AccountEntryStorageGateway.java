@@ -10,15 +10,23 @@ import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
 import com.cvesters.moneyjars.account.dao.AccountEntryDao;
+import com.cvesters.moneyjars.account.dao.AccountEntryQueryDao;
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 
 @Service
 public class AccountEntryStorageGateway {
 
 	private final AccountEntryRepository repository;
+	private final TransactionStorageGateway transactionStorage;
 
-	public AccountEntryStorageGateway(final AccountEntryRepository repository) {
+	public AccountEntryStorageGateway(final AccountEntryRepository repository,
+			final TransactionStorageGateway transactionStorage) {
 		this.repository = repository;
+		this.transactionStorage = transactionStorage;
 	}
 
 	public boolean exists(final long accountId) {
@@ -49,6 +57,14 @@ public class AccountEntryStorageGateway {
 				.stream()
 				.map(AccountEntryDao::toBdo)
 				.toList();
+	}
+
+	public PagedResult<Transaction> findTransactions(final long accountId,
+			final TransactionQuery query) {
+		Objects.requireNonNull(query);
+
+		return transactionStorage.findAll(query,
+				AccountEntryQueryDao.transactionsForAccount(accountId));
 	}
 
 	public List<AccountEntry> getAllAfter(final long accountId,

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,19 +16,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.mockito.MockedStatic;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
 import com.cvesters.moneyjars.account.dao.AccountEntryDao;
+import com.cvesters.moneyjars.account.dao.AccountEntryQueryDao;
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
 class AccountEntryStorageGatewayTest {
 
 	private final AccountEntryRepository repository = mock();
+	private final TransactionStorageGateway transactionStorage = mock();
 	private final AccountEntryStorageGateway gateway = new AccountEntryStorageGateway(
-			repository);
+			repository, transactionStorage);
 
 	@Nested
 	class ExistsByAccountId {
@@ -209,6 +221,45 @@ class AccountEntryStorageGatewayTest {
 			final List<AccountEntry> result = gateway.getAll(accountId);
 
 			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
+	class FindTransactions {
+
+		private static final long ACCOUNT_ID = 1L;
+
+		private final Specification<TransactionDao> scope = mock();
+
+		private MockedStatic<AccountEntryQueryDao> queryDao;
+
+		@BeforeEach
+		void setUp() {
+			queryDao = mockStatic(AccountEntryQueryDao.class);
+			queryDao.when(() -> AccountEntryQueryDao
+					.transactionsForAccount(ACCOUNT_ID)).thenReturn(scope);
+		}
+
+		@AfterEach
+		void tearDown() {
+			queryDao.close();
+		}
+
+		@Test
+		void success() {
+			final TransactionQuery query = mock();
+			final PagedResult<Transaction> expected = mock();
+			when(transactionStorage.findAll(query, scope)).thenReturn(expected);
+
+			final var result = gateway.findTransactions(ACCOUNT_ID, query);
+
+			assertThat(result).isSameAs(expected);
+		}
+
+		@Test
+		void queryNull() {
+			assertThatThrownBy(() -> gateway.findTransactions(ACCOUNT_ID, null))
+					.isInstanceOf(NullPointerException.class);
 		}
 	}
 

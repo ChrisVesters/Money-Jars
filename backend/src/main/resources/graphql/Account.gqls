@@ -4,7 +4,7 @@ type Account {
 	description: String!
 	balance: String!
 	inUse: Boolean!
-	transactions: [Transaction!]!
+	transactions(query: TransactionQuery = { filter: {} }): TransactionPage!
 }
 
 input UpdateAccount {

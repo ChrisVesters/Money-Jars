@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -256,6 +257,102 @@ class TransactionStorageGatewayTest {
 		void queryNull() {
 			assertThatThrownBy(() -> gateway.findAll(null))
 					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class FindAllWithScope {
+
+		private static final TransactionQuery QUERY = new TransactionQuery(
+				new TransactionFilter(LocalDate.of(2026, 1, 1),
+						LocalDate.of(2026, 1, 31)),
+				new Pagination(1, 10));
+
+		private final Specification<TransactionDao> filterSpec = mock();
+		private final Specification<TransactionDao> scope = mock();
+		private final Specification<TransactionDao> spec = mock();
+		private final Pageable pageable = mock();
+
+		private MockedStatic<TransactionQueryDao> queryDao;
+
+		@BeforeEach
+		void setUp() {
+			queryDao = mockStatic(TransactionQueryDao.class);
+			queryDao.when(
+					() -> TransactionQueryDao.toSpecification(QUERY.filter()))
+					.thenReturn(filterSpec);
+			when(filterSpec.and(scope)).thenReturn(spec);
+			queryDao.when(
+					() -> TransactionQueryDao.toPageable(QUERY.pagination()))
+					.thenReturn(pageable);
+		}
+
+		@AfterEach
+		void tearDown() {
+			queryDao.close();
+		}
+
+		@Test
+		void success() {
+			final TransactionDao dao = mock();
+			final PaymentTransaction bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			final Page<TransactionDao> page = mock();
+			when(page.getContent()).thenReturn(List.of(dao));
+			when(page.getNumber()).thenReturn(1);
+			when(page.getSize()).thenReturn(10);
+			when(page.getTotalElements()).thenReturn(11L);
+			when(repository.findAll(spec, pageable)).thenReturn(page);
+
+			final var result = gateway.findAll(QUERY, scope);
+
+			final var expected = new PagedResult<Transaction>(List.of(bdo), 1,
+					10, 11);
+			assertThat(result).isEqualTo(expected);
+		}
+
+		@Test
+		void empty() {
+			final Page<TransactionDao> page = mock();
+			when(page.getContent()).thenReturn(Collections.emptyList());
+			when(page.getNumber()).thenReturn(1);
+			when(page.getSize()).thenReturn(10);
+			when(page.getTotalElements()).thenReturn(0L);
+			when(repository.findAll(spec, pageable)).thenReturn(page);
+
+			final var result = gateway.findAll(QUERY, scope);
+
+			final var expected = new PagedResult<Transaction>(
+					Collections.emptyList(), 1, 10, 0);
+			assertThat(result).isEqualTo(expected);
+		}
+
+		@Test
+		void queryNull() {
+			assertThatThrownBy(() -> gateway.findAll(null, scope))
+					.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void scopeNull() {
+			final TransactionDao dao = mock();
+			final PaymentTransaction bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			final Page<TransactionDao> page = mock();
+			when(page.getContent()).thenReturn(List.of(dao));
+			when(page.getNumber()).thenReturn(1);
+			when(page.getSize()).thenReturn(10);
+			when(page.getTotalElements()).thenReturn(11L);
+			when(repository.findAll(filterSpec, pageable)).thenReturn(page);
+
+			final var result = gateway.findAll(QUERY, null);
+
+			final var expected = new PagedResult<Transaction>(List.of(bdo), 1,
+					10, 11);
+			assertThat(result).isEqualTo(expected);
+			verifyNoInteractions(filterSpec);
 		}
 	}
 }
