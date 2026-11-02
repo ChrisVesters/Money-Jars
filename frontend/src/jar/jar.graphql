@@ -6,38 +6,48 @@ query GetJars {
 		balance
 		goal
 		inUse
+	}
+}
 
-		transactions {
-			__typename
+query GetJar($id: ID!, $req: TransactionQuery!) {
+	getJar(id: $id) {
+		id
+		transactions(query: $req) {
+			content {
+				__typename
 
-			id
-			date
-			amount
-			description
+				id
+				date
+				amount
+				description
 
-			... on PaymentTransaction {
-				jar {
-					id
-					name
+				... on PaymentTransaction {
+					jar {
+						id
+						name
+					}
+					account {
+						id
+						name
+					}
+					counterparty
+					direction
 				}
-				account {
-					id
-					name
+
+				... on JarTransferTransaction {
+					sourceJar {
+						id
+						name
+					}
+					targetJar {
+						id
+						name
+					}
 				}
-				counterparty
-				direction
 			}
-
-			... on JarTransferTransaction {
-				sourceJar {
-					id
-					name
-				}
-				targetJar {
-					id
-					name
-				}
-			}
+			page
+			size
+			totalElements
 		}
 	}
 }

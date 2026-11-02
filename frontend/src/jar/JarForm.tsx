@@ -2,10 +2,12 @@ import type { JSX } from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Jar, UpdateJar } from "@gql/graphql";
+import type { UpdateJar } from "@gql/graphql";
+
+import type { JarItem } from "./jarTypes";
 
 export type JarFormProps = {
-	jar?: Jar;
+	jar?: JarItem;
 	onClose: () => void;
 	onConfirm: (jar: UpdateJar) => void;
 };

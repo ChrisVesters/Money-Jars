@@ -3,18 +3,19 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Jar } from "@gql/graphql";
 import {
 	CreateJarTransferTransactionDocument,
 	UpdateJarTransferTransactionDocument
 } from "@gql/graphql";
+
+import type { JarItem } from "@src/jar/jarTypes";
 
 import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
 import type { JarTransferTransactionItem } from "../transactionTypes";
 
 export type JarTransferTransactionFormProps = {
 	transaction?: JarTransferTransactionItem;
-	jars: Array<Jar>;
+	jars: Array<JarItem>;
 
 	onClose: () => void;
 };

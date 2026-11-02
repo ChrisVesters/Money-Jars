@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Category, CreatePaymentTransaction, Jar } from "@gql/graphql";
+import type { Category, CreatePaymentTransaction } from "@gql/graphql";
 
 import IconIncoming from "@assets/icons/IconIncoming";
 import IconOutgoing from "@assets/icons/IconOutgoing";
@@ -14,12 +14,13 @@ import {
 	UpdatePaymentTransactionDocument
 } from "@gql/graphql";
 import type { AccountItem } from "@src/account/accountTypes";
+import type { JarItem } from "@src/jar/jarTypes";
 import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
 import type { PaymentTransactionItem } from "../transactionTypes";
 
 export type PaytmentTransactionFormProps = {
 	transaction?: PaymentTransactionItem;
-	jars: Array<Jar>;
+	jars: Array<JarItem>;
 	accounts: Array<AccountItem>;
 	categories: Array<Category>;
 
