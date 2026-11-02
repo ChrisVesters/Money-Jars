@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,19 +16,56 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.mockito.MockedStatic;
+import org.springframework.data.jpa.domain.Specification;
 
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dao.JarEntryDao;
+import com.cvesters.moneyjars.jar.dao.JarEntryQueryDao;
+import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
 class JarEntryStorageGatewayTest {
 
 	private final JarEntryRepository repository = mock();
+	private final TransactionStorageGateway transactionStorage = mock();
 	private final JarEntryStorageGateway gateway = new JarEntryStorageGateway(
-			repository);
+			repository, transactionStorage);
+
+	@Nested
+	class ExistsByJarId {
+
+		@Test
+		public void exists() {
+			final long jarId = 1L;
+
+			when(repository.existsByJarId(jarId)).thenReturn(true);
+
+			final boolean result = gateway.exists(jarId);
+
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		public void notExists() {
+			final long jarId = 1L;
+
+			when(repository.existsByJarId(jarId)).thenReturn(false);
+
+			final boolean result = gateway.exists(jarId);
+
+			assertThat(result).isFalse();
+		}
+	}
 
 	@Nested
 	class GetByJarIdAndTransactionId {
@@ -58,9 +96,8 @@ class JarEntryStorageGatewayTest {
 			when(repository.findByJarIdAndTransactionId(jarId, transactionId))
 					.thenReturn(Optional.empty());
 
-			assertThatThrownBy(() -> gateway
-					.getByJarIdAndTransactionId(jarId, transactionId))
-					.isInstanceOf(MissingEntityException.class);
+			assertThatThrownBy(() -> gateway.getByJarIdAndTransactionId(jarId,
+					transactionId)).isInstanceOf(MissingEntityException.class);
 		}
 	}
 
@@ -113,7 +150,8 @@ class JarEntryStorageGatewayTest {
 			final JarEntry bdo = mock();
 			when(dao.toBdo()).thenReturn(bdo);
 
-			when(repository.findLastByJarId(jarId)).thenReturn(Optional.of(dao));
+			when(repository.findLastByJarId(jarId))
+					.thenReturn(Optional.of(dao));
 
 			final Optional<JarEntry> result = gateway.findLast(jarId);
 
@@ -124,7 +162,8 @@ class JarEntryStorageGatewayTest {
 		public void notFound() {
 			final long jarId = 1L;
 
-			when(repository.findLastByJarId(jarId)).thenReturn(Optional.empty());
+			when(repository.findLastByJarId(jarId))
+					.thenReturn(Optional.empty());
 
 			final Optional<JarEntry> result = gateway.findLast(jarId);
 
@@ -180,6 +219,45 @@ class JarEntryStorageGatewayTest {
 			final List<JarEntry> result = gateway.getAll(jarId);
 
 			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
+	class FindTransactions {
+
+		private static final long JAR_ID = 1L;
+
+		private final Specification<TransactionDao> scope = mock();
+
+		private MockedStatic<JarEntryQueryDao> queryDao;
+
+		@BeforeEach
+		void setUp() {
+			queryDao = mockStatic(JarEntryQueryDao.class);
+			queryDao.when(() -> JarEntryQueryDao.transactionsForJar(JAR_ID))
+					.thenReturn(scope);
+		}
+
+		@AfterEach
+		void tearDown() {
+			queryDao.close();
+		}
+
+		@Test
+		void success() {
+			final TransactionQuery query = mock();
+			final PagedResult<Transaction> expected = mock();
+			when(transactionStorage.findAll(query, scope)).thenReturn(expected);
+
+			final var result = gateway.findTransactions(JAR_ID, query);
+
+			assertThat(result).isSameAs(expected);
+		}
+
+		@Test
+		void queryNull() {
+			assertThatThrownBy(() -> gateway.findTransactions(JAR_ID, null))
+					.isInstanceOf(NullPointerException.class);
 		}
 	}
 
@@ -420,7 +498,7 @@ class JarEntryStorageGatewayTest {
 
 			assertThatThrownBy(
 					() -> gateway.updateAll(List.of(update1, update2)))
-					.isInstanceOf(IllegalArgumentException.class);
+							.isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Test

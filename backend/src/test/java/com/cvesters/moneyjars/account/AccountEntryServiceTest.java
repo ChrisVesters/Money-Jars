@@ -22,16 +22,45 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.TestAccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.AccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 
 class AccountEntryServiceTest {
 
 	private final AccountEntryStorageGateway gateway = mock();
 	private final AccountEntryService service = new AccountEntryService(
 			gateway);
+
+	@Nested
+	class Exists {
+
+		@Test
+		void exists() {
+			final long accountId = 1L;
+
+			when(gateway.exists(accountId)).thenReturn(true);
+
+			final boolean result = service.exists(accountId);
+
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		void notExists() {
+			final long accountId = 1L;
+
+			when(gateway.exists(accountId)).thenReturn(false);
+
+			final boolean result = service.exists(accountId);
+
+			assertThat(result).isFalse();
+		}
+	}
 
 	@Nested
 	class FindLast {
@@ -85,6 +114,30 @@ class AccountEntryServiceTest {
 			final List<AccountEntry> result = service.getAll(accountId);
 
 			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
+	class QueryTransactions {
+
+		private static final long ACCOUNT_ID = 1L;
+
+		@Test
+		void success() {
+			final TransactionQuery query = mock();
+			final PagedResult<Transaction> expected = mock();
+			when(gateway.findTransactions(ACCOUNT_ID, query))
+					.thenReturn(expected);
+
+			final var result = service.queryTransactions(ACCOUNT_ID, query);
+
+			assertThat(result).isSameAs(expected);
+		}
+
+		@Test
+		void queryNull() {
+			assertThatThrownBy(() -> service.queryTransactions(ACCOUNT_ID, null))
+					.isInstanceOf(NullPointerException.class);
 		}
 	}
 

@@ -20,11 +20,11 @@ public class PaymentTransactionStorageGateway {
 		this.repository = repository;
 	}
 
-	public long count(final PaymentTransactionFilter filter) {
+	public boolean exists(final PaymentTransactionFilter filter) {
 		Objects.requireNonNull(filter);
 
 		return repository
-				.count(PaymentTransactionQueryDao.toSpecification(filter));
+				.exists(PaymentTransactionQueryDao.toSpecification(filter));
 	}
 
 	public PaymentTransaction get(final long id) {

@@ -37,23 +37,32 @@ class PaymentTransactionServiceTest {
 			sequenceService, jarEntryService, accountEntryService, storage);
 
 	@Nested
-	class Count {
+	class Exists {
 
 		private static final PaymentTransactionFilter FILTER = new PaymentTransactionFilter(
 				TestCategory.GROCERIES.getId());
 
 		@Test
-		void success() {
-			when(storage.count(FILTER)).thenReturn(2L);
+		void exists() {
+			when(storage.exists(FILTER)).thenReturn(true);
 
-			final long result = service.count(FILTER);
+			final boolean result = service.exists(FILTER);
 
-			assertThat(result).isEqualTo(2L);
+			assertThat(result).isTrue();
+		}
+
+		@Test
+		void notExists() {
+			when(storage.exists(FILTER)).thenReturn(false);
+
+			final boolean result = service.exists(FILTER);
+
+			assertThat(result).isFalse();
 		}
 
 		@Test
 		void filterNull() {
-			assertThatThrownBy(() -> service.count(null))
+			assertThatThrownBy(() -> service.exists(null))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}

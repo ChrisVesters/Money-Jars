@@ -139,11 +139,12 @@ const Overview = (): JSX.Element => {
 				</button>
 			</div>
 
-			<AccountTransactionTable
-				account={accounts.find(
-					account => account.id === selectedCardId
-				)}
-			/>
+			{selectedCardId && (
+				<AccountTransactionTable
+					key={selectedCardId}
+					accountId={selectedCardId}
+				/>
+			)}
 
 			<Modal isOpen={accountFormVisible} onClose={closeAccountForm}>
 				<AccountForm

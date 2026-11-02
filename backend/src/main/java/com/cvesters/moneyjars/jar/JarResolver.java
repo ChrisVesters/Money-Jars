@@ -1,26 +1,26 @@
 package com.cvesters.moneyjars.jar;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dto.JarDto;
-import com.cvesters.moneyjars.transaction.TransactionService;
-import com.cvesters.moneyjars.transaction.dto.TransactionDto;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.dto.TransactionPageDto;
+import com.cvesters.moneyjars.transaction.dto.TransactionQueryDto;
 
 @Controller
 public class JarResolver {
 
 	private final JarEntryService entryService;
-	private final TransactionService transactionService;
 
-	public JarResolver(final JarEntryService entryService,
-			final TransactionService transactionService) {
+	public JarResolver(final JarEntryService entryService) {
 		this.entryService = entryService;
-		this.transactionService = transactionService;
 	}
 
 	@SchemaMapping(typeName = "Jar", field = "balance")
@@ -31,13 +31,17 @@ public class JarResolver {
 				.toPlainString();
 	}
 
+	@SchemaMapping(typeName = "Jar", field = "inUse")
+	public boolean inUse(final JarDto jar) {
+		return entryService.exists(jar.getId());
+	}
+
 	@SchemaMapping(typeName = "Jar", field = "transactions")
-	public List<TransactionDto> getTransactions(final JarDto jar) {
-		return entryService.getAll(jar.getId())
-				.stream()
-				.map(JarEntry::getTransactionId)
-				.map(transactionService::get)
-				.map(TransactionDto::fromBdo)
-				.toList();
+	public TransactionPageDto getTransactions(final JarDto jar,
+			@Argument final TransactionQueryDto query) {
+		final TransactionQuery bdo = query.toBdo();
+		final PagedResult<Transaction> result = entryService
+				.queryTransactions(jar.getId(), bdo);
+		return new TransactionPageDto(result);
 	}
 }

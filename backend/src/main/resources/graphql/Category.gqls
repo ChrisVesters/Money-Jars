@@ -1,22 +1,22 @@
 type Category {
-  id: ID!
-  name: String!
-  description: String!
-  inUse: Boolean!
+	id: ID!
+	name: String!
+	description: String!
+	inUse: Boolean!
 }
 
 input UpdateCategory {
-  name: String!
-  description: String!
+	name: String!
+	description: String!
 }
 
 extend type Query {
-  getCategories: [Category!]!
-  getCategory(id: ID!): Category!
+	getCategories: [Category!]!
+	getCategory(id: ID!): Category!
 }
 
 extend type Mutation {
-  createCategory(req: UpdateCategory!): Category!
-  updateCategory(id: ID!, req: UpdateCategory!): Category!
-  deleteCategory(id: ID!): Boolean!
+	createCategory(req: UpdateCategory!): Category!
+	updateCategory(id: ID!, req: UpdateCategory!): Category!
+	deleteCategory(id: ID!): Boolean!
 }

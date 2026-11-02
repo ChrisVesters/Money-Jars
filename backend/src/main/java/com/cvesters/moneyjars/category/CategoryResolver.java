@@ -19,6 +19,6 @@ public class CategoryResolver {
 	@SchemaMapping(typeName = "Category", field = "inUse")
 	public boolean inUse(final CategoryDto category) {
 		final var filter = new PaymentTransactionFilter(category.getId());
-		return paymentTransactionService.count(filter) > 0;
+		return paymentTransactionService.exists(filter);
 	}
 }

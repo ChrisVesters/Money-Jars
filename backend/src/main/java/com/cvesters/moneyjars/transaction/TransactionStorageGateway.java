@@ -63,15 +63,29 @@ public class TransactionStorageGateway {
 	}
 
 	public PagedResult<Transaction> findAll(final TransactionQuery query) {
+		return findAll(query, null);
+	}
+
+	public PagedResult<Transaction> findAll(final TransactionQuery query,
+			final Specification<TransactionDao> scope) {
 		Objects.requireNonNull(query);
 
-		final Specification<TransactionDao> spec = TransactionQueryDao
+		final Specification<TransactionDao> filterSpec = TransactionQueryDao
 				.toSpecification(query.filter());
+		final Specification<TransactionDao> spec = Optional.ofNullable(scope)
+				.map(filterSpec::and)
+				.orElse(filterSpec);
+
 		final Pageable pageable = TransactionQueryDao
 				.toPageable(query.pagination());
 
 		final Page<TransactionDao> result = repository.findAll(spec, pageable);
 
+		return toPagedResult(result);
+	}
+
+	private static PagedResult<Transaction> toPagedResult(
+			final Page<TransactionDao> result) {
 		final List<Transaction> transactions = result.getContent()
 				.stream()
 				.map(TransactionDao::toBdo)

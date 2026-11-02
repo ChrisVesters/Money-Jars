@@ -138,9 +138,12 @@ const Overview = (): JSX.Element => {
 				</div>
 			</div>
 
-			<JarTransactionTable
-				jar={jars.find(jar => jar.id === selectedCardId)}
-			/>
+			{selectedCardId && (
+				<JarTransactionTable
+					key={selectedCardId}
+					jarId={selectedCardId}
+				/>
+			)}
 
 			<Modal isOpen={JarFormVisible} onClose={closeJarForm}>
 				<JarForm

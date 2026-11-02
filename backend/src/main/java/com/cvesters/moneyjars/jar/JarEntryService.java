@@ -10,10 +10,12 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.bdo.JarTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 
 @Service
 public class JarEntryService {
@@ -24,12 +26,23 @@ public class JarEntryService {
 		this.gateway = gateway;
 	}
 
+	public boolean exists(final long jarId) {
+		return gateway.exists(jarId);
+	}
+
 	public Optional<JarEntry> findLast(final long jarId) {
 		return gateway.findLast(jarId);
 	}
 
 	public List<JarEntry> getAll(final long jarId) {
 		return gateway.getAll(jarId);
+	}
+
+	public PagedResult<Transaction> queryTransactions(final long jarId,
+			final TransactionQuery query) {
+		Objects.requireNonNull(query);
+
+		return gateway.findTransactions(jarId, query);
 	}
 
 	@Transactional

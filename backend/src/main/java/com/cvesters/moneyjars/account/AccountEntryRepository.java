@@ -12,6 +12,8 @@ import com.cvesters.moneyjars.account.dao.AccountEntryDao;
 public interface AccountEntryRepository
 		extends Repository<AccountEntryDao, Long> {
 
+	boolean existsByAccountId(long accountId);
+
 	Optional<AccountEntryDao> findById(Long id);
 
 	Optional<AccountEntryDao> findByAccountIdAndTransactionId(long accountId,

@@ -11,9 +11,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.account.bdo.AccountEntry;
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.AccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 
 @Service
 public class AccountEntryService {
@@ -24,12 +26,23 @@ public class AccountEntryService {
 		this.gateway = gateway;
 	}
 
+	public boolean exists(final long accountId) {
+		return gateway.exists(accountId);
+	}
+
 	public Optional<AccountEntry> findLast(final long accountId) {
 		return gateway.findLast(accountId);
 	}
 
 	public List<AccountEntry> getAll(final long accountId) {
 		return gateway.getAll(accountId);
+	}
+
+	public PagedResult<Transaction> queryTransactions(final long accountId,
+			final TransactionQuery query) {
+		Objects.requireNonNull(query);
+
+		return gateway.findTransactions(accountId, query);
 	}
 
 	@Transactional

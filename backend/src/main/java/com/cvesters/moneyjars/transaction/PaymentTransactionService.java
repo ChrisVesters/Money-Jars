@@ -35,10 +35,10 @@ public class PaymentTransactionService {
 		this.storage = storage;
 	}
 
-	public long count(final PaymentTransactionFilter filter) {
+	public boolean exists(final PaymentTransactionFilter filter) {
 		Objects.requireNonNull(filter);
 
-		return storage.count(filter);
+		return storage.exists(filter);
 	}
 
 	@Transactional

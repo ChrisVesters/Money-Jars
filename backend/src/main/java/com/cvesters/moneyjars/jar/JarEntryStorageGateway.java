@@ -8,17 +8,29 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dao.JarEntryDao;
+import com.cvesters.moneyjars.jar.dao.JarEntryQueryDao;
+import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
+import com.cvesters.moneyjars.transaction.bdo.Transaction;
+import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
 
 @Service
 public class JarEntryStorageGateway {
 
 	private final JarEntryRepository repository;
+	private final TransactionStorageGateway transactionStorage;
 
-	public JarEntryStorageGateway(final JarEntryRepository repository) {
+	public JarEntryStorageGateway(final JarEntryRepository repository,
+			final TransactionStorageGateway transactionStorage) {
 		this.repository = repository;
+		this.transactionStorage = transactionStorage;
+	}
+
+	public boolean exists(final long jarId) {
+		return repository.existsByJarId(jarId);
 	}
 
 	public JarEntry getByJarIdAndTransactionId(final long jarId,
@@ -43,6 +55,14 @@ public class JarEntryStorageGateway {
 				.stream()
 				.map(JarEntryDao::toBdo)
 				.toList();
+	}
+
+	public PagedResult<Transaction> findTransactions(final long jarId,
+			final TransactionQuery query) {
+		Objects.requireNonNull(query);
+
+		return transactionStorage.findAll(query,
+				JarEntryQueryDao.transactionsForJar(jarId));
 	}
 
 	public List<JarEntry> getAllAfter(final long jarId, final LocalDate date,

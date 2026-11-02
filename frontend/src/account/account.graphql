@@ -4,38 +4,49 @@ query GetAccounts {
 		name
 		description
 		balance
+		inUse
+	}
+}
 
-		transactions {
-			__typename
+query GetAccount($id: ID!, $req: TransactionQuery!) {
+	getAccount(id: $id) {
+		id
+		transactions(query: $req) {
+			content {
+				__typename
 
-			id
-			date
-			amount
-			description
+				id
+				date
+				amount
+				description
 
-			... on PaymentTransaction {
-				jar {
-					id
-					name
+				... on PaymentTransaction {
+					jar {
+						id
+						name
+					}
+					account {
+						id
+						name
+					}
+					counterparty
+					direction
 				}
-				account {
-					id
-					name
+
+				... on AccountTransferTransaction {
+					sourceAccount {
+						id
+						name
+					}
+					targetAccount {
+						id
+						name
+					}
 				}
-				counterparty
-				direction
 			}
-
-			... on AccountTransferTransaction {
-				sourceAccount {
-					id
-					name
-				}
-				targetAccount {
-					id
-					name
-				}
-			}
+			page
+			size
+			totalElements
 		}
 	}
 }
