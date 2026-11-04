@@ -1,3 +1,8 @@
+enum PaymentTransactionDirection {
+	INCOMING,
+	OUTGOING
+}
+
 type PaymentTransaction implements Transaction {
 	id: ID!
 	date: String!
@@ -7,7 +12,7 @@ type PaymentTransaction implements Transaction {
 	jar: Jar!
 	account: Account!
 	category: Category
-	direction: Direction!
+	direction: PaymentTransactionDirection!
 }
 
 input CreatePaymentTransaction {
@@ -18,7 +23,7 @@ input CreatePaymentTransaction {
 	jarId: ID!
 	accountId: ID!
 	categoryId: ID
-	direction: Direction!
+	direction: PaymentTransactionDirection!
 }
 
 
