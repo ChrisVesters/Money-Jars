@@ -1,0 +1,12 @@
+.transactions-table tbody tr.budget-current {
+	background-color: rgba(74, 144, 226, 0.15);
+	font-weight: 600;
+}
+
+.transactions-table tbody tr.budget-current td:first-child {
+	box-shadow: inset 4px 0 0 #4a90e2;
+}
+
+.transactions-table tbody tr.budget-current.selected {
+	background-color: rgba(74, 144, 226, 0.3);
+}

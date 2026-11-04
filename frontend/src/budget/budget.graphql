@@ -1,0 +1,33 @@
+query GetBudgets {
+	getBudgets {
+		id
+		name
+		description
+		startDate
+		endDate
+	}
+}
+
+mutation CreateBudget($req: UpdateBudget!) {
+	createBudget(req: $req) {
+		id
+		name
+		description
+		startDate
+		endDate
+	}
+}
+
+mutation DeleteBudget($id: ID!) {
+	deleteBudget(id: $id)
+}
+
+mutation UpdateBudget($id: ID!, $req: UpdateBudget!) {
+	updateBudget(id: $id, req: $req) {
+		id
+		name
+		description
+		startDate
+		endDate
+	}
+}

@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Direction } from "@gql/graphql";
+import { PaymentTransactionDirection } from "@gql/graphql";
 
 import IconIncoming from "@assets/icons/IconIncoming";
 import IconOutgoing from "@assets/icons/IconOutgoing";
@@ -22,7 +22,8 @@ const PaymentTransactionRow = (
 ): JSX.Element => {
 	const { t } = useTranslation();
 
-	const isOutgoing = props.transaction.direction === Direction.Outgoing;
+	const isOutgoing =
+		props.transaction.direction === PaymentTransactionDirection.Outgoing;
 	// TODO: better/clearer format. Maybe with icons?
 	const context = [
 		props.transaction.account.id === props.accountId
