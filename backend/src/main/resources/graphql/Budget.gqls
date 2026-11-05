@@ -13,7 +13,6 @@ enum BudgetLineDirection {
 
 type BudgetLine {
 	id: ID!
-	budget: Budget!
 	category: Category!
 	amount: String!
 	direction: BudgetLineDirection!
@@ -47,7 +46,7 @@ extend type Mutation {
 	updateBudget(id: ID!, req: UpdateBudget!): Budget!
 	deleteBudget(id: ID!): Boolean!
 
-	createBudgetLine(req: UpdateBudgetLine!): BudgetLine!
+	createBudgetLine(req: CreateBudgetLine!): BudgetLine!
 	updateBudgetLine(id: ID!, req: UpdateBudgetLine!): BudgetLine!
 	deleteBudgetLine(id: ID!): Boolean!
 }
