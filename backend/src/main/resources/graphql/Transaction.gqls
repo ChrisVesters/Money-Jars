@@ -5,11 +5,6 @@ interface Transaction {
 	description: String!
 }
 
-enum Direction {
-	INCOMING,
-	OUTGOING
-}
-
 input TransactionFilter {
 	from: String
 	to: String

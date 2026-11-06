@@ -1,5 +1,5 @@
 import type { QueryTransactionsQuery } from "@gql/graphql";
-import { Direction } from "@gql/graphql";
+import { PaymentTransactionDirection } from "@gql/graphql";
 
 export type TransactionItem =
 	QueryTransactionsQuery["queryTransactions"]["content"][number];
@@ -30,10 +30,12 @@ export type AccountTransferTransactionItem = Extract<
 export const getTransferDirection = (
 	sourceId: string,
 	ownerId: string | undefined
-): Direction | undefined => {
+): PaymentTransactionDirection | undefined => {
 	if (ownerId === undefined) {
 		return undefined;
 	}
 
-	return sourceId === ownerId ? Direction.Outgoing : Direction.Incoming;
+	return sourceId === ownerId
+		? PaymentTransactionDirection.Outgoing
+		: PaymentTransactionDirection.Incoming;
 };

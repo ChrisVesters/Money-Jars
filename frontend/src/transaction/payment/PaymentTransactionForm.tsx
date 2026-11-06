@@ -4,15 +4,15 @@ import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
 import type { Category, CreatePaymentTransaction } from "@gql/graphql";
+import {
+	CreatePaymentTransactionDocument,
+	PaymentTransactionDirection,
+	UpdatePaymentTransactionDocument
+} from "@gql/graphql";
 
 import IconIncoming from "@assets/icons/IconIncoming";
 import IconOutgoing from "@assets/icons/IconOutgoing";
 
-import {
-	CreatePaymentTransactionDocument,
-	Direction,
-	UpdatePaymentTransactionDocument
-} from "@gql/graphql";
 import type { AccountItem } from "@src/account/accountTypes";
 import type { JarItem } from "@src/jar/jarTypes";
 import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
@@ -46,7 +46,9 @@ const PaymentTransactionForm = (
 	const [accountId, setAccountId] = useState("");
 	const [categoryId, setCategoryId] = useState("");
 	const [counterparty, setCounterparty] = useState("");
-	const [direction, setDirection] = useState(Direction.Outgoing);
+	const [direction, setDirection] = useState<PaymentTransactionDirection>(
+		PaymentTransactionDirection.Outgoing
+	);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	useEffect(() => {
@@ -67,7 +69,7 @@ const PaymentTransactionForm = (
 			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
 			setCategoryId("");
 			setCounterparty("");
-			setDirection(Direction.Outgoing);
+			setDirection(PaymentTransactionDirection.Outgoing);
 		}
 	}, [props.transaction, props.jars, props.accounts]);
 
@@ -167,7 +169,7 @@ const PaymentTransactionForm = (
 		setJarId(props.jars.length > 0 ? props.jars[0].id : "");
 		setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
 		setCategoryId("");
-		setDirection(Direction.Outgoing);
+		setDirection(PaymentTransactionDirection.Outgoing);
 	};
 
 	return (
@@ -205,12 +207,12 @@ const PaymentTransactionForm = (
 					type="button"
 					onClick={() =>
 						setDirection(
-							direction === Direction.Outgoing
-								? Direction.Incoming
-								: Direction.Outgoing
+							direction === PaymentTransactionDirection.Outgoing
+								? PaymentTransactionDirection.Incoming
+								: PaymentTransactionDirection.Outgoing
 						)
 					}>
-					{direction === Direction.Outgoing ? (
+					{direction === PaymentTransactionDirection.Outgoing ? (
 						<IconOutgoing />
 					) : (
 						<IconIncoming />

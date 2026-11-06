@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
 import IconAccount from "@assets/icons/IconAccount";
+import IconBudget from "@assets/icons/IconBudget";
 import IconChartArea from "@assets/icons/IconChartArea";
 import IconJar from "@assets/icons/IconJar";
 import IconPanelLeftClose from "@assets/icons/IconPanelLeftClose";
@@ -87,6 +88,15 @@ const Sidebar = (): JSX.Element => {
 								title={t("categories")}>
 								<IconCategory className="nav-icon" />
 								<span>{t("categories")}</span>
+							</Link>
+						</li>
+						<li className="nav-item">
+							<Link
+								to="/budgets"
+								className={`nav-link ${isActive("/budgets") ? "active" : ""}`}
+								title={t("budgets")}>
+								<IconBudget className="nav-icon" />
+								<span>{t("budgets")}</span>
 							</Link>
 						</li>
 						<li className="nav-item">

@@ -119,3 +119,34 @@ CREATE TABLE account_entries(
 
 CREATE INDEX ON account_entries(account_id);
 CREATE INDEX ON account_entries(transaction_id);
+
+
+CREATE TABLE budgets(
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL,
+
+	PRIMARY KEY (id)
+);
+
+CREATE INDEX ON budgets(start_date);
+CREATE INDEX ON budgets(end_date);
+
+
+CREATE TABLE budget_lines(
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
+	budget_id BIGINT NOT NULL,
+	category_id BIGINT NOT NULL,
+	amount NUMERIC NOT NULL,
+	direction SMALLINT NOT NULL,
+
+	PRIMARY KEY (id),
+	UNIQUE (budget_id, category_id),
+	FOREIGN KEY (budget_id) REFERENCES budgets(id) ON DELETE CASCADE,
+	FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+CREATE INDEX ON budget_lines(budget_id);
+CREATE INDEX ON budget_lines(category_id);

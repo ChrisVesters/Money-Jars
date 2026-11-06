@@ -1,0 +1,34 @@
+query GetBudgetLines($budgetId: ID!) {
+	getBudget(id: $budgetId) {
+		id
+		lines {
+			id
+			amount
+			direction
+			category {
+				id
+				name
+			}
+		}
+	}
+}
+
+mutation CreateBudgetLine($req: CreateBudgetLine!) {
+	createBudgetLine(req: $req) {
+		id
+		amount
+		direction
+	}
+}
+
+mutation UpdateBudgetLine($id: ID!, $req: UpdateBudgetLine!) {
+	updateBudgetLine(id: $id, req: $req) {
+		id
+		amount
+		direction
+	}
+}
+
+mutation DeleteBudgetLine($id: ID!) {
+	deleteBudgetLine(id: $id)
+}

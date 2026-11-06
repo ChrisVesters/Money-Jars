@@ -1,0 +1,54 @@
+enum BudgetLineDirection {
+	INCOME,
+	EXPENSE
+}
+
+type BudgetLine {
+	id: ID!
+	category: Category!
+	amount: String!
+	direction: BudgetLineDirection!
+}
+
+type Budget {
+	id: ID!
+	name: String!
+	description: String!
+	startDate: String!
+	endDate: String!
+	lines: [BudgetLine!]!
+}
+
+input UpdateBudget {
+	name: String!
+	description: String!
+	startDate: String!
+	endDate: String!
+}
+
+input CreateBudgetLine {
+	budgetId: ID!
+	categoryId: ID!
+	amount: String!
+	direction: BudgetLineDirection!
+}
+
+input UpdateBudgetLine {
+	amount: String!
+	direction: BudgetLineDirection!
+}
+
+extend type Query {
+	getBudgets: [Budget!]!
+	getBudget(id: ID!): Budget!
+}
+
+extend type Mutation {
+	createBudget(req: UpdateBudget!): Budget!
+	updateBudget(id: ID!, req: UpdateBudget!): Budget!
+	deleteBudget(id: ID!): Boolean!
+
+	createBudgetLine(req: CreateBudgetLine!): BudgetLine!
+	updateBudgetLine(id: ID!, req: UpdateBudgetLine!): BudgetLine!
+	deleteBudgetLine(id: ID!): Boolean!
+}

@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { Direction } from "@gql/graphql";
+import { PaymentTransactionDirection } from "@gql/graphql";
 
 import { Money } from "@src/common/money";
 
@@ -13,7 +13,7 @@ export type BaseTransactionRowProps = {
 	typeLabel: string;
 	party: string;
 	context: string;
-	direction?: Direction;
+	direction?: PaymentTransactionDirection;
 	isSelected?: boolean;
 	onSelect?: () => void;
 };
@@ -23,9 +23,15 @@ type AmountStyle = {
 	className: string;
 };
 
-const AMOUNT_STYLES: Record<Direction, AmountStyle> = {
-	[Direction.Incoming]: { prefix: "+", className: "amount-incoming" },
-	[Direction.Outgoing]: { prefix: "-", className: "amount-outgoing" }
+const AMOUNT_STYLES: Record<PaymentTransactionDirection, AmountStyle> = {
+	[PaymentTransactionDirection.Incoming]: {
+		prefix: "+",
+		className: "amount-incoming"
+	},
+	[PaymentTransactionDirection.Outgoing]: {
+		prefix: "-",
+		className: "amount-outgoing"
+	}
 };
 
 const BaseTransactionRow = (
