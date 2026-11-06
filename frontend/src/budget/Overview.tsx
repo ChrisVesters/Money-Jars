@@ -4,8 +4,6 @@ import { useTranslation } from "react-i18next";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 
-import IconDelete from "@assets/icons/IconDelete";
-import IconEdit from "@assets/icons/IconEdit";
 import IconPlus from "@assets/icons/IconPlus";
 
 import type { UpdateBudget } from "@gql/graphql";
@@ -18,9 +16,12 @@ import {
 
 import Modal from "@src/common/Modal";
 
+import "../jar/jar.css";
 import "../transaction/transaction.css";
 import "./budget.css";
 import BudgetForm from "./BudgetForm";
+import BudgetLineTable from "./BudgetLineTable";
+import BudgetView from "./BudgetView";
 import { isCurrent, toIsoDate } from "./budgetDates";
 import type { BudgetItem } from "./budgetTypes";
 
@@ -37,6 +38,10 @@ const Overview = (): JSX.Element => {
 		BudgetItem | undefined
 	>(undefined);
 
+	const [selectedCardId, setSelectedCardId] = useState<string | undefined>(
+		undefined
+	);
+
 	const today = toIsoDate(new Date());
 
 	const budgets = useMemo(
@@ -47,20 +52,22 @@ const Overview = (): JSX.Element => {
 		[data?.getBudgets]
 	);
 
-	const handleSelectBudget = (budget: BudgetItem): void => {
-		if (selectedBudget?.id === budget.id) {
-			setSelectedBudget(undefined);
+	const handleSelectBudget = (budgetId: string): void => {
+		if (selectedCardId === budgetId) {
+			setSelectedCardId(undefined);
 		} else {
-			setSelectedBudget(budget);
+			setSelectedCardId(budgetId);
 		}
 	};
 
 	const openCreateBudgetForm = (): void => {
 		setSelectedBudget(undefined);
+		setSelectedCardId(undefined);
 		setBudgetFormVisible(true);
 	};
 
-	const openEditBudgetForm = (): void => {
+	const openEditBudgetForm = (budget: BudgetItem): void => {
+		setSelectedBudget(budget);
 		setBudgetFormVisible(true);
 	};
 
@@ -98,18 +105,15 @@ const Overview = (): JSX.Element => {
 		return true;
 	};
 
-	const handleDeleteBudget = async (): Promise<void> => {
-		if (
-			!selectedBudget ||
-			!globalThis.confirm(t("confirmDeleteBudget"))
-		) {
+	const handleDeleteBudget = async (budgetId: string): Promise<void> => {
+		if (!globalThis.confirm(t("confirmDeleteBudget"))) {
 			return;
 		}
 
 		try {
 			await deleteBudget({
 				variables: {
-					id: selectedBudget.id
+					id: budgetId
 				},
 				refetchQueries: [{ query: GetBudgetsDocument }]
 			});
@@ -117,72 +121,38 @@ const Overview = (): JSX.Element => {
 			console.info(t("errorDeleteBudget"), error);
 		}
 
-		setSelectedBudget(undefined);
+		setSelectedCardId(undefined);
 	};
 
-	const rowClassName = (budget: BudgetItem): string =>
-		[
-			isCurrent(budget, today) ? "budget-current" : "",
-			selectedBudget?.id === budget.id ? "selected" : ""
-		]
-			.filter(Boolean)
-			.join(" ");
-
 	return (
-		<div className="transactions-overview">
-			<div className="transactions-actions">
-				{selectedBudget ? (
-					<>
-						<button
-							className="icon-button"
-							onClick={openEditBudgetForm}
-							title={t("editBudget")}>
-							<IconEdit />
-						</button>
-						<button
-							className="icon-button"
-							onClick={handleDeleteBudget}
-							title={t("deleteBudget")}>
-							<IconDelete />
-						</button>
-					</>
-				) : (
-					<button
-						className="icon-button"
-						onClick={openCreateBudgetForm}
-						title={t("createBudget")}>
-						<IconPlus />
-					</button>
-				)}
+		<>
+			<div className="jar-grid">
+				{budgets.map(budget => (
+					<BudgetView
+						key={budget.id}
+						budget={budget}
+						isCurrent={isCurrent(budget, today)}
+						isSelected={selectedCardId === budget.id}
+						onSelect={() => handleSelectBudget(budget.id)}
+						onEdit={openEditBudgetForm}
+						onDelete={handleDeleteBudget}
+					/>
+				))}
+				<button
+					type="button"
+					className="jar-card jar-add-card"
+					onClick={openCreateBudgetForm}
+					title={t("createBudget")}>
+					<IconPlus />
+				</button>
 			</div>
 
-			<table className="transactions-table">
-				<thead>
-					<tr>
-						<th>{t("name")}</th>
-						<th>{t("startDate")}</th>
-						<th>{t("endDate")}</th>
-						<th>{t("description")}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{budgets.map(budget => (
-						<tr
-							key={budget.id}
-							className={rowClassName(budget)}
-							onClick={() => handleSelectBudget(budget)}>
-							<td>{budget.name}</td>
-							<td className="transaction-date">
-								{budget.startDate}
-							</td>
-							<td className="transaction-date">
-								{budget.endDate}
-							</td>
-							<td>{budget.description}</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
+			{selectedCardId && (
+				<BudgetLineTable
+					key={selectedCardId}
+					budgetId={selectedCardId}
+				/>
+			)}
 
 			<Modal isOpen={budgetFormVisible} onClose={closeBudgetForm}>
 				<BudgetForm
@@ -191,7 +161,7 @@ const Overview = (): JSX.Element => {
 					onConfirm={handleSubmitBudget}
 				/>
 			</Modal>
-		</div>
+		</>
 	);
 };
 
