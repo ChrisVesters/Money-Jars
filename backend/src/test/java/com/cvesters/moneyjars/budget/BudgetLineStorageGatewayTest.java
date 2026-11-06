@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
@@ -28,6 +29,25 @@ class BudgetLineStorageGatewayTest {
 	private final BudgetLineRepository repository = mock();
 	private final BudgetLineStorageGateway gateway = new BudgetLineStorageGateway(
 			repository);
+
+	@Nested
+	class GetAllByBudget {
+
+		private static final long BUDGET_ID = LINE.getBudget().getId();
+
+		@Test
+		void success() {
+			final BudgetLineDao dao = mock();
+			final BudgetLine bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+			when(repository.findAllByBudgetId(BUDGET_ID))
+					.thenReturn(List.of(dao));
+
+			final List<BudgetLine> result = gateway.getAllByBudget(BUDGET_ID);
+
+			assertThat(result).containsExactly(bdo);
+		}
+	}
 
 	@Nested
 	class Exists {

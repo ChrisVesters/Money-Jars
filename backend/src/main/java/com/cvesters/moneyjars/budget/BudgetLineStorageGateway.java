@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.budget;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,13 @@ public class BudgetLineStorageGateway {
 
 	public BudgetLineStorageGateway(final BudgetLineRepository repository) {
 		this.repository = repository;
+	}
+
+	public List<BudgetLine> getAllByBudget(final long budgetId) {
+		return repository.findAllByBudgetId(budgetId)
+				.stream()
+				.map(BudgetLineDao::toBdo)
+				.toList();
 	}
 
 	public boolean exists(final long budgetId, final long categoryId) {

@@ -26,6 +26,12 @@ public class BudgetController {
 		return budgetService.getAll().stream().map(BudgetDto::new).toList();
 	}
 
+	@QueryMapping
+	public BudgetDto getBudget(@Argument final long id) {
+		final Budget budget = budgetService.get(id);
+		return new BudgetDto(budget);
+	}
+
 	@MutationMapping
 	public BudgetDto createBudget(@Argument final BudgetActionDto.Create req) {
 		final BudgetAction.Create action = req.toBdo();

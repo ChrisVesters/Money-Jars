@@ -9,6 +9,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -23,6 +25,23 @@ class BudgetLineServiceTest {
 
 	private final BudgetLineStorageGateway storage = mock();
 	private final BudgetLineService service = new BudgetLineService(storage);
+
+	@Nested
+	class GetAllByBudget {
+
+		private static final long BUDGET_ID = 1L;
+
+		@Test
+		void success() {
+			final BudgetLine expected = mock();
+			when(storage.getAllByBudget(BUDGET_ID))
+					.thenReturn(List.of(expected));
+
+			final List<BudgetLine> result = service.getAllByBudget(BUDGET_ID);
+
+			assertThat(result).containsExactly(expected);
+		}
+	}
 
 	@Nested
 	class Create {

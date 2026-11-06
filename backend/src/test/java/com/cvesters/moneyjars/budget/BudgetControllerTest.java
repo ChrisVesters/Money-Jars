@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.budget;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,14 +12,19 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cvesters.moneyjars.budget.bdo.Budget;
 import com.cvesters.moneyjars.budget.bdo.BudgetAction;
+import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
+import com.cvesters.moneyjars.config.GraphqlExceptionResolver;
 
 @GraphQlTest(BudgetController.class)
+@Import(GraphqlExceptionResolver.class)
 class BudgetControllerTest {
 
 	@Autowired
@@ -58,6 +64,52 @@ class BudgetControllerTest {
 
 			assertEquals(response, NOVEMBER, "getBudgets[0]");
 			assertEquals(response, DECEMBER, "getBudgets[1]");
+		}
+	}
+
+	@Nested
+	class GetBudget {
+
+		private static final TestBudget BUDGET = TestBudget.NOVEMBER_2026;
+
+		private static final String DOCUMENT = """
+				query {
+					getBudget(id: %d) {
+						id
+						name
+						description
+						startDate
+						endDate
+					}
+				}
+				""";
+
+		@Test
+		void success() {
+			final Budget budget = BUDGET.bdo();
+			when(budgetService.get(BUDGET.getId())).thenReturn(budget);
+
+			final Response response = graphQlTester
+					.document(DOCUMENT.formatted(BUDGET.getId()))
+					.execute();
+
+			assertEquals(response, BUDGET, "getBudget");
+		}
+
+		@Test
+		void notFound() {
+			when(budgetService.get(BUDGET.getId()))
+					.thenThrow(MissingEntityException.class);
+
+			graphQlTester.document(DOCUMENT.formatted(BUDGET.getId()))
+					.execute()
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.NOT_FOUND);
+						assertThat(error.getPath()).isEqualTo("getBudget");
+						return true;
+					});
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.budget;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,10 @@ public class BudgetLineService {
 
 	public BudgetLineService(final BudgetLineStorageGateway storageGateway) {
 		this.storageGateway = storageGateway;
+	}
+
+	public List<BudgetLine> getAllByBudget(final long budgetId) {
+		return storageGateway.getAllByBudget(budgetId);
 	}
 
 	public BudgetLine create(final BudgetLineAction.Create action) {

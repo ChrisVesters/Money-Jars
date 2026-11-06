@@ -21,6 +21,10 @@ public class BudgetService {
 		return storageGateway.getAll();
 	}
 
+	public Budget get(final long id) {
+		return storageGateway.get(id);
+	}
+
 	public Budget create(final BudgetAction.Create action) {
 		Objects.requireNonNull(action);
 

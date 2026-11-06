@@ -1,11 +1,3 @@
-type Budget {
-	id: ID!
-	name: String!
-	description: String!
-	startDate: String!
-	endDate: String!
-}
-
 enum BudgetLineDirection {
 	INCOME,
 	EXPENSE
@@ -16,6 +8,15 @@ type BudgetLine {
 	category: Category!
 	amount: String!
 	direction: BudgetLineDirection!
+}
+
+type Budget {
+	id: ID!
+	name: String!
+	description: String!
+	startDate: String!
+	endDate: String!
+	lines: [BudgetLine!]!
 }
 
 input UpdateBudget {
@@ -39,6 +40,7 @@ input UpdateBudgetLine {
 
 extend type Query {
 	getBudgets: [Budget!]!
+	getBudget(id: ID!): Budget!
 }
 
 extend type Mutation {

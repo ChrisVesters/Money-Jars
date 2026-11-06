@@ -36,6 +36,22 @@ class BudgetServiceTest {
 	}
 
 	@Nested
+	class Get {
+
+		private static final long BUDGET_ID = 1L;
+
+		@Test
+		void success() {
+			final Budget expected = mock();
+			when(storage.get(BUDGET_ID)).thenReturn(expected);
+
+			final Budget result = service.get(BUDGET_ID);
+
+			assertThat(result).isSameAs(expected);
+		}
+	}
+
+	@Nested
 	class Create {
 
 		@Test
