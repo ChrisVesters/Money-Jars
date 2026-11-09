@@ -13,6 +13,7 @@ import com.cvesters.moneyjars.category.dto.CategoryDto;
 import com.cvesters.moneyjars.jar.JarService;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.jar.dto.JarDto;
+import com.cvesters.moneyjars.transaction.dto.PaymentTransactionCategoryTotalDto;
 import com.cvesters.moneyjars.transaction.dto.PaymentTransactionDto;
 
 @Controller
@@ -45,6 +46,14 @@ public class PaymentTransactionResolver {
 	@SchemaMapping(typeName = "PaymentTransaction", field = "category")
 	public CategoryDto category(final PaymentTransactionDto transaction) {
 		return Optional.ofNullable(transaction.getCategoryId())
+				.map(categoryService::get)
+				.map(CategoryDto::new)
+				.orElse(null);
+	}
+
+	@SchemaMapping(typeName = "PaymentTransactionCategoryTotal", field = "category")
+	public CategoryDto category(final PaymentTransactionCategoryTotalDto total) {
+		return Optional.ofNullable(total.getCategoryId())
 				.map(categoryService::get)
 				.map(CategoryDto::new)
 				.orElse(null);

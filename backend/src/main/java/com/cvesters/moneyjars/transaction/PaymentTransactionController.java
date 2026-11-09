@@ -1,12 +1,17 @@
 package com.cvesters.moneyjars.transaction;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
 import com.cvesters.moneyjars.transaction.dto.PaymentTransactionActionDto;
+import com.cvesters.moneyjars.transaction.dto.PaymentTransactionCategoryTotalDto;
 import com.cvesters.moneyjars.transaction.dto.PaymentTransactionDto;
 import com.cvesters.moneyjars.transaction.dto.TransactionDto;
 
@@ -18,6 +23,15 @@ public class PaymentTransactionController {
 	public PaymentTransactionController(
 			final PaymentTransactionService paymentTransactionService) {
 		this.paymentTransactionService = paymentTransactionService;
+	}
+
+	@QueryMapping
+	public List<PaymentTransactionCategoryTotalDto> getPaymentTransactionCategoryTotals(
+			@Argument final LocalDate from, @Argument final LocalDate to) {
+		return paymentTransactionService.getCategoryTotals(from, to)
+				.stream()
+				.map(PaymentTransactionCategoryTotalDto::new)
+				.toList();
 	}
 
 	@MutationMapping

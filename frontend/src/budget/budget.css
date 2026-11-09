@@ -51,3 +51,27 @@
 	background-color: rgba(74, 144, 226, 0.15);
 	font-weight: 600;
 }
+
+.transactions-table tr.budget-over-expense td.budget-actual {
+	color: var(--color-outgoing);
+	font-weight: 600;
+}
+
+.transactions-table tr.budget-over-income td.budget-actual {
+	color: var(--color-incoming);
+	font-weight: 600;
+}
+
+/* Categories with actual amounts but no budget line. */
+.transactions-table tr.budget-unplanned td:first-child {
+	font-style: italic;
+}
+
+.transactions-table tr.budget-unselectable {
+	cursor: default;
+}
+
+.budget-difference-amounts {
+	display: flex;
+	gap: 1.5rem;
+}

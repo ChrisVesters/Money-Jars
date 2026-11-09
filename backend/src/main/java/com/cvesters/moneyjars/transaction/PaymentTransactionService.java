@@ -2,6 +2,7 @@ package com.cvesters.moneyjars.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.transaction.Transactional;
@@ -12,6 +13,7 @@ import com.cvesters.moneyjars.account.AccountEntryService;
 import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionCategoryTotal;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 
@@ -39,6 +41,14 @@ public class PaymentTransactionService {
 		Objects.requireNonNull(filter);
 
 		return storage.exists(filter);
+	}
+
+	public List<PaymentTransactionCategoryTotal> getCategoryTotals(
+			final LocalDate start, final LocalDate end) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+
+		return storage.getCategoryTotalsInPeriod(start, end);
 	}
 
 	@Transactional

@@ -26,6 +26,15 @@ input CreatePaymentTransaction {
 	direction: PaymentTransactionDirection!
 }
 
+type PaymentTransactionCategoryTotal {
+	category: Category
+	incoming: String!
+	outgoing: String!
+}
+
+extend type Query {
+	getPaymentTransactionCategoryTotals(from: String!, to: String!): [PaymentTransactionCategoryTotal!]!
+}
 
 extend type Mutation {
 	createPaymentTransaction(req: CreatePaymentTransaction!): PaymentTransaction!

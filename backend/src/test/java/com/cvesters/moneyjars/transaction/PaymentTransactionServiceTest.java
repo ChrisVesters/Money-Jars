@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import com.cvesters.moneyjars.category.TestCategory;
 import com.cvesters.moneyjars.jar.JarEntryService;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionAction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionCategoryTotal;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionDirection;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
 
@@ -63,6 +65,39 @@ class PaymentTransactionServiceTest {
 		@Test
 		void filterNull() {
 			assertThatThrownBy(() -> service.exists(null))
+					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class GetCategoryTotals {
+
+		private static final LocalDate START = LocalDate.of(2026, 1, 1);
+		private static final LocalDate END = LocalDate.of(2026, 1, 31);
+
+		@Test
+		void success() {
+			final List<PaymentTransactionCategoryTotal> totals = List.of(
+					TestPaymentTransactionCategoryTotal.JANUARY_GROCERIES.bdo(),
+					TestPaymentTransactionCategoryTotal.JANUARY_RENT.bdo());
+			when(storage.getCategoryTotalsInPeriod(START, END))
+					.thenReturn(totals);
+
+			final List<PaymentTransactionCategoryTotal> result = service
+					.getCategoryTotals(START, END);
+
+			assertThat(result).isSameAs(totals);
+		}
+
+		@Test
+		void startNull() {
+			assertThatThrownBy(() -> service.getCategoryTotals(null, END))
+					.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void endNull() {
+			assertThatThrownBy(() -> service.getCategoryTotals(START, null))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}

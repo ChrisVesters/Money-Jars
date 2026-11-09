@@ -1,5 +1,6 @@
 package com.cvesters.moneyjars.budget;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,14 +9,19 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.graphql.test.autoconfigure.GraphQlTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.graphql.execution.ErrorType;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.GraphQlTester.Response;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.cvesters.moneyjars.budget.bdo.BudgetLine;
 import com.cvesters.moneyjars.budget.bdo.BudgetLineAction;
+import com.cvesters.moneyjars.common.exceptions.DuplicateEntityException;
+import com.cvesters.moneyjars.config.GraphqlExceptionResolver;
 
 @GraphQlTest(BudgetLineController.class)
+@Import(GraphqlExceptionResolver.class)
 class BudgetLineControllerTest {
 
 	@Autowired
@@ -59,6 +65,44 @@ class BudgetLineControllerTest {
 					.execute();
 
 			assertEquals(response, LINE, "createBudgetLine");
+		}
+
+		@Test
+		void duplicate() {
+			final var action = new BudgetLineAction.Create(
+					LINE.getBudget().getId(), LINE.getCategory().getId(),
+					LINE.getAmount(), LINE.getDirection());
+			when(budgetLineService.create(action))
+					.thenThrow(DuplicateEntityException.class);
+
+			final String document = """
+					mutation {
+						createBudgetLine(req: {
+							budgetId: %d,
+							categoryId: %d,
+							amount: "%s",
+							direction: %s
+						}) {
+							id
+						}
+					}
+					""".formatted(LINE.getBudget().getId(),
+					LINE.getCategory().getId(),
+					LINE.getAmount().toPlainString(),
+					LINE.getDirection().name());
+
+			graphQlTester.document(document)
+					.execute()
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.BAD_REQUEST);
+						assertThat(error.getPath())
+								.isEqualTo("createBudgetLine");
+						assertThat(error.getMessage())
+								.isEqualTo("Entity already exists");
+						return true;
+					});
 		}
 	}
 

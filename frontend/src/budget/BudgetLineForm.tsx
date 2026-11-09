@@ -8,6 +8,8 @@ import type { CategoryItem } from "@src/category/categoryTypes";
 
 import type { BudgetLineItem } from "./budgetTypes";
 
+type CategoryOption = { id: string; name: string };
+
 export type BudgetLineFormValues = {
 	categoryId: string;
 	amount: string;
@@ -16,6 +18,11 @@ export type BudgetLineFormValues = {
 
 export type BudgetLineFormProps = {
 	line?: BudgetLineItem;
+	/**
+	 * The fixed category of a new line, for a category that has actual
+	 * amounts but no line yet.
+	 */
+	category?: CategoryOption;
 	direction: BudgetLineDirection;
 	categories: Array<CategoryItem>;
 	onClose: () => void;
@@ -37,17 +44,20 @@ const BudgetLineForm = (
 	const reset = (
 		categories: Array<CategoryItem>,
 		defaultDirection: BudgetLineDirection,
-		line?: BudgetLineItem
+		line?: BudgetLineItem,
+		category?: CategoryOption
 	): void => {
-		setCategoryId(line?.category.id ?? categories[0]?.id ?? "");
+		setCategoryId(
+			line?.category.id ?? category?.id ?? categories[0]?.id ?? ""
+		);
 		setAmount(line?.amount ?? "");
 		setDirection(line?.direction ?? defaultDirection);
 		setErrors({});
 	};
 
 	useEffect(() => {
-		reset(props.categories, props.direction, props.line);
-	}, [props.line, props.categories, props.direction]);
+		reset(props.categories, props.direction, props.line, props.category);
+	}, [props.line, props.categories, props.direction, props.category]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};
@@ -68,6 +78,8 @@ const BudgetLineForm = (
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0;
 	};
+
+	const fixedCategory = props.line?.category ?? props.category;
 
 	const handleSubmit = async (event: React.FormEvent): Promise<void> => {
 		event.preventDefault();
@@ -95,11 +107,11 @@ const BudgetLineForm = (
 				<label htmlFor="budget-line-category">
 					{t("category")} <span className="required">*</span>
 				</label>
-				{props.line ? (
+				{fixedCategory ? (
 					<input
 						id="budget-line-category"
 						type="text"
-						value={props.line.category.name}
+						value={fixedCategory.name}
 						disabled
 					/>
 				) : (
