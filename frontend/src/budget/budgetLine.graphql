@@ -32,3 +32,14 @@ mutation UpdateBudgetLine($id: ID!, $req: UpdateBudgetLine!) {
 mutation DeleteBudgetLine($id: ID!) {
 	deleteBudgetLine(id: $id)
 }
+
+query GetPaymentTransactionCategoryTotals($from: String!, $to: String!) {
+	getPaymentTransactionCategoryTotals(from: $from, to: $to) {
+		incoming
+		outgoing
+		category {
+			id
+			name
+		}
+	}
+}

@@ -13,6 +13,7 @@ import {
 	DeleteBudgetLineDocument,
 	GetBudgetLinesDocument,
 	GetCategoriesDocument,
+	GetPaymentTransactionCategoryTotalsDocument,
 	UpdateBudgetLineDocument
 } from "@gql/graphql";
 
@@ -22,14 +23,20 @@ import { Money } from "@src/common/money";
 import type { BudgetLineFormValues } from "./BudgetLineForm";
 import BudgetLineForm from "./BudgetLineForm";
 import BudgetLineSection from "./BudgetLineSection";
-import type { BudgetLineItem } from "./budgetTypes";
+import { toBudgetRows } from "./budgetActuals";
+import type { BudgetItem, BudgetRow } from "./budgetTypes";
 
 export type BudgetLineTableProps = {
-	budgetId: string;
+	budget: BudgetItem;
 };
 
-const sumAmounts = (lines: Array<BudgetLineItem>): number =>
-	lines.reduce((total, line) => total + Number.parseFloat(line.amount), 0);
+const sumPlanned = (rows: Array<BudgetRow>): number =>
+	rows.reduce((total, row) => total + row.planned, 0);
+
+const sumActual = (rows: Array<BudgetRow>): number =>
+	rows.reduce((total, row) => total + row.actual, 0);
+
+const toLabel = (amount: number): string => Money.toLabel(amount.toFixed(2));
 
 const BudgetLineTable = (
 	props: Readonly<BudgetLineTableProps>
@@ -37,9 +44,21 @@ const BudgetLineTable = (
 	const { t } = useTranslation();
 
 	const { data } = useQuery(GetBudgetLinesDocument, {
-		variables: { budgetId: props.budgetId }
+		variables: { budgetId: props.budget.id }
 	});
 	const { data: categoryData } = useQuery(GetCategoriesDocument);
+	// Transactions can change on other pages, so the actual amounts are
+	// always fetched again when the budget is shown.
+	const { data: totalData } = useQuery(
+		GetPaymentTransactionCategoryTotalsDocument,
+		{
+			variables: {
+				from: props.budget.startDate,
+				to: props.budget.endDate
+			},
+			fetchPolicy: "cache-and-network"
+		}
+	);
 
 	const [createBudgetLine] = useMutation(CreateBudgetLineDocument);
 	const [updateBudgetLine] = useMutation(UpdateBudgetLineDocument);
@@ -49,65 +68,70 @@ const BudgetLineTable = (
 	const [formDirection, setFormDirection] = useState<BudgetLineDirection>(
 		BudgetLineDirection.Expense
 	);
-	const [selectedLine, setSelectedLine] = useState<
-		BudgetLineItem | undefined
-	>(undefined);
+	// A row without a line can be selected too: editing it creates the line.
+	const [selectedRow, setSelectedRow] = useState<BudgetRow | undefined>(
+		undefined
+	);
+	const selectedLine = selectedRow?.line;
 
 	const refetchQueries = [
 		{
 			query: GetBudgetLinesDocument,
-			variables: { budgetId: props.budgetId }
+			variables: { budgetId: props.budget.id }
 		}
 	];
 
-	const lines = useMemo(
-		() =>
-			[...(data?.getBudget.lines ?? [])].sort((a, b) =>
-				a.category.name.localeCompare(b.category.name)
-			),
-		[data?.getBudget.lines]
+	const lines = data?.getBudget.lines;
+	const totals = totalData?.getPaymentTransactionCategoryTotals;
+	const rows = useMemo(
+		() => toBudgetRows(lines ?? [], totals ?? []),
+		[lines, totals]
 	);
 
-	const incomeLines = lines.filter(
-		line => line.direction === BudgetLineDirection.Income
+	const incomeRows = rows.filter(
+		row => row.direction === BudgetLineDirection.Income
 	);
-	const expenseLines = lines.filter(
-		line => line.direction === BudgetLineDirection.Expense
+	const expenseRows = rows.filter(
+		row => row.direction === BudgetLineDirection.Expense
 	);
 
 	// A category appears in at most one line of a budget.
 	const availableCategories = useMemo(() => {
-		const usedCategoryIds = new Set(lines.map(line => line.category.id));
+		const usedCategoryIds = new Set(
+			(lines ?? []).map(line => line.category.id)
+		);
 		return [...(categoryData?.getCategories ?? [])]
 			.filter(category => !usedCategoryIds.has(category.id))
 			.sort((a, b) => a.name.localeCompare(b.name));
 	}, [lines, categoryData?.getCategories]);
 
-	const plannedIncome = sumAmounts(incomeLines);
-	const plannedExpenses = sumAmounts(expenseLines);
-	const difference = plannedIncome - plannedExpenses;
+	const plannedDifference = sumPlanned(incomeRows) - sumPlanned(expenseRows);
+	const actualDifference = sumActual(incomeRows) - sumActual(expenseRows);
 
-	const handleSelectLine = (line: BudgetLineItem): void => {
-		if (selectedLine?.id === line.id) {
-			setSelectedLine(undefined);
+	const handleSelectRow = (row: BudgetRow): void => {
+		if (selectedRow?.key === row.key) {
+			setSelectedRow(undefined);
 		} else {
-			setSelectedLine(line);
+			setSelectedRow(row);
 		}
 	};
 
 	const openCreateLineForm = (direction: BudgetLineDirection): void => {
-		setSelectedLine(undefined);
+		setSelectedRow(undefined);
 		setFormDirection(direction);
 		setLineFormVisible(true);
 	};
 
 	const openEditLineForm = (): void => {
+		if (selectedRow) {
+			setFormDirection(selectedRow.direction);
+		}
 		setLineFormVisible(true);
 	};
 
 	const closeLineForm = (): void => {
 		setLineFormVisible(false);
-		setSelectedLine(undefined);
+		setSelectedRow(undefined);
 	};
 
 	const handleSubmitLine = async (
@@ -129,7 +153,7 @@ const BudgetLineTable = (
 				await createBudgetLine({
 					variables: {
 						req: {
-							budgetId: props.budgetId,
+							budgetId: props.budget.id,
 							categoryId: values.categoryId,
 							amount: values.amount,
 							direction: values.direction
@@ -166,7 +190,7 @@ const BudgetLineTable = (
 			console.info(t("errorDeleteBudgetLine"), error);
 		}
 
-		setSelectedLine(undefined);
+		setSelectedRow(undefined);
 	};
 
 	const canCreate = availableCategories.length > 0;
@@ -175,7 +199,7 @@ const BudgetLineTable = (
 		<div className="transactions-overview">
 			<div className="transactions-header">
 				<h2>{t("budgetLines")}</h2>
-				{selectedLine && (
+				{selectedRow && (
 					<div className="transactions-actions">
 						<button
 							className="icon-button"
@@ -183,12 +207,14 @@ const BudgetLineTable = (
 							title={t("editBudgetLine")}>
 							<IconEdit />
 						</button>
-						<button
-							className="icon-button"
-							onClick={handleDeleteLine}
-							title={t("deleteBudgetLine")}>
-							<IconDelete />
-						</button>
+						{selectedLine && (
+							<button
+								className="icon-button"
+								onClick={handleDeleteLine}
+								title={t("deleteBudgetLine")}>
+								<IconDelete />
+							</button>
+						)}
 					</div>
 				)}
 			</div>
@@ -196,26 +222,26 @@ const BudgetLineTable = (
 			<div className="budget-line-sections">
 				<BudgetLineSection
 					title={t("budgetIncome")}
-					totalLabel={t("plannedIncome")}
+					totalLabel={t("totalIncome")}
 					createLabel={t("createIncomeLine")}
-					lines={incomeLines}
-					total={plannedIncome}
-					selectedLineId={selectedLine?.id}
+					direction={BudgetLineDirection.Income}
+					rows={incomeRows}
+					selectedRowKey={selectedRow?.key}
 					canCreate={canCreate}
-					onSelect={handleSelectLine}
+					onSelect={handleSelectRow}
 					onCreate={() =>
 						openCreateLineForm(BudgetLineDirection.Income)
 					}
 				/>
 				<BudgetLineSection
 					title={t("budgetExpenses")}
-					totalLabel={t("plannedExpenses")}
+					totalLabel={t("totalExpenses")}
 					createLabel={t("createExpenseLine")}
-					lines={expenseLines}
-					total={plannedExpenses}
-					selectedLineId={selectedLine?.id}
+					direction={BudgetLineDirection.Expense}
+					rows={expenseRows}
+					selectedRowKey={selectedRow?.key}
 					canCreate={canCreate}
-					onSelect={handleSelectLine}
+					onSelect={handleSelectRow}
 					onCreate={() =>
 						openCreateLineForm(BudgetLineDirection.Expense)
 					}
@@ -224,14 +250,26 @@ const BudgetLineTable = (
 
 			<div className="budget-difference">
 				<span>{t("difference")}</span>
-				<span className="budget-amount">
-					{Money.toLabel(difference.toFixed(2))}
+				<span className="budget-difference-amounts">
+					<span>
+						{t("planned")}{" "}
+						<span className="budget-amount">
+							{toLabel(plannedDifference)}
+						</span>
+					</span>
+					<span>
+						{t("actual")}{" "}
+						<span className="budget-amount">
+							{toLabel(actualDifference)}
+						</span>
+					</span>
 				</span>
 			</div>
 
 			<Modal isOpen={lineFormVisible} onClose={closeLineForm}>
 				<BudgetLineForm
 					line={selectedLine}
+					category={selectedLine ? undefined : selectedRow?.category}
 					direction={formDirection}
 					categories={availableCategories}
 					onClose={closeLineForm}

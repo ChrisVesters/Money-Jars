@@ -52,6 +52,8 @@ const Overview = (): JSX.Element => {
 		[data?.getBudgets]
 	);
 
+	const shownBudget = budgets.find(budget => budget.id === selectedCardId);
+
 	const handleSelectBudget = (budgetId: string): void => {
 		if (selectedCardId === budgetId) {
 			setSelectedCardId(undefined);
@@ -147,11 +149,8 @@ const Overview = (): JSX.Element => {
 				</button>
 			</div>
 
-			{selectedCardId && (
-				<BudgetLineTable
-					key={selectedCardId}
-					budgetId={selectedCardId}
-				/>
+			{shownBudget && (
+				<BudgetLineTable key={shownBudget.id} budget={shownBudget} />
 			)}
 
 			<Modal isOpen={budgetFormVisible} onClose={closeBudgetForm}>
