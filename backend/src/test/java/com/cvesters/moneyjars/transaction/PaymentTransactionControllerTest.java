@@ -6,6 +6,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,61 @@ class PaymentTransactionControllerTest {
 
 	@MockitoBean
 	private PaymentTransactionService paymentTransactionService;
+
+	@Nested
+	class GetPaymentTransactionCategoryTotals {
+
+		private static final LocalDate FROM = LocalDate.of(2026, 1, 1);
+		private static final LocalDate TO = LocalDate.of(2026, 1, 31);
+
+		private static final String DOCUMENT = """
+				query {
+					getPaymentTransactionCategoryTotals(from: "%s", to: "%s") {
+						incoming
+						outgoing
+					}
+				}
+				""".formatted(FROM, TO);
+
+		@Test
+		void success() {
+			final TestPaymentTransactionCategoryTotal first = TestPaymentTransactionCategoryTotal.JANUARY_RENT;
+			final TestPaymentTransactionCategoryTotal second = TestPaymentTransactionCategoryTotal.JANUARY_UNCATEGORISED;
+			when(paymentTransactionService.getCategoryTotals(FROM, TO))
+					.thenReturn(List.of(first.bdo(), second.bdo()));
+
+			final Response response = graphQlTester.document(DOCUMENT)
+					.execute();
+
+			final String prefix = "getPaymentTransactionCategoryTotals";
+			assertEquals(response, first, prefix + "[0]");
+			assertEquals(response, second, prefix + "[1]");
+			response.path(prefix).entityList(Object.class).hasSize(2);
+		}
+
+		@Test
+		void none() {
+			when(paymentTransactionService.getCategoryTotals(FROM, TO))
+					.thenReturn(List.of());
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.path("getPaymentTransactionCategoryTotals")
+					.entityList(Object.class)
+					.hasSize(0);
+		}
+
+		private static void assertEquals(final Response response,
+				final TestPaymentTransactionCategoryTotal expected,
+				final String prefix) {
+			response.path(prefix + ".incoming")
+					.entity(String.class)
+					.isEqualTo(expected.getIncoming().toPlainString())
+					.path(prefix + ".outgoing")
+					.entity(String.class)
+					.isEqualTo(expected.getOutgoing().toPlainString());
+		}
+	}
 
 	@Nested
 	class CreatePaymentTransaction {

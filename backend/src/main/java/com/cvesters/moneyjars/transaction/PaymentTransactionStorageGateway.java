@@ -1,12 +1,16 @@
 package com.cvesters.moneyjars.transaction;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionCategoryTotal;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
+import com.cvesters.moneyjars.transaction.dao.PaymentTransactionCategoryTotalDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionQueryDao;
 
@@ -25,6 +29,15 @@ public class PaymentTransactionStorageGateway {
 
 		return repository
 				.exists(PaymentTransactionQueryDao.toSpecification(filter));
+	}
+
+	public List<PaymentTransactionCategoryTotal> getCategoryTotalsInPeriod(
+			final LocalDate start, final LocalDate end) {
+		Objects.requireNonNull(start);
+		Objects.requireNonNull(end);
+
+		return PaymentTransactionCategoryTotalDao
+				.toBdo(repository.findCategoryTotalsInPeriod(start, end));
 	}
 
 	public PaymentTransaction get(final long id) {

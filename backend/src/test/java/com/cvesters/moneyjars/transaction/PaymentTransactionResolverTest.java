@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,8 @@ import com.cvesters.moneyjars.jar.TestJar;
 import com.cvesters.moneyjars.jar.bdo.Jar;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 
-@GraphQlTest({ TransactionController.class, PaymentTransactionResolver.class })
+@GraphQlTest({ TransactionController.class, PaymentTransactionController.class,
+		PaymentTransactionResolver.class })
 @Import({ TransactionGraphqlConfig.class, GraphqlExceptionResolver.class })
 class PaymentTransactionResolverTest {
 
@@ -45,6 +49,9 @@ class PaymentTransactionResolverTest {
 
 	@MockitoBean
 	private TransactionService transactionService;
+
+	@MockitoBean
+	private PaymentTransactionService paymentTransactionService;
 
 	@Nested
 	class ResolveJar {
@@ -327,6 +334,85 @@ class PaymentTransactionResolverTest {
 			response.path("getTransaction.direction")
 					.entity(String.class)
 					.isEqualTo(TRANSACTION.getDirection().name());
+		}
+	}
+
+	@Nested
+	class ResolveCategoryTotalCategory {
+
+		private static final LocalDate FROM = LocalDate.of(2026, 1, 1);
+		private static final LocalDate TO = LocalDate.of(2026, 1, 31);
+
+		private static final String DOCUMENT = """
+				query {
+					getPaymentTransactionCategoryTotals(from: "%s", to: "%s") {
+						category {
+							id
+							name
+							description
+						}
+					}
+				}
+				""".formatted(FROM, TO);
+
+		@Test
+		void success() {
+			final TestPaymentTransactionCategoryTotal total = TestPaymentTransactionCategoryTotal.JANUARY_RENT;
+			final TestCategory expectedCategory = total.getCategory();
+			when(paymentTransactionService.getCategoryTotals(FROM, TO))
+					.thenReturn(List.of(total.bdo()));
+
+			final Category category = expectedCategory.bdo();
+			when(categoryService.get(expectedCategory.getId()))
+					.thenReturn(category);
+
+			final Response response = graphQlTester.document(DOCUMENT)
+					.execute();
+
+			final String prefix = "getPaymentTransactionCategoryTotals[0].category";
+			response.path(prefix + ".id")
+					.entity(Long.class)
+					.isEqualTo(expectedCategory.getId())
+					.path(prefix + ".name")
+					.entity(String.class)
+					.isEqualTo(expectedCategory.getName())
+					.path(prefix + ".description")
+					.entity(String.class)
+					.isEqualTo(expectedCategory.getDescription());
+		}
+
+		@Test
+		void noCategory() {
+			final TestPaymentTransactionCategoryTotal total = TestPaymentTransactionCategoryTotal.JANUARY_UNCATEGORISED;
+			when(paymentTransactionService.getCategoryTotals(FROM, TO))
+					.thenReturn(List.of(total.bdo()));
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.path("getPaymentTransactionCategoryTotals[0].category")
+					.valueIsNull();
+			verifyNoInteractions(categoryService);
+		}
+
+		@Test
+		void notFound() {
+			final TestPaymentTransactionCategoryTotal total = TestPaymentTransactionCategoryTotal.JANUARY_RENT;
+			when(paymentTransactionService.getCategoryTotals(FROM, TO))
+					.thenReturn(List.of(total.bdo()));
+
+			when(categoryService.get(total.getCategoryId()))
+					.thenThrow(MissingEntityException.class);
+
+			graphQlTester.document(DOCUMENT)
+					.execute()
+					.errors()
+					.expect(error -> {
+						assertThat(error.getErrorType())
+								.isEqualTo(ErrorType.NOT_FOUND);
+						assertThat(error.getPath()).isEqualTo(
+								"getPaymentTransactionCategoryTotals[0].category");
+						return true;
+					});
 		}
 	}
 }

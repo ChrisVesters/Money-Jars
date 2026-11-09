@@ -11,6 +11,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -24,7 +26,9 @@ import org.springframework.data.jpa.domain.Specification;
 import com.cvesters.moneyjars.category.TestCategory;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
+import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionCategoryTotal;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransactionFilter;
+import com.cvesters.moneyjars.transaction.dao.PaymentTransactionCategoryTotalDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionDao;
 import com.cvesters.moneyjars.transaction.dao.PaymentTransactionQueryDao;
 
@@ -81,6 +85,59 @@ class PaymentTransactionStorageGatewayTest {
 		void filterNull() {
 			assertThatThrownBy(() -> gateway.exists(null))
 					.isInstanceOf(NullPointerException.class);
+		}
+	}
+
+	@Nested
+	class GetCategoryTotalsInPeriod {
+
+		private static final LocalDate START = LocalDate.of(2026, 1, 1);
+		private static final LocalDate END = LocalDate.of(2026, 1, 31);
+
+		private MockedStatic<PaymentTransactionCategoryTotalDao> totalDao;
+
+		@BeforeEach
+		void setUp() {
+			totalDao = mockStatic(PaymentTransactionCategoryTotalDao.class);
+		}
+
+		@AfterEach
+		void tearDown() {
+			totalDao.close();
+		}
+
+		@Test
+		void success() {
+			final List<PaymentTransactionCategoryTotalDao> daos = List
+					.of(mock(), mock());
+			when(repository.findCategoryTotalsInPeriod(START, END))
+					.thenReturn(daos);
+
+			final List<PaymentTransactionCategoryTotal> bdos = List.of(
+					TestPaymentTransactionCategoryTotal.JANUARY_GROCERIES.bdo(),
+					TestPaymentTransactionCategoryTotal.JANUARY_UNCATEGORISED
+							.bdo());
+			totalDao.when(() -> PaymentTransactionCategoryTotalDao.toBdo(daos))
+					.thenReturn(bdos);
+
+			final List<PaymentTransactionCategoryTotal> result = gateway
+					.getCategoryTotalsInPeriod(START, END);
+
+			assertThat(result).isSameAs(bdos);
+		}
+
+		@Test
+		void startNull() {
+			assertThatThrownBy(
+					() -> gateway.getCategoryTotalsInPeriod(null, END))
+							.isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		void endNull() {
+			assertThatThrownBy(
+					() -> gateway.getCategoryTotalsInPeriod(START, null))
+							.isInstanceOf(NullPointerException.class);
 		}
 	}
 
