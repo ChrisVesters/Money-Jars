@@ -28,7 +28,7 @@ import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.JarTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 class JarEntryServiceTest {
 
@@ -117,24 +117,24 @@ class JarEntryServiceTest {
 	}
 
 	@Nested
-	class QueryTransactions {
+	class SearchTransactions {
 
 		private static final long JAR_ID = 1L;
 
 		@Test
 		void success() {
-			final TransactionQuery query = mock();
+			final TransactionSearch query = mock();
 			final PagedResult<Transaction> expected = mock();
 			when(gateway.findTransactions(JAR_ID, query)).thenReturn(expected);
 
-			final var result = service.queryTransactions(JAR_ID, query);
+			final var result = service.searchTransactions(JAR_ID, query);
 
 			assertThat(result).isSameAs(expected);
 		}
 
 		@Test
 		void queryNull() {
-			assertThatThrownBy(() -> service.queryTransactions(JAR_ID, null))
+			assertThatThrownBy(() -> service.searchTransactions(JAR_ID, null))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}

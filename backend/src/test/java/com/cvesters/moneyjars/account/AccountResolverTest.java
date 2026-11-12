@@ -25,7 +25,7 @@ import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.TestTransaction;
 import com.cvesters.moneyjars.transaction.TransactionGraphqlConfig;
 import com.cvesters.moneyjars.transaction.bdo.TransactionFilter;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @GraphQlTest({ AccountController.class, AccountResolver.class })
 @Import(TransactionGraphqlConfig.class)
@@ -166,8 +166,8 @@ class AccountResolverTest {
 
 			when(accountService.get(CHECKING.getId()))
 					.thenReturn(CHECKING.bdo());
-			when(entryService.queryTransactions(CHECKING.getId(),
-					new TransactionQuery(new TransactionFilter(null, null),
+			when(entryService.searchTransactions(CHECKING.getId(),
+					new TransactionSearch(new TransactionFilter(null, null),
 							new Pagination(0, 100))))
 					.thenReturn(new PagedResult<>(
 							List.of(transaction1.bdo(), transaction2.bdo(),
@@ -194,8 +194,8 @@ class AccountResolverTest {
 
 			when(accountService.get(CHECKING.getId()))
 					.thenReturn(CHECKING.bdo());
-			when(entryService.queryTransactions(CHECKING.getId(),
-					new TransactionQuery(
+			when(entryService.searchTransactions(CHECKING.getId(),
+					new TransactionSearch(
 							new TransactionFilter(LocalDate.of(2026, 1, 1),
 									LocalDate.of(2026, 1, 31)),
 							new Pagination(1, 1))))
@@ -224,8 +224,8 @@ class AccountResolverTest {
 		void noEntries() {
 			when(accountService.get(CHECKING.getId()))
 					.thenReturn(CHECKING.bdo());
-			when(entryService.queryTransactions(CHECKING.getId(),
-					new TransactionQuery(new TransactionFilter(null, null),
+			when(entryService.searchTransactions(CHECKING.getId(),
+					new TransactionSearch(new TransactionFilter(null, null),
 							new Pagination(0, 100))))
 					.thenReturn(new PagedResult<>(Collections.emptyList(), 0,
 							100, 0));

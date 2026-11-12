@@ -8,7 +8,7 @@ query GetAccounts {
 	}
 }
 
-query GetAccount($id: ID!, $req: TransactionQuery!) {
+query GetAccount($id: ID!, $req: TransactionSearch!) {
 	getAccount(id: $id) {
 		id
 		transactions(query: $req) {

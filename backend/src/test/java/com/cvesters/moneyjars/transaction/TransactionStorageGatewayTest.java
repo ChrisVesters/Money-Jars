@@ -27,7 +27,7 @@ import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 import com.cvesters.moneyjars.transaction.bdo.TransactionFilter;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionQueryDao;
 
@@ -191,7 +191,7 @@ class TransactionStorageGatewayTest {
 	@Nested
 	class FindAll {
 
-		private static final TransactionQuery QUERY = new TransactionQuery(
+		private static final TransactionSearch QUERY = new TransactionSearch(
 				new TransactionFilter(LocalDate.of(2026, 1, 1),
 						LocalDate.of(2026, 1, 31)),
 				new Pagination(1, 10));
@@ -263,7 +263,7 @@ class TransactionStorageGatewayTest {
 	@Nested
 	class FindAllWithScope {
 
-		private static final TransactionQuery QUERY = new TransactionQuery(
+		private static final TransactionSearch QUERY = new TransactionSearch(
 				new TransactionFilter(LocalDate.of(2026, 1, 1),
 						LocalDate.of(2026, 1, 31)),
 				new Pagination(1, 10));

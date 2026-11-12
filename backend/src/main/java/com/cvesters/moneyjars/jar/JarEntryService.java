@@ -15,7 +15,7 @@ import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.transaction.bdo.JarTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @Service
 public class JarEntryService {
@@ -38,8 +38,8 @@ public class JarEntryService {
 		return gateway.getAll(jarId);
 	}
 
-	public PagedResult<Transaction> queryTransactions(final long jarId,
-			final TransactionQuery query) {
+	public PagedResult<Transaction> searchTransactions(final long jarId,
+			final TransactionSearch query) {
 		Objects.requireNonNull(query);
 
 		return gateway.findTransactions(jarId, query);

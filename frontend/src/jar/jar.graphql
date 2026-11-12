@@ -9,7 +9,7 @@ query GetJars {
 	}
 }
 
-query GetJar($id: ID!, $req: TransactionQuery!) {
+query GetJar($id: ID!, $req: TransactionSearch!) {
 	getJar(id: $id) {
 		id
 		transactions(query: $req) {

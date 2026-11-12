@@ -10,7 +10,7 @@ input TransactionFilter {
 	to: String
 }
 
-input TransactionQuery {
+input TransactionSearch {
 	filter: TransactionFilter!
 	page: Int = 0
 	size: Int = 100
@@ -27,5 +27,5 @@ extend type Query {
 	getTransactions: [Transaction!]!
 	getTransaction(id: ID!): Transaction!
 
-	queryTransactions(query: TransactionQuery!): TransactionPage!
+	searchTransactions(query: TransactionSearch!): TransactionPage!
 }

@@ -48,8 +48,8 @@ query GetTransactions {
 	}
 }
 
-query QueryTransactions($req: TransactionQuery!) {
-	queryTransactions(query: $req) {
+query SearchTransactions($req: TransactionSearch!) {
+	searchTransactions(query: $req) {
 		content {
 			__typename
 

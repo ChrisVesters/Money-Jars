@@ -5,7 +5,7 @@ type Jar {
 	balance: String!
 	goal: String
 	inUse: Boolean!
-	transactions(query: TransactionQuery = { filter: {} }): TransactionPage!
+	transactions(query: TransactionSearch = { filter: {} }): TransactionPage!
 }
 
 input UpdateJar {

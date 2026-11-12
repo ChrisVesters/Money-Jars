@@ -5,24 +5,24 @@ import java.util.Optional;
 
 import com.cvesters.moneyjars.common.bdo.Pagination;
 import com.cvesters.moneyjars.transaction.bdo.TransactionFilter;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
-public class TransactionQueryDto {
+public class TransactionSearchDto {
 
 	private final FilterDto filter;
 	private final int page;
 	private final int size;
 
-	public TransactionQueryDto(final FilterDto filter, final int page,
+	public TransactionSearchDto(final FilterDto filter, final int page,
 			final int size) {
 		this.filter = filter;
 		this.page = page;
 		this.size = size;
 	}
 
-	public TransactionQuery toBdo() {
+	public TransactionSearch toBdo() {
 		final Pagination pagination = new Pagination(page, size);
-		return new TransactionQuery(filter.toBdo(), pagination);
+		return new TransactionSearch(filter.toBdo(), pagination);
 	}
 
 	public static class FilterDto {

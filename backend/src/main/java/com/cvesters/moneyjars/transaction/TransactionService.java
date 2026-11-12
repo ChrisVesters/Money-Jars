@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @Service
 public class TransactionService {
@@ -22,7 +22,7 @@ public class TransactionService {
 		return storage.getAll();
 	}
 
-	public PagedResult<Transaction> query(final TransactionQuery query) {
+	public PagedResult<Transaction> query(final TransactionSearch query) {
 		Objects.requireNonNull(query);
 
 		return storage.findAll(query);
