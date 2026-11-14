@@ -40,6 +40,11 @@ public class JarEntryStorageGateway {
 				.orElseThrow(MissingEntityException::new);
 	}
 
+	public Optional<JarEntry> findBefore(final long jarId,
+			final LocalDate date) {
+		return findBefore(jarId, date, 0);
+	}
+
 	public Optional<JarEntry> findBefore(final long jarId, final LocalDate date,
 			final int sequence) {
 		return repository.findBefore(jarId, date, sequence)

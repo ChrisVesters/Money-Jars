@@ -14,9 +14,25 @@ input UpdateJar {
 	goal: String
 }
 
+input JarBalanceQuery {
+	jarIds: [ID!]!
+}
+
+type JarBalanceSnapshot {
+	date: String!
+	balance: String!
+}
+
+type JarBalanceHistory {
+	jarId: ID!
+	snapshots: [JarBalanceSnapshot!]!
+}
+
 extend type Query {
 	getJars: [Jar!]!
 	getJar(id: ID!): Jar!
+
+	queryJarBalanceHistory(req: JarBalanceQuery!): [JarBalanceHistory!]!
 }
 
 extend type Mutation {

@@ -108,7 +108,7 @@ class JarEntryStorageGatewayTest {
 		public void found() {
 			final long jarId = 1L;
 			final LocalDate date = LocalDate.now();
-			final int sequence = 0;
+			final int sequence = 3;
 
 			final JarEntryDao dao = mock();
 			final JarEntry bdo = mock();
@@ -127,13 +127,46 @@ class JarEntryStorageGatewayTest {
 		public void notFound() {
 			final long jarId = 1L;
 			final LocalDate date = LocalDate.now();
-			final int sequence = 0;
+			final int sequence = 3;
 
 			when(repository.findBefore(jarId, date, sequence))
 					.thenReturn(Optional.empty());
 
 			final Optional<JarEntry> result = gateway.findBefore(jarId, date,
 					sequence);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
+	class FindBeforeDate {
+
+		private static final TestJarEntry JAR_ENTRY = TestJarEntry.HOUSEHOLD_CAFE;
+		private static final long JAR_ID = JAR_ENTRY.getJar().getId();
+		private static final LocalDate DATE = JAR_ENTRY.getTransaction()
+				.getDate();
+
+		@Test
+		void found() {
+			final JarEntryDao dao = mock();
+			final JarEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findBefore(JAR_ID, DATE, 0))
+					.thenReturn(Optional.of(dao));
+
+			final Optional<JarEntry> result = gateway.findBefore(JAR_ID, DATE);
+
+			assertThat(result).containsSame(bdo);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findBefore(JAR_ID, DATE, 0))
+					.thenReturn(Optional.empty());
+
+			final Optional<JarEntry> result = gateway.findBefore(JAR_ID, DATE);
 
 			assertThat(result).isEmpty();
 		}
@@ -268,7 +301,7 @@ class JarEntryStorageGatewayTest {
 		public void single() {
 			final long jarId = 1L;
 			final LocalDate date = LocalDate.now();
-			final int sequence = 0;
+			final int sequence = 3;
 
 			final JarEntryDao dao = mock();
 			final JarEntry bdo = mock();
@@ -287,7 +320,7 @@ class JarEntryStorageGatewayTest {
 		public void multiple() {
 			final long jarId = 1L;
 			final LocalDate date = LocalDate.now();
-			final int sequence = 0;
+			final int sequence = 3;
 
 			final JarEntryDao dao1 = mock();
 			final JarEntry bdo1 = mock();
@@ -310,7 +343,7 @@ class JarEntryStorageGatewayTest {
 		public void empty() {
 			final long jarId = 1L;
 			final LocalDate date = LocalDate.now();
-			final int sequence = 0;
+			final int sequence = 3;
 
 			when(repository.findAllAfter(jarId, date, sequence))
 					.thenReturn(Collections.emptyList());
