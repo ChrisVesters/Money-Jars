@@ -73,3 +73,13 @@ mutation UpdateJar($id: ID!, $req: UpdateJar!) {
 mutation DeleteJar($id: ID!) {
 	deleteJar(id: $id)
 }
+
+query GetJarBalanceHistory($req: JarBalanceQuery!) {
+	queryJarBalanceHistory(req: $req) {
+		jarId
+		snapshots {
+			date
+			balance
+		}
+	}
+}

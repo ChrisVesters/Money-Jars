@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@apollo/client": "^4.1.6",
+		"echarts": "^6.1.0",
 		"graphql": "^16.13.2",
 		"i18next": "^26.3.1",
 		"i18next-http-backend": "^4.0.0",
