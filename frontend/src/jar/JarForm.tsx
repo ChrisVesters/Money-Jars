@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { UpdateJar } from "@gql/graphql";
@@ -20,12 +20,6 @@ const JarForm = (props: Readonly<JarFormProps>): JSX.Element => {
 		props.jar?.description ?? ""
 	);
 	const [goal, setGoal] = useState(props.jar?.goal ?? "");
-
-	useEffect(() => {
-		setName(props.jar?.name ?? "");
-		setDescription(props.jar?.description ?? "");
-		setGoal(props.jar?.goal ?? "");
-	}, [props.jar]);
 
 	// const [error, setError] = useState<string | null>(null);
 

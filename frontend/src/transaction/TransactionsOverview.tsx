@@ -129,12 +129,10 @@ const TransactionsOverview = (): JSX.Element => {
 			<Modal
 				isOpen={transactionFormVisible}
 				onClose={closeTransactionForm}>
-				{transactionFormVisible && (
-					<TransactionForm
-						transaction={selectedTransaction}
-						onClose={closeTransactionForm}
-					/>
-				)}
+				<TransactionForm
+					transaction={selectedTransaction}
+					onClose={closeTransactionForm}
+				/>
 			</Modal>
 		</div>
 	);

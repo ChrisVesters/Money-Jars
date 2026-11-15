@@ -1,328 +1,51 @@
 /* eslint-disable */
-import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = T | null | undefined;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-};
-
-export type Account = {
-  __typename?: 'Account';
-  balance: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  inUse: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-  transactions: TransactionPage;
-};
-
-
-export type AccountTransactionsArgs = {
-  query?: InputMaybe<TransactionSearch>;
-};
-
-export type AccountTransferTransaction = Transaction & {
-  __typename?: 'AccountTransferTransaction';
-  amount: Scalars['String']['output'];
-  date: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  sourceAccount: Account;
-  targetAccount: Account;
-};
-
-export type Budget = {
-  __typename?: 'Budget';
-  description: Scalars['String']['output'];
-  endDate: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  lines: Array<BudgetLine>;
-  name: Scalars['String']['output'];
-  startDate: Scalars['String']['output'];
-};
-
-export type BudgetLine = {
-  __typename?: 'BudgetLine';
-  amount: Scalars['String']['output'];
-  category: Category;
-  direction: BudgetLineDirection;
-  id: Scalars['ID']['output'];
-};
-
+import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export const BudgetLineDirection = {
   Expense: 'EXPENSE',
   Income: 'INCOME'
 } as const;
 
 export type BudgetLineDirection = typeof BudgetLineDirection[keyof typeof BudgetLineDirection];
-export type Category = {
-  __typename?: 'Category';
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  inUse: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-};
-
 export type CreateAccountTransferTransaction = {
-  amount: Scalars['String']['input'];
-  date: Scalars['String']['input'];
-  description: Scalars['String']['input'];
-  sourceAccountId: Scalars['ID']['input'];
-  targetAccountId: Scalars['ID']['input'];
+  amount: string;
+  date: string;
+  description: string;
+  sourceAccountId: string | number;
+  targetAccountId: string | number;
 };
 
 export type CreateBudgetLine = {
-  amount: Scalars['String']['input'];
-  budgetId: Scalars['ID']['input'];
-  categoryId: Scalars['ID']['input'];
+  amount: string;
+  budgetId: string | number;
+  categoryId: string | number;
   direction: BudgetLineDirection;
 };
 
 export type CreateJarTransferTransaction = {
-  amount: Scalars['String']['input'];
-  date: Scalars['String']['input'];
-  description: Scalars['String']['input'];
-  sourceJarId: Scalars['ID']['input'];
-  targetJarId: Scalars['ID']['input'];
+  amount: string;
+  date: string;
+  description: string;
+  sourceJarId: string | number;
+  targetJarId: string | number;
 };
 
 export type CreatePaymentTransaction = {
-  accountId: Scalars['ID']['input'];
-  amount: Scalars['String']['input'];
-  categoryId?: InputMaybe<Scalars['ID']['input']>;
-  counterparty: Scalars['String']['input'];
-  date: Scalars['String']['input'];
-  description: Scalars['String']['input'];
+  accountId: string | number;
+  amount: string;
+  categoryId?: string | number | null | undefined;
+  counterparty: string;
+  date: string;
+  description: string;
   direction: PaymentTransactionDirection;
-  jarId: Scalars['ID']['input'];
-};
-
-export type Jar = {
-  __typename?: 'Jar';
-  balance: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  goal?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  inUse: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-  transactions: TransactionPage;
-};
-
-
-export type JarTransactionsArgs = {
-  query?: InputMaybe<TransactionSearch>;
-};
-
-export type JarBalanceHistory = {
-  __typename?: 'JarBalanceHistory';
-  jarId: Scalars['ID']['output'];
-  snapshots: Array<JarBalanceSnapshot>;
+  jarId: string | number;
 };
 
 export type JarBalanceQuery = {
-  jarIds: Array<Scalars['ID']['input']>;
-};
-
-export type JarBalanceSnapshot = {
-  __typename?: 'JarBalanceSnapshot';
-  balance: Scalars['String']['output'];
-  date: Scalars['String']['output'];
-};
-
-export type JarTransferTransaction = Transaction & {
-  __typename?: 'JarTransferTransaction';
-  amount: Scalars['String']['output'];
-  date: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  sourceJar: Jar;
-  targetJar: Jar;
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  createAccount: Account;
-  createAccountTransferTransaction: AccountTransferTransaction;
-  createBudget: Budget;
-  createBudgetLine: BudgetLine;
-  createCategory: Category;
-  createJar: Jar;
-  createJarTransferTransaction: JarTransferTransaction;
-  createPaymentTransaction: PaymentTransaction;
-  deleteAccount: Scalars['Boolean']['output'];
-  deleteAccountTransferTransaction: Scalars['Boolean']['output'];
-  deleteBudget: Scalars['Boolean']['output'];
-  deleteBudgetLine: Scalars['Boolean']['output'];
-  deleteCategory: Scalars['Boolean']['output'];
-  deleteJar: Scalars['Boolean']['output'];
-  deleteJarTransferTransaction: Scalars['Boolean']['output'];
-  deletePaymentTransaction: Scalars['Boolean']['output'];
-  updateAccount: Account;
-  updateAccountTransferTransaction: AccountTransferTransaction;
-  updateBudget: Budget;
-  updateBudgetLine: BudgetLine;
-  updateCategory: Category;
-  updateJar: Jar;
-  updateJarTransferTransaction: JarTransferTransaction;
-  updatePaymentTransaction: PaymentTransaction;
-};
-
-
-export type MutationCreateAccountArgs = {
-  req: UpdateAccount;
-};
-
-
-export type MutationCreateAccountTransferTransactionArgs = {
-  req: CreateAccountTransferTransaction;
-};
-
-
-export type MutationCreateBudgetArgs = {
-  req: UpdateBudget;
-};
-
-
-export type MutationCreateBudgetLineArgs = {
-  req: CreateBudgetLine;
-};
-
-
-export type MutationCreateCategoryArgs = {
-  req: UpdateCategory;
-};
-
-
-export type MutationCreateJarArgs = {
-  req: UpdateJar;
-};
-
-
-export type MutationCreateJarTransferTransactionArgs = {
-  req: CreateJarTransferTransaction;
-};
-
-
-export type MutationCreatePaymentTransactionArgs = {
-  req: CreatePaymentTransaction;
-};
-
-
-export type MutationDeleteAccountArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeleteAccountTransferTransactionArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeleteBudgetArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeleteBudgetLineArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeleteCategoryArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeleteJarArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeleteJarTransferTransactionArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationDeletePaymentTransactionArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationUpdateAccountArgs = {
-  id: Scalars['ID']['input'];
-  req: UpdateAccount;
-};
-
-
-export type MutationUpdateAccountTransferTransactionArgs = {
-  id: Scalars['ID']['input'];
-  req: CreateAccountTransferTransaction;
-};
-
-
-export type MutationUpdateBudgetArgs = {
-  id: Scalars['ID']['input'];
-  req: UpdateBudget;
-};
-
-
-export type MutationUpdateBudgetLineArgs = {
-  id: Scalars['ID']['input'];
-  req: UpdateBudgetLine;
-};
-
-
-export type MutationUpdateCategoryArgs = {
-  id: Scalars['ID']['input'];
-  req: UpdateCategory;
-};
-
-
-export type MutationUpdateJarArgs = {
-  id: Scalars['ID']['input'];
-  req: UpdateJar;
-};
-
-
-export type MutationUpdateJarTransferTransactionArgs = {
-  id: Scalars['ID']['input'];
-  req: CreateJarTransferTransaction;
-};
-
-
-export type MutationUpdatePaymentTransactionArgs = {
-  id: Scalars['ID']['input'];
-  req: CreatePaymentTransaction;
-};
-
-export type PaymentTransaction = Transaction & {
-  __typename?: 'PaymentTransaction';
-  account: Account;
-  amount: Scalars['String']['output'];
-  category?: Maybe<Category>;
-  counterparty: Scalars['String']['output'];
-  date: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  direction: PaymentTransactionDirection;
-  id: Scalars['ID']['output'];
-  jar: Jar;
-};
-
-export type PaymentTransactionCategoryTotal = {
-  __typename?: 'PaymentTransactionCategoryTotal';
-  category?: Maybe<Category>;
-  incoming: Scalars['String']['output'];
-  outgoing: Scalars['String']['output'];
+  jarIds: Array<string | number>;
 };
 
 export const PaymentTransactionDirection = {
@@ -331,133 +54,60 @@ export const PaymentTransactionDirection = {
 } as const;
 
 export type PaymentTransactionDirection = typeof PaymentTransactionDirection[keyof typeof PaymentTransactionDirection];
-export type Query = {
-  __typename?: 'Query';
-  getAccount: Account;
-  getAccounts: Array<Account>;
-  getBudget: Budget;
-  getBudgets: Array<Budget>;
-  getCategories: Array<Category>;
-  getCategory: Category;
-  getJar: Jar;
-  getJars: Array<Jar>;
-  getPaymentTransactionCategoryTotals: Array<PaymentTransactionCategoryTotal>;
-  getTransaction: Transaction;
-  getTransactions: Array<Transaction>;
-  queryJarBalanceHistory: Array<JarBalanceHistory>;
-  searchTransactions: TransactionPage;
-};
-
-
-export type QueryGetAccountArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryGetBudgetArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryGetCategoryArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryGetJarArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryGetPaymentTransactionCategoryTotalsArgs = {
-  from: Scalars['String']['input'];
-  to: Scalars['String']['input'];
-};
-
-
-export type QueryGetTransactionArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryQueryJarBalanceHistoryArgs = {
-  req: JarBalanceQuery;
-};
-
-
-export type QuerySearchTransactionsArgs = {
-  query: TransactionSearch;
-};
-
-export type Transaction = {
-  amount?: Maybe<Scalars['String']['output']>;
-  date: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-};
-
 export type TransactionFilter = {
-  from?: InputMaybe<Scalars['String']['input']>;
-  to?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type TransactionPage = {
-  __typename?: 'TransactionPage';
-  content: Array<Transaction>;
-  page: Scalars['Int']['output'];
-  size: Scalars['Int']['output'];
-  totalElements: Scalars['Int']['output'];
+  from?: string | null | undefined;
+  to?: string | null | undefined;
 };
 
 export type TransactionSearch = {
   filter: TransactionFilter;
-  page?: InputMaybe<Scalars['Int']['input']>;
-  size?: InputMaybe<Scalars['Int']['input']>;
+  page?: number | null | undefined;
+  size?: number | null | undefined;
 };
 
 export type UpdateAccount = {
-  description: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  description: string;
+  name: string;
 };
 
 export type UpdateBudget = {
-  description: Scalars['String']['input'];
-  endDate: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
+  description: string;
+  endDate: string;
+  name: string;
+  startDate: string;
 };
 
 export type UpdateBudgetLine = {
-  amount: Scalars['String']['input'];
+  amount: string;
   direction: BudgetLineDirection;
 };
 
 export type UpdateCategory = {
-  description: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  description: string;
+  name: string;
 };
 
 export type UpdateJar = {
-  description: Scalars['String']['input'];
-  goal?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+  description: string;
+  goal?: string | null | undefined;
+  name: string;
 };
 
 export type GetAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAccountsQuery = { __typename?: 'Query', getAccounts: Array<{ __typename?: 'Account', id: string, name: string, description: string, balance: string, inUse: boolean }> };
+export type GetAccountsQuery = { getAccounts: Array<{ id: string, name: string, description: string, balance: string, inUse: boolean }> };
 
 export type GetAccountQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: TransactionSearch;
 }>;
 
 
-export type GetAccountQuery = { __typename?: 'Query', getAccount: { __typename?: 'Account', id: string, transactions: { __typename?: 'TransactionPage', page: number, size: number, totalElements: number, content: Array<
-        | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string, sourceAccount: { __typename?: 'Account', id: string, name: string }, targetAccount: { __typename?: 'Account', id: string, name: string } }
+export type GetAccountQuery = { getAccount: { id: string, transactions: { page: number, size: number, totalElements: number, content: Array<
+        | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string, sourceAccount: { id: string, name: string }, targetAccount: { id: string, name: string } }
         | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string }
-        | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { __typename?: 'Jar', id: string, name: string }, account: { __typename?: 'Account', id: string, name: string } }
+        | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { id: string, name: string }, account: { id: string, name: string }, category: { id: string, name: string } | null }
       > } } };
 
 export type CreateAccountMutationVariables = Exact<{
@@ -465,129 +115,129 @@ export type CreateAccountMutationVariables = Exact<{
 }>;
 
 
-export type CreateAccountMutation = { __typename?: 'Mutation', createAccount: { __typename?: 'Account', id: string, name: string, description: string, balance: string } };
+export type CreateAccountMutation = { createAccount: { id: string, name: string, description: string, balance: string } };
 
 export type UpdateAccountMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: UpdateAccount;
 }>;
 
 
-export type UpdateAccountMutation = { __typename?: 'Mutation', updateAccount: { __typename?: 'Account', id: string, name: string, description: string, balance: string } };
+export type UpdateAccountMutation = { updateAccount: { id: string, name: string, description: string, balance: string } };
 
 export type DeleteAccountMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteAccountMutation = { __typename?: 'Mutation', deleteAccount: boolean };
+export type DeleteAccountMutation = { deleteAccount: boolean };
 
 export type GetBudgetsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBudgetsQuery = { __typename?: 'Query', getBudgets: Array<{ __typename?: 'Budget', id: string, name: string, description: string, startDate: string, endDate: string }> };
+export type GetBudgetsQuery = { getBudgets: Array<{ id: string, name: string, description: string, startDate: string, endDate: string }> };
 
 export type CreateBudgetMutationVariables = Exact<{
   req: UpdateBudget;
 }>;
 
 
-export type CreateBudgetMutation = { __typename?: 'Mutation', createBudget: { __typename?: 'Budget', id: string, name: string, description: string, startDate: string, endDate: string } };
+export type CreateBudgetMutation = { createBudget: { id: string, name: string, description: string, startDate: string, endDate: string } };
 
 export type DeleteBudgetMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteBudgetMutation = { __typename?: 'Mutation', deleteBudget: boolean };
+export type DeleteBudgetMutation = { deleteBudget: boolean };
 
 export type UpdateBudgetMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: UpdateBudget;
 }>;
 
 
-export type UpdateBudgetMutation = { __typename?: 'Mutation', updateBudget: { __typename?: 'Budget', id: string, name: string, description: string, startDate: string, endDate: string } };
+export type UpdateBudgetMutation = { updateBudget: { id: string, name: string, description: string, startDate: string, endDate: string } };
 
 export type GetBudgetLinesQueryVariables = Exact<{
-  budgetId: Scalars['ID']['input'];
+  budgetId: string | number;
 }>;
 
 
-export type GetBudgetLinesQuery = { __typename?: 'Query', getBudget: { __typename?: 'Budget', id: string, lines: Array<{ __typename?: 'BudgetLine', id: string, amount: string, direction: BudgetLineDirection, category: { __typename?: 'Category', id: string, name: string } }> } };
+export type GetBudgetLinesQuery = { getBudget: { id: string, lines: Array<{ id: string, amount: string, direction: BudgetLineDirection, category: { id: string, name: string } }> } };
 
 export type CreateBudgetLineMutationVariables = Exact<{
   req: CreateBudgetLine;
 }>;
 
 
-export type CreateBudgetLineMutation = { __typename?: 'Mutation', createBudgetLine: { __typename?: 'BudgetLine', id: string, amount: string, direction: BudgetLineDirection } };
+export type CreateBudgetLineMutation = { createBudgetLine: { id: string, amount: string, direction: BudgetLineDirection } };
 
 export type UpdateBudgetLineMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: UpdateBudgetLine;
 }>;
 
 
-export type UpdateBudgetLineMutation = { __typename?: 'Mutation', updateBudgetLine: { __typename?: 'BudgetLine', id: string, amount: string, direction: BudgetLineDirection } };
+export type UpdateBudgetLineMutation = { updateBudgetLine: { id: string, amount: string, direction: BudgetLineDirection } };
 
 export type DeleteBudgetLineMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteBudgetLineMutation = { __typename?: 'Mutation', deleteBudgetLine: boolean };
+export type DeleteBudgetLineMutation = { deleteBudgetLine: boolean };
 
 export type GetPaymentTransactionCategoryTotalsQueryVariables = Exact<{
-  from: Scalars['String']['input'];
-  to: Scalars['String']['input'];
+  from: string;
+  to: string;
 }>;
 
 
-export type GetPaymentTransactionCategoryTotalsQuery = { __typename?: 'Query', getPaymentTransactionCategoryTotals: Array<{ __typename?: 'PaymentTransactionCategoryTotal', incoming: string, outgoing: string, category?: { __typename?: 'Category', id: string, name: string } | null }> };
+export type GetPaymentTransactionCategoryTotalsQuery = { getPaymentTransactionCategoryTotals: Array<{ incoming: string, outgoing: string, category: { id: string, name: string } | null }> };
 
 export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCategoriesQuery = { __typename?: 'Query', getCategories: Array<{ __typename?: 'Category', id: string, name: string, description: string, inUse: boolean }> };
+export type GetCategoriesQuery = { getCategories: Array<{ id: string, name: string, description: string, inUse: boolean }> };
 
 export type CreateCategoryMutationVariables = Exact<{
   req: UpdateCategory;
 }>;
 
 
-export type CreateCategoryMutation = { __typename?: 'Mutation', createCategory: { __typename?: 'Category', id: string, name: string, description: string } };
+export type CreateCategoryMutation = { createCategory: { id: string, name: string, description: string } };
 
 export type UpdateCategoryMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: UpdateCategory;
 }>;
 
 
-export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory: { __typename?: 'Category', id: string, name: string, description: string } };
+export type UpdateCategoryMutation = { updateCategory: { id: string, name: string, description: string } };
 
 export type DeleteCategoryMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteCategoryMutation = { __typename?: 'Mutation', deleteCategory: boolean };
+export type DeleteCategoryMutation = { deleteCategory: boolean };
 
 export type GetJarsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetJarsQuery = { __typename?: 'Query', getJars: Array<{ __typename?: 'Jar', id: string, name: string, description: string, balance: string, goal?: string | null, inUse: boolean }> };
+export type GetJarsQuery = { getJars: Array<{ id: string, name: string, description: string, balance: string, goal: string | null, inUse: boolean }> };
 
 export type GetJarQueryVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: TransactionSearch;
 }>;
 
 
-export type GetJarQuery = { __typename?: 'Query', getJar: { __typename?: 'Jar', id: string, transactions: { __typename?: 'TransactionPage', page: number, size: number, totalElements: number, content: Array<
+export type GetJarQuery = { getJar: { id: string, transactions: { page: number, size: number, totalElements: number, content: Array<
         | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string }
-        | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string, sourceJar: { __typename?: 'Jar', id: string, name: string }, targetJar: { __typename?: 'Jar', id: string, name: string } }
-        | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { __typename?: 'Jar', id: string, name: string }, account: { __typename?: 'Account', id: string, name: string } }
+        | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string, sourceJar: { id: string, name: string }, targetJar: { id: string, name: string } }
+        | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { id: string, name: string }, account: { id: string, name: string }, category: { id: string, name: string } | null }
       > } } };
 
 export type CreateJarMutationVariables = Exact<{
@@ -595,103 +245,103 @@ export type CreateJarMutationVariables = Exact<{
 }>;
 
 
-export type CreateJarMutation = { __typename?: 'Mutation', createJar: { __typename?: 'Jar', id: string, name: string, description: string, balance: string } };
+export type CreateJarMutation = { createJar: { id: string, name: string, description: string, balance: string } };
 
 export type UpdateJarMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: UpdateJar;
 }>;
 
 
-export type UpdateJarMutation = { __typename?: 'Mutation', updateJar: { __typename?: 'Jar', id: string, name: string, description: string, balance: string } };
+export type UpdateJarMutation = { updateJar: { id: string, name: string, description: string, balance: string } };
 
 export type DeleteJarMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteJarMutation = { __typename?: 'Mutation', deleteJar: boolean };
+export type DeleteJarMutation = { deleteJar: boolean };
 
 export type GetJarBalanceHistoryQueryVariables = Exact<{
   req: JarBalanceQuery;
 }>;
 
 
-export type GetJarBalanceHistoryQuery = { __typename?: 'Query', queryJarBalanceHistory: Array<{ __typename?: 'JarBalanceHistory', jarId: string, snapshots: Array<{ __typename?: 'JarBalanceSnapshot', date: string, balance: string }> }> };
+export type GetJarBalanceHistoryQuery = { queryJarBalanceHistory: Array<{ jarId: string, snapshots: Array<{ date: string, balance: string }> }> };
 
 export type CreateAccountTransferTransactionMutationVariables = Exact<{
   req: CreateAccountTransferTransaction;
 }>;
 
 
-export type CreateAccountTransferTransactionMutation = { __typename?: 'Mutation', createAccountTransferTransaction: { __typename?: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string } };
+export type CreateAccountTransferTransactionMutation = { createAccountTransferTransaction: { id: string, date: string, amount: string, description: string } };
 
 export type UpdateAccountTransferTransactionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: CreateAccountTransferTransaction;
 }>;
 
 
-export type UpdateAccountTransferTransactionMutation = { __typename?: 'Mutation', updateAccountTransferTransaction: { __typename?: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string } };
+export type UpdateAccountTransferTransactionMutation = { updateAccountTransferTransaction: { id: string, date: string, amount: string, description: string } };
 
 export type DeleteAccountTransferTransactionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteAccountTransferTransactionMutation = { __typename?: 'Mutation', deleteAccountTransferTransaction: boolean };
+export type DeleteAccountTransferTransactionMutation = { deleteAccountTransferTransaction: boolean };
 
 export type CreateJarTransferTransactionMutationVariables = Exact<{
   req: CreateJarTransferTransaction;
 }>;
 
 
-export type CreateJarTransferTransactionMutation = { __typename?: 'Mutation', createJarTransferTransaction: { __typename?: 'JarTransferTransaction', id: string, date: string, amount: string, description: string } };
+export type CreateJarTransferTransactionMutation = { createJarTransferTransaction: { id: string, date: string, amount: string, description: string } };
 
 export type UpdateJarTransferTransactionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: CreateJarTransferTransaction;
 }>;
 
 
-export type UpdateJarTransferTransactionMutation = { __typename?: 'Mutation', updateJarTransferTransaction: { __typename?: 'JarTransferTransaction', id: string, date: string, amount: string, description: string } };
+export type UpdateJarTransferTransactionMutation = { updateJarTransferTransaction: { id: string, date: string, amount: string, description: string } };
 
 export type DeleteJarTransferTransactionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeleteJarTransferTransactionMutation = { __typename?: 'Mutation', deleteJarTransferTransaction: boolean };
+export type DeleteJarTransferTransactionMutation = { deleteJarTransferTransaction: boolean };
 
 export type CreatePaymentTransactionMutationVariables = Exact<{
   req: CreatePaymentTransaction;
 }>;
 
 
-export type CreatePaymentTransactionMutation = { __typename?: 'Mutation', createPaymentTransaction: { __typename?: 'PaymentTransaction', id: string, date: string, amount: string, description: string, counterparty: string, direction: PaymentTransactionDirection } };
+export type CreatePaymentTransactionMutation = { createPaymentTransaction: { id: string, date: string, amount: string, description: string, counterparty: string, direction: PaymentTransactionDirection } };
 
 export type UpdatePaymentTransactionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
   req: CreatePaymentTransaction;
 }>;
 
 
-export type UpdatePaymentTransactionMutation = { __typename?: 'Mutation', updatePaymentTransaction: { __typename?: 'PaymentTransaction', id: string, date: string, amount: string, description: string, counterparty: string, direction: PaymentTransactionDirection } };
+export type UpdatePaymentTransactionMutation = { updatePaymentTransaction: { id: string, date: string, amount: string, description: string, counterparty: string, direction: PaymentTransactionDirection } };
 
 export type DeletePaymentTransactionMutationVariables = Exact<{
-  id: Scalars['ID']['input'];
+  id: string | number;
 }>;
 
 
-export type DeletePaymentTransactionMutation = { __typename?: 'Mutation', deletePaymentTransaction: boolean };
+export type DeletePaymentTransactionMutation = { deletePaymentTransaction: boolean };
 
 export type GetTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTransactionsQuery = { __typename?: 'Query', getTransactions: Array<
-    | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string, sourceAccount: { __typename?: 'Account', id: string, name: string }, targetAccount: { __typename?: 'Account', id: string, name: string } }
-    | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string, sourceJar: { __typename?: 'Jar', id: string, name: string }, targetJar: { __typename?: 'Jar', id: string, name: string } }
-    | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { __typename?: 'Jar', id: string, name: string }, account: { __typename?: 'Account', id: string, name: string }, category?: { __typename?: 'Category', id: string, name: string } | null }
+export type GetTransactionsQuery = { getTransactions: Array<
+    | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string, sourceAccount: { id: string, name: string }, targetAccount: { id: string, name: string } }
+    | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string, sourceJar: { id: string, name: string }, targetJar: { id: string, name: string } }
+    | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { id: string, name: string }, account: { id: string, name: string }, category: { id: string, name: string } | null }
   > };
 
 export type SearchTransactionsQueryVariables = Exact<{
@@ -699,15 +349,15 @@ export type SearchTransactionsQueryVariables = Exact<{
 }>;
 
 
-export type SearchTransactionsQuery = { __typename?: 'Query', searchTransactions: { __typename?: 'TransactionPage', page: number, size: number, totalElements: number, content: Array<
-      | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string, sourceAccount: { __typename?: 'Account', id: string, name: string }, targetAccount: { __typename?: 'Account', id: string, name: string } }
-      | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string, sourceJar: { __typename?: 'Jar', id: string, name: string }, targetJar: { __typename?: 'Jar', id: string, name: string } }
-      | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { __typename?: 'Jar', id: string, name: string }, account: { __typename?: 'Account', id: string, name: string }, category?: { __typename?: 'Category', id: string, name: string } | null }
+export type SearchTransactionsQuery = { searchTransactions: { page: number, size: number, totalElements: number, content: Array<
+      | { __typename: 'AccountTransferTransaction', id: string, date: string, amount: string, description: string, sourceAccount: { id: string, name: string }, targetAccount: { id: string, name: string } }
+      | { __typename: 'JarTransferTransaction', id: string, date: string, amount: string, description: string, sourceJar: { id: string, name: string }, targetJar: { id: string, name: string } }
+      | { __typename: 'PaymentTransaction', counterparty: string, direction: PaymentTransactionDirection, id: string, date: string, amount: string, description: string, jar: { id: string, name: string }, account: { id: string, name: string }, category: { id: string, name: string } | null }
     > } };
 
 
 export const GetAccountsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAccounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"inUse"}}]}}]}}]} as unknown as DocumentNode<GetAccountsQuery, GetAccountsQueryVariables>;
-export const GetAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TransactionSearch"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"transactions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"counterparty"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccountTransferTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sourceAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"totalElements"}}]}}]}}]}}]} as unknown as DocumentNode<GetAccountQuery, GetAccountQueryVariables>;
+export const GetAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TransactionSearch"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"transactions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"counterparty"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AccountTransferTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sourceAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"totalElements"}}]}}]}}]}}]} as unknown as DocumentNode<GetAccountQuery, GetAccountQueryVariables>;
 export const CreateAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateAccount"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"req"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}}]}}]}}]} as unknown as DocumentNode<CreateAccountMutation, CreateAccountMutationVariables>;
 export const UpdateAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateAccount"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"req"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}}]}}]}}]} as unknown as DocumentNode<UpdateAccountMutation, UpdateAccountMutationVariables>;
 export const DeleteAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteAccount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteAccount"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteAccountMutation, DeleteAccountMutationVariables>;
@@ -725,7 +375,7 @@ export const CreateCategoryDocument = {"kind":"Document","definitions":[{"kind":
 export const UpdateCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateCategory"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"req"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}}]}}]}}]} as unknown as DocumentNode<UpdateCategoryMutation, UpdateCategoryMutationVariables>;
 export const DeleteCategoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteCategory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteCategory"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteCategoryMutation, DeleteCategoryMutationVariables>;
 export const GetJarsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetJars"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getJars"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"goal"}},{"kind":"Field","name":{"kind":"Name","value":"inUse"}}]}}]}}]} as unknown as DocumentNode<GetJarsQuery, GetJarsQueryVariables>;
-export const GetJarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetJar"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TransactionSearch"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getJar"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"transactions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"counterparty"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"JarTransferTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sourceJar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetJar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"totalElements"}}]}}]}}]}}]} as unknown as DocumentNode<GetJarQuery, GetJarQueryVariables>;
+export const GetJarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetJar"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TransactionSearch"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getJar"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"transactions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"query"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PaymentTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"jar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"counterparty"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"JarTransferTransaction"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sourceJar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"targetJar"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"page"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"totalElements"}}]}}]}}]}}]} as unknown as DocumentNode<GetJarQuery, GetJarQueryVariables>;
 export const CreateJarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateJar"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateJar"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createJar"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"req"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}}]}}]}}]} as unknown as DocumentNode<CreateJarMutation, CreateJarMutationVariables>;
 export const UpdateJarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateJar"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"req"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateJar"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateJar"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"req"},"value":{"kind":"Variable","name":{"kind":"Name","value":"req"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"balance"}}]}}]}}]} as unknown as DocumentNode<UpdateJarMutation, UpdateJarMutationVariables>;
 export const DeleteJarDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteJar"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteJar"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteJarMutation, DeleteJarMutationVariables>;

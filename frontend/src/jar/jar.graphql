@@ -30,6 +30,10 @@ query GetJar($id: ID!, $req: TransactionSearch!) {
 						id
 						name
 					}
+					category {
+						id
+						name
+					}
 					counterparty
 					direction
 				}

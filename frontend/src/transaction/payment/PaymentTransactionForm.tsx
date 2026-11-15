@@ -1,9 +1,9 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
-import type { Category, CreatePaymentTransaction } from "@gql/graphql";
+import type { CreatePaymentTransaction } from "@gql/graphql";
 import {
 	CreatePaymentTransactionDocument,
 	PaymentTransactionDirection,
@@ -14,6 +14,7 @@ import IconIncoming from "@assets/icons/IconIncoming";
 import IconOutgoing from "@assets/icons/IconOutgoing";
 
 import type { AccountItem } from "@src/account/accountTypes";
+import type { CategoryItem } from "@src/category/categoryTypes";
 import type { JarItem } from "@src/jar/jarTypes";
 import { TRANSACTION_REFETCH_QUERIES } from "../transactionQueries";
 import type { PaymentTransactionItem } from "../transactionTypes";
@@ -22,7 +23,7 @@ export type PaytmentTransactionFormProps = {
 	transaction?: PaymentTransactionItem;
 	jars: Array<JarItem>;
 	accounts: Array<AccountItem>;
-	categories: Array<Category>;
+	categories: Array<CategoryItem>;
 
 	onClose: () => void;
 };
@@ -39,39 +40,29 @@ const PaymentTransactionForm = (
 		UpdatePaymentTransactionDocument
 	);
 
-	const [date, setDate] = useState("");
-	const [amount, setAmount] = useState("");
-	const [description, setDescription] = useState("");
-	const [jarId, setJarId] = useState("");
-	const [accountId, setAccountId] = useState("");
-	const [categoryId, setCategoryId] = useState("");
-	const [counterparty, setCounterparty] = useState("");
+	const [date, setDate] = useState(
+		props.transaction?.date ?? new Date().toISOString().split("T")[0]
+	);
+	const [amount, setAmount] = useState(props.transaction?.amount ?? "");
+	const [description, setDescription] = useState(
+		props.transaction?.description ?? ""
+	);
+	const [jarId, setJarId] = useState(
+		props.transaction?.jar.id ?? props.jars[0]?.id ?? ""
+	);
+	const [accountId, setAccountId] = useState(
+		props.transaction?.account.id ?? props.accounts[0]?.id ?? ""
+	);
+	const [categoryId, setCategoryId] = useState(
+		props.transaction?.category?.id ?? ""
+	);
+	const [counterparty, setCounterparty] = useState(
+		props.transaction?.counterparty ?? ""
+	);
 	const [direction, setDirection] = useState<PaymentTransactionDirection>(
-		PaymentTransactionDirection.Outgoing
+		props.transaction?.direction ?? PaymentTransactionDirection.Outgoing
 	);
 	const [errors, setErrors] = useState<Record<string, string>>({});
-
-	useEffect(() => {
-		if (props.transaction) {
-			setDate(props.transaction.date);
-			setAmount(props.transaction.amount ?? "");
-			setDescription(props.transaction.description ?? "");
-			setJarId(props.transaction.jar.id);
-			setAccountId(props.transaction.account.id);
-			setCategoryId(props.transaction.category?.id ?? "");
-			setCounterparty(props.transaction.counterparty ?? "");
-			setDirection(props.transaction.direction);
-		} else {
-			setDate(new Date().toISOString().split("T")[0]);
-			setAmount("");
-			setDescription("");
-			setJarId(props.jars.length > 0 ? props.jars[0].id : "");
-			setAccountId(props.accounts.length > 0 ? props.accounts[0].id : "");
-			setCategoryId("");
-			setCounterparty("");
-			setDirection(PaymentTransactionDirection.Outgoing);
-		}
-	}, [props.transaction, props.jars, props.accounts]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};

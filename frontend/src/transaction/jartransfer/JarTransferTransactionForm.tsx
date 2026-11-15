@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useMutation } from "@apollo/client/react";
@@ -32,28 +32,20 @@ const JarTransferTransactionForm = (
 		UpdateJarTransferTransactionDocument
 	);
 
-	const [date, setDate] = useState("");
-	const [amount, setAmount] = useState("");
-	const [description, setDescription] = useState("");
-	const [sourceJarId, setSourceJarId] = useState("");
-	const [targetJarId, setTargetJarId] = useState("");
+	const [date, setDate] = useState(
+		props.transaction?.date ?? new Date().toISOString().split("T")[0]
+	);
+	const [amount, setAmount] = useState(props.transaction?.amount ?? "");
+	const [description, setDescription] = useState(
+		props.transaction?.description ?? ""
+	);
+	const [sourceJarId, setSourceJarId] = useState(
+		props.transaction?.sourceJar.id ?? props.jars[0]?.id ?? ""
+	);
+	const [targetJarId, setTargetJarId] = useState(
+		props.transaction?.targetJar.id ?? props.jars[1]?.id ?? ""
+	);
 	const [errors, setErrors] = useState<Record<string, string>>({});
-
-	useEffect(() => {
-		if (props.transaction) {
-			setDate(props.transaction.date);
-			setAmount(props.transaction.amount ?? "");
-			setDescription(props.transaction.description ?? "");
-			setSourceJarId(props.transaction.sourceJar.id);
-			setTargetJarId(props.transaction.targetJar.id);
-		} else {
-			setDate(new Date().toISOString().split("T")[0]);
-			setAmount("");
-			setDescription("");
-			setSourceJarId(props.jars.length > 0 ? props.jars[0].id : "");
-			setTargetJarId(props.jars.length > 1 ? props.jars[1].id : "");
-		}
-	}, [props.transaction, props.jars]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};

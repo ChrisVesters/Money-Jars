@@ -39,7 +39,7 @@ const Modal = (props: Readonly<ModalProps>): JSX.Element => {
 
 	return (
 		<dialog ref={modalRef} onKeyDown={handleKeyDown}>
-			{props.children}
+			{props.isOpen && props.children}
 		</dialog>
 	);
 };

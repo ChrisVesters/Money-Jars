@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { UpdateAccount } from "@gql/graphql";
@@ -20,10 +20,6 @@ const AccountForm = (props: Readonly<AccountFormProps>): JSX.Element => {
 		props.account?.description ?? ""
 	);
 
-	useEffect(() => {
-		setName(props.account?.name ?? "");
-		setDescription(props.account?.description ?? "");
-	}, [props.account]);
 
 	const handleSubmit = async (event: React.FormEvent): Promise<void> => {
 		event.preventDefault();

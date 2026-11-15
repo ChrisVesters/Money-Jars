@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { BudgetLineDirection } from "@gql/graphql";
@@ -34,10 +34,15 @@ const BudgetLineForm = (
 ): JSX.Element => {
 	const { t } = useTranslation();
 
-	const [categoryId, setCategoryId] = useState("");
-	const [amount, setAmount] = useState("");
+	const [categoryId, setCategoryId] = useState(
+		props.line?.category.id ??
+			props.category?.id ??
+			props.categories[0]?.id ??
+			""
+	);
+	const [amount, setAmount] = useState(props.line?.amount ?? "");
 	const [direction, setDirection] = useState<BudgetLineDirection>(
-		BudgetLineDirection.Expense
+		props.line?.direction ?? props.direction
 	);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -55,9 +60,6 @@ const BudgetLineForm = (
 		setErrors({});
 	};
 
-	useEffect(() => {
-		reset(props.categories, props.direction, props.line, props.category);
-	}, [props.line, props.categories, props.direction, props.category]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};

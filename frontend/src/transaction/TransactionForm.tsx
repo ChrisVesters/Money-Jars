@@ -30,6 +30,11 @@ const TransactionForm = (
 	const accounts = accountsQuery.data?.getAccounts ?? [];
 	const categories = categoryQuery.data?.getCategories ?? [];
 
+	// The forms take their defaults from this data when they mount.
+	if (jarsQuery.loading || accountsQuery.loading || categoryQuery.loading) {
+		return <></>;
+	}
+
 	if (!props.transaction) {
 		return (
 			<CreateTransactionForm

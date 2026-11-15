@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { UpdateBudget } from "@gql/graphql";
@@ -16,10 +16,13 @@ export type BudgetFormProps = {
 const BudgetForm = (props: Readonly<BudgetFormProps>): JSX.Element => {
 	const { t } = useTranslation();
 
-	const [name, setName] = useState("");
-	const [description, setDescription] = useState("");
-	const [startDate, setStartDate] = useState("");
-	const [endDate, setEndDate] = useState("");
+	const initialPeriod = props.budget ?? currentMonthPeriod();
+	const [name, setName] = useState(props.budget?.name ?? "");
+	const [description, setDescription] = useState(
+		props.budget?.description ?? ""
+	);
+	const [startDate, setStartDate] = useState(initialPeriod.startDate);
+	const [endDate, setEndDate] = useState(initialPeriod.endDate);
 	const [errors, setErrors] = useState<Record<string, string>>({});
 
 	const reset = (budget?: BudgetItem): void => {
@@ -31,9 +34,6 @@ const BudgetForm = (props: Readonly<BudgetFormProps>): JSX.Element => {
 		setErrors({});
 	};
 
-	useEffect(() => {
-		reset(props.budget);
-	}, [props.budget]);
 
 	const validateForm = (): boolean => {
 		const newErrors: Record<string, string> = {};

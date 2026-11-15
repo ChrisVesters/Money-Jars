@@ -10,7 +10,7 @@ const config: CodegenConfig = {
 			plugins: [],
 			config: {
 				useTypeImports: true,
-				enumsAsConst: true
+				enumType: "const"
 			}
 		}
 	}

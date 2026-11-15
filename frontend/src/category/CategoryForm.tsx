@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { UpdateCategory } from "@gql/graphql";
@@ -20,10 +20,6 @@ const CategoryForm = (props: Readonly<CategoryFormProps>): JSX.Element => {
 		props.category?.description ?? ""
 	);
 
-	useEffect(() => {
-		setName(props.category?.name ?? "");
-		setDescription(props.category?.description ?? "");
-	}, [props.category]);
 
 	const handleSubmit = async (event: React.FormEvent): Promise<void> => {
 		event.preventDefault();
