@@ -40,7 +40,7 @@
 .text-button {
 	background: none;
 	border: none;
-	color: #4a90e2;
+	color: var(--color-accent);
 	cursor: pointer;
 	padding: 0.5rem;
 	font-size: 1rem;
@@ -66,8 +66,8 @@
 }
 
 .transactions-table thead {
-	background-color: rgba(74, 144, 226, 0.15);
-	border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+	background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+	border-bottom: 2px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
 }
 
 .transactions-table th {
@@ -85,15 +85,15 @@
 }
 
 .transactions-table tbody tr:hover {
-	background-color: rgba(74, 144, 226, 0.1);
+	background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
 }
 
 .transactions-table tbody tr.selected {
-	background-color: rgba(74, 144, 226, 0.3);
+	background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
 }
 
 .transactions-table tbody tr.selected td:first-child {
-	box-shadow: inset 4px 0 0 #4a90e2;
+	box-shadow: inset 4px 0 0 var(--color-accent);
 }
 
 .transactions-table td {
@@ -138,7 +138,7 @@
 .icon-button {
 	background: none;
 	border: none;
-	color: #4a90e2;
+	color: var(--color-accent);
 	cursor: pointer;
 	padding: 0.5rem;
 	display: flex;

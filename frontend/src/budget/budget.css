@@ -1,9 +1,9 @@
 .jar-card.budget-current {
-	box-shadow: inset 4px 0 0 #4a90e2, 0 2px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: inset 4px 0 0 var(--color-accent), 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .jar-card.budget-current.selected {
-	box-shadow: inset 4px 0 0 #4a90e2, 0 0 0 3px rgba(74, 144, 226, 0.2);
+	box-shadow: inset 4px 0 0 var(--color-accent), 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
 }
 
 .budget-current-label {
@@ -11,7 +11,7 @@
 	margin-top: 0.5rem;
 	padding: 0.1rem 0.5rem;
 	border-radius: 4px;
-	background-color: #4a90e2;
+	background-color: var(--color-accent);
 	color: white;
 	font-size: 0.85rem;
 	font-weight: 600;
@@ -24,7 +24,7 @@
 }
 
 .transactions-table tfoot.budget-totals tr {
-	border-top: 1px solid rgba(74, 144, 226, 0.3);
+	border-top: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
 	font-weight: 600;
 }
 
@@ -48,7 +48,7 @@
 	justify-content: space-between;
 	padding: 0.75rem 1rem;
 	border-radius: 8px;
-	background-color: rgba(74, 144, 226, 0.15);
+	background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
 	font-weight: 600;
 }
 
