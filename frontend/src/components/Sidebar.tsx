@@ -42,7 +42,10 @@ const Sidebar = (): JSX.Element => {
 								<IconPanelLeftOpen />
 							)}
 						</button>
-						<h1>{t("appTitle")}</h1>
+						<div className="sidebar-brand">
+							<img className="sidebar-logo" src="/logo.svg" alt="" />
+							<h1>{t("appTitle")}</h1>
+						</div>
 					</div>
 					<ul className="nav-menu">
 						<li className="nav-item">

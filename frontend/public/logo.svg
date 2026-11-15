@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300" stroke="#1f5a96" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+	<!-- Jar body -->
+	<path d="M45 40 V52 Q45 66 30 78 Q6 98 6 128 V250 Q6 294 50 294 H190 Q234 294 234 250 V128 Q234 98 210 78 Q195 66 195 52 V40 Z" fill="#4a90e2" fill-opacity="0.3"/>
+	<!-- Lid -->
+	<rect x="22" y="6" width="196" height="34" rx="8" fill="#4aa8e8"/>
+	<!-- Back coin stack -->
+	<path d="M114 100 V180 H182 V100" fill="#f9c623"/>
+	<ellipse cx="148" cy="100" rx="34" ry="12" fill="#f9c623"/>
+	<path d="M114 140 Q148 154 182 140" fill="none"/>
+	<!-- Front coin stack -->
+	<path d="M44 140 V240 Q78 254 112 240 V140" fill="#f9c623"/>
+	<ellipse cx="78" cy="140" rx="34" ry="12" fill="#f9c623"/>
+	<path d="M44 175 Q78 189 112 175 M44 208 Q78 222 112 208" fill="none"/>
+	<!-- Dollar coin -->
+	<circle cx="160" cy="212" r="56" fill="#f9c623"/>
+	<path d="M174 192 Q170 184 160 184 Q144 184 144 197 Q144 208 160 210 Q176 212 176 226 Q176 240 160 240 Q148 240 144 232 M160 172 V184 M160 240 V252" fill="none" stroke-width="9"/>
+</svg>
