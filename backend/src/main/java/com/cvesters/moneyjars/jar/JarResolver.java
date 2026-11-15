@@ -10,9 +10,9 @@ import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.jar.bdo.JarEntry;
 import com.cvesters.moneyjars.jar.dto.JarDto;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 import com.cvesters.moneyjars.transaction.dto.TransactionPageDto;
-import com.cvesters.moneyjars.transaction.dto.TransactionQueryDto;
+import com.cvesters.moneyjars.transaction.dto.TransactionSearchDto;
 
 @Controller
 public class JarResolver {
@@ -38,10 +38,10 @@ public class JarResolver {
 
 	@SchemaMapping(typeName = "Jar", field = "transactions")
 	public TransactionPageDto getTransactions(final JarDto jar,
-			@Argument final TransactionQueryDto query) {
-		final TransactionQuery bdo = query.toBdo();
+			@Argument final TransactionSearchDto query) {
+		final TransactionSearch bdo = query.toBdo();
 		final PagedResult<Transaction> result = entryService
-				.queryTransactions(jar.getId(), bdo);
+				.searchTransactions(jar.getId(), bdo);
 		return new TransactionPageDto(result);
 	}
 }

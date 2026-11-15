@@ -9,7 +9,7 @@ query GetJars {
 	}
 }
 
-query GetJar($id: ID!, $req: TransactionQuery!) {
+query GetJar($id: ID!, $req: TransactionSearch!) {
 	getJar(id: $id) {
 		id
 		transactions(query: $req) {
@@ -72,4 +72,14 @@ mutation UpdateJar($id: ID!, $req: UpdateJar!) {
 
 mutation DeleteJar($id: ID!) {
 	deleteJar(id: $id)
+}
+
+query GetJarBalanceHistory($req: JarBalanceQuery!) {
+	queryJarBalanceHistory(req: $req) {
+		jarId
+		snapshots {
+			date
+			balance
+		}
+	}
 }

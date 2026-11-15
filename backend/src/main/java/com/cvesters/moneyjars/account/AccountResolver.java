@@ -10,9 +10,9 @@ import com.cvesters.moneyjars.account.bdo.AccountEntry;
 import com.cvesters.moneyjars.account.dto.AccountDto;
 import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 import com.cvesters.moneyjars.transaction.dto.TransactionPageDto;
-import com.cvesters.moneyjars.transaction.dto.TransactionQueryDto;
+import com.cvesters.moneyjars.transaction.dto.TransactionSearchDto;
 
 @Controller
 public class AccountResolver {
@@ -38,10 +38,10 @@ public class AccountResolver {
 
 	@SchemaMapping(typeName = "Account", field = "transactions")
 	public TransactionPageDto getTransactions(final AccountDto account,
-			@Argument final TransactionQueryDto query) {
-		final TransactionQuery bdo = query.toBdo();
+			@Argument final TransactionSearchDto query) {
+		final TransactionSearch bdo = query.toBdo();
 		final PagedResult<Transaction> result = entryService
-				.queryTransactions(account.getId(), bdo);
+				.searchTransactions(account.getId(), bdo);
 		return new TransactionPageDto(result);
 	}
 }

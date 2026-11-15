@@ -8,10 +8,10 @@ import org.springframework.stereotype.Controller;
 
 import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 import com.cvesters.moneyjars.transaction.dto.TransactionDto;
 import com.cvesters.moneyjars.transaction.dto.TransactionPageDto;
-import com.cvesters.moneyjars.transaction.dto.TransactionQueryDto;
+import com.cvesters.moneyjars.transaction.dto.TransactionSearchDto;
 
 @Controller
 public class TransactionController {
@@ -31,9 +31,9 @@ public class TransactionController {
 	}
 
 	@QueryMapping
-	public TransactionPageDto queryTransactions(
-			@Argument final TransactionQueryDto query) {
-		final TransactionQuery bdo = query.toBdo();
+	public TransactionPageDto searchTransactions(
+			@Argument final TransactionSearchDto query) {
+		final TransactionSearch bdo = query.toBdo();
 		final PagedResult<Transaction> result = transactionService.query(bdo);
 
 		return new TransactionPageDto(result);

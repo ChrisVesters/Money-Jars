@@ -15,7 +15,7 @@ import com.cvesters.moneyjars.jar.dao.JarEntryDao;
 import com.cvesters.moneyjars.jar.dao.JarEntryQueryDao;
 import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @Service
 public class JarEntryStorageGateway {
@@ -40,6 +40,11 @@ public class JarEntryStorageGateway {
 				.orElseThrow(MissingEntityException::new);
 	}
 
+	public Optional<JarEntry> findBefore(final long jarId,
+			final LocalDate date) {
+		return findBefore(jarId, date, 0);
+	}
+
 	public Optional<JarEntry> findBefore(final long jarId, final LocalDate date,
 			final int sequence) {
 		return repository.findBefore(jarId, date, sequence)
@@ -58,7 +63,7 @@ public class JarEntryStorageGateway {
 	}
 
 	public PagedResult<Transaction> findTransactions(final long jarId,
-			final TransactionQuery query) {
+			final TransactionSearch query) {
 		Objects.requireNonNull(query);
 
 		return transactionStorage.findAll(query,

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.cvesters.moneyjars.common.bdo.Pagination;
 
-class TransactionQueryTest {
+class TransactionSearchTest {
 
 	@Nested
 	class Constructor {
@@ -19,11 +19,11 @@ class TransactionQueryTest {
 			final TransactionFilter filter = mock();
 			final Pagination pagination = mock();
 
-			final var transactionQuery = new TransactionQuery(filter,
+			final var transactionSearch = new TransactionSearch(filter,
 					pagination);
 
-			assertThat(transactionQuery.filter()).isEqualTo(filter);
-			assertThat(transactionQuery.pagination()).isEqualTo(pagination);
+			assertThat(transactionSearch.filter()).isEqualTo(filter);
+			assertThat(transactionSearch.pagination()).isEqualTo(pagination);
 		}
 
 		@Test
@@ -31,7 +31,7 @@ class TransactionQueryTest {
 			final TransactionFilter filter = null;
 			final Pagination pagination = mock();
 
-			assertThatThrownBy(() -> new TransactionQuery(filter, pagination))
+			assertThatThrownBy(() -> new TransactionSearch(filter, pagination))
 					.isInstanceOf(NullPointerException.class);
 		}
 
@@ -40,7 +40,7 @@ class TransactionQueryTest {
 			final TransactionFilter filter = mock();
 			final Pagination pagination = null;
 
-			assertThatThrownBy(() -> new TransactionQuery(filter, pagination))
+			assertThatThrownBy(() -> new TransactionSearch(filter, pagination))
 					.isInstanceOf(NullPointerException.class);
 		}
 	}

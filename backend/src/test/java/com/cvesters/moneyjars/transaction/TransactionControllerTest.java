@@ -25,7 +25,7 @@ import com.cvesters.moneyjars.common.bdo.Pagination;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
 import com.cvesters.moneyjars.transaction.bdo.TransactionFilter;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @GraphQlTest(TransactionController.class)
 @Import(TransactionGraphqlConfig.class)
@@ -76,11 +76,11 @@ class TransactionControllerTest {
 	}
 
 	@Nested
-	class QueryTransactions {
+	class SearchTransactions {
 
 		@Test
 		void success() {
-			final var query = new TransactionQuery(
+			final var query = new TransactionSearch(
 					new TransactionFilter(LocalDate.of(2026, 1, 1),
 							LocalDate.of(2026, 1, 31)),
 					new Pagination(1, 2));
@@ -96,7 +96,7 @@ class TransactionControllerTest {
 
 			final String document = """
 					query {
-						queryTransactions(query: {
+						searchTransactions(query: {
 							filter: { from: "2026-01-01", to: "2026-01-31" }
 							page: 1
 							size: 2
@@ -121,26 +121,26 @@ class TransactionControllerTest {
 					.execute();
 
 			assertEquals(response, TestPaymentTransaction.RENT,
-					"queryTransactions.content[0]");
+					"searchTransactions.content[0]");
 			assertEquals(response, TestPaymentTransaction.GROCERY,
-					"queryTransactions.content[1]");
-			response.path("queryTransactions.content")
+					"searchTransactions.content[1]");
+			response.path("searchTransactions.content")
 					.entityList(Object.class)
 					.hasSize(2)
-					.path("queryTransactions.page")
+					.path("searchTransactions.page")
 					.entity(Integer.class)
 					.isEqualTo(1)
-					.path("queryTransactions.size")
+					.path("searchTransactions.size")
 					.entity(Integer.class)
 					.isEqualTo(2)
-					.path("queryTransactions.totalElements")
+					.path("searchTransactions.totalElements")
 					.entity(Long.class)
 					.isEqualTo(5L);
 		}
 
 		@Test
 		void defaults() {
-			final var query = new TransactionQuery(
+			final var query = new TransactionSearch(
 					new TransactionFilter(null, null), new Pagination(0, 100));
 
 			when(transactionService.query(query)).thenReturn(
@@ -148,7 +148,7 @@ class TransactionControllerTest {
 
 			final String document = """
 					query {
-						queryTransactions(query: { filter: {} }) {
+						searchTransactions(query: { filter: {} }) {
 							content {
 								id
 							}
@@ -161,16 +161,16 @@ class TransactionControllerTest {
 
 			graphQlTester.document(document)
 					.execute()
-					.path("queryTransactions.content")
+					.path("searchTransactions.content")
 					.entityList(Object.class)
 					.hasSize(0)
-					.path("queryTransactions.page")
+					.path("searchTransactions.page")
 					.entity(Integer.class)
 					.isEqualTo(0)
-					.path("queryTransactions.size")
+					.path("searchTransactions.size")
 					.entity(Integer.class)
 					.isEqualTo(100)
-					.path("queryTransactions.totalElements")
+					.path("searchTransactions.totalElements")
 					.entity(Long.class)
 					.isEqualTo(0L);
 		}
@@ -179,7 +179,7 @@ class TransactionControllerTest {
 		void filterMissing() {
 			final String document = """
 					query {
-						queryTransactions(query: { page: 0, size: 10 }) {
+						searchTransactions(query: { page: 0, size: 10 }) {
 							content {
 								id
 							}

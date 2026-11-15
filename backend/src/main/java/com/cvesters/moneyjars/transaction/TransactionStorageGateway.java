@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 import com.cvesters.moneyjars.transaction.dao.TransactionQueryDao;
 
@@ -62,11 +62,11 @@ public class TransactionStorageGateway {
 		return repository.findLastForDate(date).map(TransactionDao::toBdo);
 	}
 
-	public PagedResult<Transaction> findAll(final TransactionQuery query) {
+	public PagedResult<Transaction> findAll(final TransactionSearch query) {
 		return findAll(query, null);
 	}
 
-	public PagedResult<Transaction> findAll(final TransactionQuery query,
+	public PagedResult<Transaction> findAll(final TransactionSearch query,
 			final Specification<TransactionDao> scope) {
 		Objects.requireNonNull(query);
 

@@ -17,6 +17,7 @@ import JarView from "./JarView";
 import Modal from "@src/common/Modal";
 
 import "./jar.css";
+import JarBalanceChart from "./JarBalanceChart";
 import JarForm from "./JarForm";
 import JarTransactionTable from "./JarTransactionTable";
 import type { JarItem } from "./jarTypes";
@@ -139,10 +140,16 @@ const Overview = (): JSX.Element => {
 			</div>
 
 			{selectedCardId && (
-				<JarTransactionTable
-					key={selectedCardId}
-					jarId={selectedCardId}
-				/>
+				<>
+					<JarBalanceChart
+						key={`chart-${selectedCardId}`}
+						jarId={selectedCardId}
+					/>
+					<JarTransactionTable
+						key={selectedCardId}
+						jarId={selectedCardId}
+					/>
+				</>
 			)}
 
 			<Modal isOpen={JarFormVisible} onClose={closeJarForm}>

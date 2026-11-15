@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useQuery } from "@apollo/client/react";
-import { QueryTransactionsDocument } from "@gql/graphql";
+import { SearchTransactionsDocument } from "@gql/graphql";
 
 import Modal from "@src/common/Modal";
 import Pagination from "@src/common/Pagination";
@@ -27,7 +27,7 @@ const TransactionsOverview = (): JSX.Element => {
 	const [pageNumber, setPageNumber] = useState(0);
 	const [pageSize, setPageSize] = useState(25);
 
-	const page = useQuery(QueryTransactionsDocument, {
+	const page = useQuery(SearchTransactionsDocument, {
 		variables: {
 			req: {
 				filter: {
@@ -39,7 +39,7 @@ const TransactionsOverview = (): JSX.Element => {
 			}
 		}
 	});
-	const pageData = (page.data ?? page.previousData)?.queryTransactions;
+	const pageData = (page.data ?? page.previousData)?.searchTransactions;
 
 	const deleteTransaction = useDeleteTransaction();
 

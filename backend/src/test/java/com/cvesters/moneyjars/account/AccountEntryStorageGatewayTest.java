@@ -31,7 +31,7 @@ import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 import com.cvesters.moneyjars.transaction.dao.TransactionDao;
 
 class AccountEntryStorageGatewayTest {
@@ -247,7 +247,7 @@ class AccountEntryStorageGatewayTest {
 
 		@Test
 		void success() {
-			final TransactionQuery query = mock();
+			final TransactionSearch query = mock();
 			final PagedResult<Transaction> expected = mock();
 			when(transactionStorage.findAll(query, scope)).thenReturn(expected);
 

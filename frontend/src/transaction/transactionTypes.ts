@@ -1,8 +1,8 @@
-import type { QueryTransactionsQuery } from "@gql/graphql";
+import type { SearchTransactionsQuery } from "@gql/graphql";
 import { PaymentTransactionDirection } from "@gql/graphql";
 
 export type TransactionItem =
-	QueryTransactionsQuery["queryTransactions"]["content"][number];
+	SearchTransactionsQuery["searchTransactions"]["content"][number];
 
 export type TransactionType = TransactionItem["__typename"];
 

@@ -5,7 +5,7 @@ type Jar {
 	balance: String!
 	goal: String
 	inUse: Boolean!
-	transactions(query: TransactionQuery = { filter: {} }): TransactionPage!
+	transactions(query: TransactionSearch = { filter: {} }): TransactionPage!
 }
 
 input UpdateJar {
@@ -14,9 +14,25 @@ input UpdateJar {
 	goal: String
 }
 
+input JarBalanceQuery {
+	jarIds: [ID!]!
+}
+
+type JarBalanceSnapshot {
+	date: String!
+	balance: String!
+}
+
+type JarBalanceHistory {
+	jarId: ID!
+	snapshots: [JarBalanceSnapshot!]!
+}
+
 extend type Query {
 	getJars: [Jar!]!
 	getJar(id: ID!): Jar!
+
+	queryJarBalanceHistory(req: JarBalanceQuery!): [JarBalanceHistory!]!
 }
 
 extend type Mutation {

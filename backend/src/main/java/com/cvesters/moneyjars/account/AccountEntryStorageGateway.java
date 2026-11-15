@@ -15,7 +15,7 @@ import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.common.exceptions.MissingEntityException;
 import com.cvesters.moneyjars.transaction.TransactionStorageGateway;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @Service
 public class AccountEntryStorageGateway {
@@ -60,7 +60,7 @@ public class AccountEntryStorageGateway {
 	}
 
 	public PagedResult<Transaction> findTransactions(final long accountId,
-			final TransactionQuery query) {
+			final TransactionSearch query) {
 		Objects.requireNonNull(query);
 
 		return transactionStorage.findAll(query,

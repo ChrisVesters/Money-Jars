@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 class TransactionServiceTest {
 
@@ -39,7 +39,7 @@ class TransactionServiceTest {
 
 		@Test
 		void success() {
-			final TransactionQuery query = mock();
+			final TransactionSearch query = mock();
 			final PagedResult<Transaction> expected = mock();
 			when(storage.findAll(query)).thenReturn(expected);
 

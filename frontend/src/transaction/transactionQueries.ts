@@ -5,11 +5,11 @@ import {
 	GetJarDocument,
 	GetJarsDocument,
 	GetPaymentTransactionCategoryTotalsDocument,
-	QueryTransactionsDocument
+	SearchTransactionsDocument
 } from "@gql/graphql";
 
 export const TRANSACTION_REFETCH_QUERIES = [
-	QueryTransactionsDocument,
+	SearchTransactionsDocument,
 	GetJarDocument,
 	GetJarsDocument,
 	GetAccountDocument,

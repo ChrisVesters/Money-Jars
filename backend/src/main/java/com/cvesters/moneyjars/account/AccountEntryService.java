@@ -15,7 +15,7 @@ import com.cvesters.moneyjars.common.bdo.PagedResult;
 import com.cvesters.moneyjars.transaction.bdo.AccountTransferTransaction;
 import com.cvesters.moneyjars.transaction.bdo.PaymentTransaction;
 import com.cvesters.moneyjars.transaction.bdo.Transaction;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @Service
 public class AccountEntryService {
@@ -38,8 +38,8 @@ public class AccountEntryService {
 		return gateway.getAll(accountId);
 	}
 
-	public PagedResult<Transaction> queryTransactions(final long accountId,
-			final TransactionQuery query) {
+	public PagedResult<Transaction> searchTransactions(final long accountId,
+			final TransactionSearch query) {
 		Objects.requireNonNull(query);
 
 		return gateway.findTransactions(accountId, query);

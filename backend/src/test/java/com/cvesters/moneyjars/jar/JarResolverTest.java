@@ -25,7 +25,7 @@ import com.cvesters.moneyjars.transaction.TestPaymentTransaction;
 import com.cvesters.moneyjars.transaction.TestTransaction;
 import com.cvesters.moneyjars.transaction.TransactionGraphqlConfig;
 import com.cvesters.moneyjars.transaction.bdo.TransactionFilter;
-import com.cvesters.moneyjars.transaction.bdo.TransactionQuery;
+import com.cvesters.moneyjars.transaction.bdo.TransactionSearch;
 
 @GraphQlTest({ JarController.class, JarResolver.class })
 @Import(TransactionGraphqlConfig.class)
@@ -161,8 +161,8 @@ class JarResolverTest {
 					.getJarTransferTransaction();
 
 			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
-			when(entryService.queryTransactions(HOUSEHOLD.getId(),
-					new TransactionQuery(new TransactionFilter(null, null),
+			when(entryService.searchTransactions(HOUSEHOLD.getId(),
+					new TransactionSearch(new TransactionFilter(null, null),
 							new Pagination(0, 100))))
 					.thenReturn(new PagedResult<>(
 							List.of(transaction1.bdo(), transaction2.bdo(),
@@ -188,8 +188,8 @@ class JarResolverTest {
 					.getPaymentTransaction();
 
 			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
-			when(entryService.queryTransactions(HOUSEHOLD.getId(),
-					new TransactionQuery(
+			when(entryService.searchTransactions(HOUSEHOLD.getId(),
+					new TransactionSearch(
 							new TransactionFilter(LocalDate.of(2026, 1, 1),
 									LocalDate.of(2026, 1, 31)),
 							new Pagination(1, 1))))
@@ -217,8 +217,8 @@ class JarResolverTest {
 		@Test
 		void noEntries() {
 			when(jarService.get(HOUSEHOLD.getId())).thenReturn(HOUSEHOLD.bdo());
-			when(entryService.queryTransactions(HOUSEHOLD.getId(),
-					new TransactionQuery(new TransactionFilter(null, null),
+			when(entryService.searchTransactions(HOUSEHOLD.getId(),
+					new TransactionSearch(new TransactionFilter(null, null),
 							new Pagination(0, 100))))
 					.thenReturn(new PagedResult<>(Collections.emptyList(), 0,
 							100, 0));

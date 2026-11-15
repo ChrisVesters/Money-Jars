@@ -4,10 +4,10 @@ import java.util.Objects;
 
 import com.cvesters.moneyjars.common.bdo.Pagination;
 
-public record TransactionQuery(TransactionFilter filter,
+public record TransactionSearch(TransactionFilter filter,
 		Pagination pagination) {
 
-	public TransactionQuery {
+	public TransactionSearch {
 		Objects.requireNonNull(filter);
 		Objects.requireNonNull(pagination);
 	}
