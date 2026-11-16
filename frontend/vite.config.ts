@@ -16,4 +16,7 @@ export default defineConfig({
 	  '@src': path.resolve(import.meta.dirname, './src'),
     },
   },
+  server: {
+	port: 10010
+  }
 })

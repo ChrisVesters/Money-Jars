@@ -10,7 +10,7 @@ import "./i18n";
 
 const client = new ApolloClient({
 	link: new HttpLink({
-		uri: "http://localhost:7000/graphql"
+		uri: "http://localhost:10020/graphql"
 	}),
 	cache: new InMemoryCache()
 });
