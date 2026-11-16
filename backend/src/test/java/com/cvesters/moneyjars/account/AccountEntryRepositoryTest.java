@@ -79,6 +79,17 @@ class AccountEntryRepositoryTest extends RepositoryTest {
 		}
 
 		@Test
+		void transferEntry() {
+			final LocalDate date = LocalDate.of(2026, 2, 10);
+
+			final Optional<AccountEntryDao> result = repository
+					.findBefore(TestAccount.SAVINGS.getId(), date, 3);
+
+			assertThat(result).hasValueSatisfying(e -> assertEquals(e,
+					TestAccountEntry.SAVINGS_SAVINGS_DEPOSIT));
+		}
+
+		@Test
 		void dateNull() {
 			final Optional<AccountEntryDao> result = repository
 					.findBefore(ACCOUNT.getId(), null, 1);

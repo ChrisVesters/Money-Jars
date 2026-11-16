@@ -76,3 +76,13 @@ mutation UpdateAccount($id: ID!, $req: UpdateAccount!) {
 mutation DeleteAccount($id: ID!) {
 	deleteAccount(id: $id)
 }
+
+query GetAccountBalanceHistory($req: AccountBalanceQuery!) {
+	queryAccountBalanceHistory(req: $req) {
+		accountId
+		snapshots {
+			date
+			balance
+		}
+	}
+}

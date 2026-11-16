@@ -141,6 +141,42 @@ class AccountEntryStorageGatewayTest {
 	}
 
 	@Nested
+	class FindBeforeDate {
+
+		private static final TestAccountEntry ACCOUNT_ENTRY = TestAccountEntry.CHECKING_RENT;
+		private static final long ACCOUNT_ID = ACCOUNT_ENTRY.getAccount()
+				.getId();
+		private static final LocalDate DATE = ACCOUNT_ENTRY.getTransaction()
+				.getDate();
+
+		@Test
+		void found() {
+			final AccountEntryDao dao = mock();
+			final AccountEntry bdo = mock();
+			when(dao.toBdo()).thenReturn(bdo);
+
+			when(repository.findBefore(ACCOUNT_ID, DATE, 0))
+					.thenReturn(Optional.of(dao));
+
+			final Optional<AccountEntry> result = gateway
+					.findBefore(ACCOUNT_ID, DATE);
+
+			assertThat(result).containsSame(bdo);
+		}
+
+		@Test
+		void notFound() {
+			when(repository.findBefore(ACCOUNT_ID, DATE, 0))
+					.thenReturn(Optional.empty());
+
+			final Optional<AccountEntry> result = gateway
+					.findBefore(ACCOUNT_ID, DATE);
+
+			assertThat(result).isEmpty();
+		}
+	}
+
+	@Nested
 	class FindLast {
 
 		@Test
