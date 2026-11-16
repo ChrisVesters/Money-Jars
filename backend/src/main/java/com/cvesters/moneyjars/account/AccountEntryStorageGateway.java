@@ -42,6 +42,11 @@ public class AccountEntryStorageGateway {
 	}
 
 	public Optional<AccountEntry> findBefore(final long accountId,
+			final LocalDate date) {
+		return findBefore(accountId, date, 0);
+	}
+
+	public Optional<AccountEntry> findBefore(final long accountId,
 			final LocalDate date, final int sequence) {
 		return repository.findBefore(accountId, date, sequence)
 				.map(AccountEntryDao::toBdo);

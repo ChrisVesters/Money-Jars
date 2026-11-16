@@ -12,9 +12,25 @@ input UpdateAccount {
 	description: String!
 }
 
+input AccountBalanceQuery {
+	accountIds: [ID!]!
+}
+
+type AccountBalanceSnapshot {
+	date: String!
+	balance: String!
+}
+
+type AccountBalanceHistory {
+	accountId: ID!
+	snapshots: [AccountBalanceSnapshot!]!
+}
+
 extend type Query {
 	getAccounts: [Account!]!
 	getAccount(id: ID!): Account!
+
+	queryAccountBalanceHistory(req: AccountBalanceQuery!): [AccountBalanceHistory!]!
 }
 
 extend type Mutation {

@@ -17,6 +17,7 @@ import {
 import Modal from "@src/common/Modal";
 
 import "../jar/jar.css";
+import AccountBalanceChart from "./AccountBalanceChart";
 import AccountForm from "./AccountForm";
 import AccountTransactionTable from "./AccountTransactionTable";
 import AccountView from "./AccountView";
@@ -140,10 +141,16 @@ const Overview = (): JSX.Element => {
 			</div>
 
 			{selectedCardId && (
-				<AccountTransactionTable
-					key={selectedCardId}
-					accountId={selectedCardId}
-				/>
+				<>
+					<AccountBalanceChart
+						key={`chart-${selectedCardId}`}
+						accountId={selectedCardId}
+					/>
+					<AccountTransactionTable
+						key={selectedCardId}
+						accountId={selectedCardId}
+					/>
+				</>
 			)}
 
 			<Modal isOpen={accountFormVisible} onClose={closeAccountForm}>
